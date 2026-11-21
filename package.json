@@ -1,0 +1,17 @@
+{
+  "name": "tlh-sportsfest-3-registration",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TLH Sports Fest 3.0 registration site and Google Apps Script backend",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "sync": "node scripts/sync-rules.js",
+    "sync:check": "node scripts/sync-rules.js --check",
+    "seed": "node scripts/build-seed.js",
+    "serve": "node scripts/serve.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
