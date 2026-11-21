@@ -96,12 +96,30 @@ function onOpen() {
     .addToUi();
 }
 
+function getOrCreateWorkbook_() {
+  try {
+    var existing = SpreadsheetApp.getActiveSpreadsheet();
+    if (existing) return existing;
+  } catch (error) {
+    // No active spreadsheet; continue and open by stored ID or create one.
+  }
+  try {
+    var storedId = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
+    if (storedId) return SpreadsheetApp.openById(storedId);
+  } catch (error) {
+    // Ignore and create below.
+  }
+  var sheet = SpreadsheetApp.create('TLH Sports Fest 3.0');
+  PropertiesService.getScriptProperties().setProperty(TLH_SPREADSHEET_ID_PROPERTY, sheet.getId());
+  return sheet;
+}
+
 /**
  * Safe to run many times. Creates or repairs tabs, headers, formats,
  * dropdowns, protection, the dashboard and triggers. Never deletes data.
  */
 function setupWorkbook() {
-  var ss = getSpreadsheet_();
+  var ss = getOrCreateWorkbook_();
   PropertiesService.getScriptProperties().setProperty(TLH_SPREADSHEET_ID_PROPERTY, ss.getId());
 
   var names = ['Config', 'Games', 'Submissions', 'Entries', 'Players', 'Dashboard', 'Logs'];
