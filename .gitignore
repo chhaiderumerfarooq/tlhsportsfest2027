@@ -1,0 +1,23 @@
+# OS and editor junk
+.DS_Store
+._*
+Thumbs.db
+*.swp
+
+# Apps Script / clasp local credentials
+.clasprc.json
+.clasp.json
+~/.clasprc.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Local test output
+test-output/
+screenshots/
+*.local
+
+# Never commit secrets
+.env
+.env.*
