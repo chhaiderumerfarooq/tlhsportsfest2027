@@ -8,7 +8,7 @@
  * runs offline with a simulated backend. Use ?mock=1 to force preview mode.
  */
 
-export const API_URL = 'https://script.google.com/macros/s/AKfycbzjtocV9rjjufVoslgTH-OtnGonNaSjzM4P4HjoSXB_/exec';
+export const API_URL = 'https://script.google.com/macros/s/AKfycbysy7oeXh4ruNr8xNIm4oIqO5zGEsFTMBit1zAwPDGd2x76dx2M4Mj-brjjNoxsDy6XLg/exec';
 
 export const USE_MOCK = false;
 
