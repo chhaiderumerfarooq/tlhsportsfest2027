@@ -12,7 +12,7 @@
 var TLH_SEED_GAMES = [
   {
     "gameId": "G01",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 1,
     "name": "Cricket",
     "category": "Ground Games",
@@ -33,7 +33,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G02",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 2,
     "name": "Futsal",
     "category": "Ground Games",
@@ -54,7 +54,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G03",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 3,
     "name": "Basketball",
     "category": "Ground Games",
@@ -75,7 +75,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G04",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 4,
     "name": "Paddle Tennis (Singles)",
     "category": "Ground Games",
@@ -96,7 +96,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G05",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 5,
     "name": "Paddle Tennis (Doubles)",
     "category": "Ground Games",
@@ -117,7 +117,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G06",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 6,
     "name": "Pickle Ball (Singles)",
     "category": "Ground Games",
@@ -138,7 +138,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G07",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 7,
     "name": "Pickle Ball (Doubles)",
     "category": "Ground Games",
@@ -159,7 +159,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G08",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 8,
     "name": "Squid Game",
     "category": "Other",
@@ -180,7 +180,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G09",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 9,
     "name": "Badminton (Singles)",
     "category": "Indoor Games",
@@ -201,7 +201,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G10",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 10,
     "name": "Badminton (Doubles)",
     "category": "Indoor Games",
@@ -222,7 +222,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G11",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 11,
     "name": "Table Tennis (Singles)",
     "category": "Indoor Games",
@@ -243,7 +243,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G12",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 12,
     "name": "Table Tennis (Doubles)",
     "category": "Indoor Games",
@@ -264,7 +264,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G13",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 13,
     "name": "Carrom",
     "category": "Indoor Games",
@@ -285,7 +285,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G14",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 14,
     "name": "Ludo",
     "category": "Indoor Games",
@@ -306,7 +306,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G15",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 15,
     "name": "Chess",
     "category": "Indoor Games",
@@ -327,7 +327,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G16",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 16,
     "name": "Foosball",
     "category": "Indoor Games",
@@ -348,7 +348,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G17",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 17,
     "name": "Arm Wrestling",
     "category": "Indoor Games",
@@ -369,7 +369,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G18",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 18,
     "name": "Snooker Junior",
     "category": "Indoor Games",
@@ -390,7 +390,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G19",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 19,
     "name": "PUBG Mobile",
     "category": "E-Games",
@@ -411,7 +411,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G20",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 20,
     "name": "Tekken 8 (PS)",
     "category": "E-Games",
@@ -432,7 +432,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G21",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 21,
     "name": "FIFA 2027 (PS)",
     "category": "E-Games",
@@ -453,7 +453,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G22",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 22,
     "name": "Call of Duty PVP (PS)",
     "category": "E-Games",
@@ -474,7 +474,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G23",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 23,
     "name": "Free Fire Custom (Mobile)",
     "category": "E-Games",
@@ -495,7 +495,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G24",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 24,
     "name": "Fortnite (PS)",
     "category": "E-Games",
@@ -516,7 +516,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G25",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 25,
     "name": "Minecraft PVP (PC)",
     "category": "E-Games",
@@ -537,7 +537,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G26",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 26,
     "name": "Mud Pottery",
     "category": "Workshops",
@@ -558,7 +558,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G27",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 27,
     "name": "Tote Bags painting",
     "category": "Workshops",
@@ -579,7 +579,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G28",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 28,
     "name": "Canvas Painting",
     "category": "Workshops",
@@ -600,7 +600,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G29",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 29,
     "name": "Beaded Craft",
     "category": "Workshops",
@@ -621,7 +621,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G30",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 30,
     "name": "Bedazzling",
     "category": "Workshops",
@@ -642,7 +642,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G31",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 31,
     "name": "Trinket Tray Painting",
     "category": "Workshops",
@@ -663,7 +663,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G32",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 32,
     "name": "3D floral bloom",
     "category": "Workshops",
@@ -684,7 +684,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G33",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 33,
     "name": "Mirror Painting",
     "category": "Workshops",
@@ -705,7 +705,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G34",
-    "active": "TRUE",
+    "active": true,
     "sortOrder": 34,
     "name": "Feel the Beat",
     "category": "Workshops",
@@ -726,7 +726,7 @@ var TLH_SEED_GAMES = [
   },
   {
     "gameId": "G35",
-    "active": "FALSE",
+    "active": false,
     "sortOrder": 35,
     "name": "Mafia (Hidden Game)",
     "category": "Other",
@@ -760,7 +760,7 @@ function seedGames() {
 
   var rows = TLH_SEED_GAMES.map(function (game) {
     return [
-      game.gameId, game.active ? 'TRUE' : 'FALSE', game.sortOrder, game.name, game.category,
+      game.gameId, parseBool_(game.active, false) ? 'TRUE' : 'FALSE', game.sortOrder, game.name, game.category,
       game.format, game.divisions, game.ageGroups, game.earlyFee,
       game.regularFee, game.minPlayers, game.maxPlayers, game.maxEntries,
       game.details, game.prizes, game.coach, game.head, game.coHead1, game.coHead2
