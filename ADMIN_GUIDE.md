@@ -1,8 +1,12 @@
 # ADMIN_GUIDE.md — Change something later
 
-Use this guide from Google Drive with the **TLH Sports Fest 3.0 — Registrations**
-sheet open. You need a Google account that can edit the Sheet. You do **not** need
-passwords or API tokens; just drive and the sheet.
+Use this guide from Google Drive with the **TLH Sports Fest 3.0** sheet open.
+You need a Google account that can edit the Sheet. You do **not** need passwords
+or API tokens; just Drive and the Sheet.
+
+If you cannot find it, open `https://drive.google.com` with the account that
+deployed the web app and search for **TLH Sports Fest 3.0**. The backend creates
+it automatically on the first request.
 
 ## 1. Change an event date or venue
 
