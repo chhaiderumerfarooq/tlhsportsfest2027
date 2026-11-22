@@ -144,6 +144,7 @@ function setupWorkbook() {
   if (gamesSheet.getLastRow() < 2) {
     seedGames();
   }
+  repairSeedActiveFlagsOnce_();
 
   applyFormats_(ss);
   applyValidations_(ss);
@@ -169,6 +170,50 @@ function setupWorkbook() {
     sheets: names,
     games: Math.max(0, gamesSheet.getLastRow() - 1)
   };
+}
+
+/**
+ * One-time repair for workbooks seeded by the first version of the seed
+ * generator, which wrote the string "FALSE" into the Active column. The
+ * string was truthy when the Games tab was built, so inactive games were
+ * inserted as active. Runs once, then records a Script Property.
+ */
+function repairSeedActiveFlagsOnce_() {
+  var props = PropertiesService.getScriptProperties();
+  if (props.getProperty('TLH_SEED_ACTIVE_REPAIR_V1') === 'done') return;
+
+  var ss;
+  try {
+    ss = getSpreadsheet_();
+  } catch (error) {
+    return;
+  }
+  var sheet = ss.getSheetByName('Games');
+  if (!sheet || sheet.getLastRow() < 2) return;
+
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2).getValues();
+  var byId = {};
+  TLH_SEED_GAMES.forEach(function (game) {
+    byId[String(game.gameId)] = game;
+  });
+
+  var changed = 0;
+  for (var i = 0; i < values.length; i++) {
+    var id = String(values[i][0] || '').trim();
+    var seed = byId[id];
+    if (!seed) continue;
+    var seedActive = parseBool_(seed.active, false);
+    var sheetActive = parseBool_(values[i][1], false);
+    if (!seedActive && sheetActive) {
+      sheet.getRange(i + 2, 2).setValue('FALSE');
+      changed++;
+    }
+  }
+
+  props.setProperty('TLH_SEED_ACTIVE_REPAIR_V1', 'done');
+  if (changed) {
+    logEvent_('INFO', 'repairSeedActiveFlags', 'Set ' + changed + ' seed game(s) to inactive.');
+  }
 }
 
 function ensureSheet_(ss, name, index) {
