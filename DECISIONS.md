@@ -15,9 +15,9 @@ easier to review later.
   It must still validate on the backend with the real rules, and it sends the
   server-returned new totals in `FEE_CHANGED` rather than continuing with its
   old estimate.
-- **Mock by default until a URL is added.** `USE_MOCK = true` until you paste the
-  Apps Script URL into `assets/js/config.js`. `?mock=1` forces mock for preview
-  or tests.
+- **Mock mode is explicit.** The committed `assets/js/config.js` points at the
+  deployed web app (`USE_MOCK = false`). Set `USE_MOCK = true` or add `?mock=1`
+  to force the full offline mock for previews and tests.
 - **Honeypot field in the form.** The hidden `website` input must stay empty.
 - **Static, no cookies, no storage except the browser draft.** The public site
   does not write registration data to a browser store; personal details are only
@@ -106,6 +106,10 @@ easier to review later.
   IndexedDB. A reload restores everything.
 - **Best-effort file saving.** If the device cannot store files, we show a note
   but let the user continue; if the network fails, the site retries the upload.
+- **The workbook creates itself on first use.** A standalone Apps Script
+  deployment has no bound Sheet, so the first `?action=config` request creates
+  **TLH Sports Fest 3.0**, seeds the tabs, and stores its ID in Script
+  Properties. `setupWorkbook()` remains the safe repair command.
 
 ## Known deviations from the original spec
 
