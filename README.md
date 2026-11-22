@@ -8,7 +8,7 @@ plain static website, a Google Apps Script backend and a Google Sheet.
 - **Frontend** in `index.html`, `assets/css/` and `assets/js/`: a mobile-first
   four-step wizard, live age and fee checks, draft saving, bank-detail copy,
   upload retries and a Print summary. No framework and no build step.
-- **Backend** in `backend/`: one Apps Script project bound to the Sheet.
+- **Backend** in `backend/`: one Apps Script project connected to the Sheet.
   It is deployed as a web app with a stable `/exec` URL.
 - **Shared rules** in `shared/rules.js`, the single source of truth for prices,
   age eligibility, division rules, contact validation and formula sanitising.
@@ -25,6 +25,16 @@ plain static website, a Google Apps Script backend and a Google Sheet.
   are still current.
 - `npm run seed` regenerates the seed, `SeedGames.gs` and the mock game list.
 - `npm run serve` starts a local preview at `http://localhost:8080/`.
+
+## Current deployment
+
+- Frontend: `https://chhaiderumerfarooq.github.io/tlhsportsfest2027/`
+- Backend: `https://script.google.com/macros/s/AKfycbysy7oeXh4ruNr8xNIm4oIqO5zGEsFTMBit1zAwPDGd2x76dx2M4Mj-brjjNoxsDy6XLg/exec`
+- Sheet: **TLH Sports Fest 3.0** in the owner's Google Drive. It is created
+  automatically the first time the deployed web app receives a request.
+
+`setupWorkbook()` is still the safe repair command. Running it again never
+deletes data.
 
 ## Owners and sources
 
@@ -54,12 +64,15 @@ npm test
 npm run serve
 ```
 
-Visit `http://localhost:8080/`. Until you deploy the backend, the site runs
-the built-in mock: `assets/js/config.js` currently has `USE_MOCK = true`.
+Visit `http://localhost:8080/`. The committed `assets/js/config.js` points at
+the deployed backend (`USE_MOCK = false`). Add `?mock=1` to any URL to force the
+offline mock, or set `USE_MOCK = true` while working without a backend.
 
 ### 2. Set up the Google Sheet
 
-1. Open your Google Drive and create a new Google Sheet for TLH Sports Fest.
+1. You do **not** have to create the Sheet by hand. The backend creates
+   **TLH Sports Fest 3.0** on its first request and remembers the ID in Script
+   Properties. If you prefer to create it first, any blank Sheet works.
 2. Open **Extensions > Apps Script**.
 3. In the script editor, create or open the TLH Sports Fest 3.0 project.
 4. Paste these files into the editor:
@@ -73,6 +86,7 @@ the built-in mock: `assets/js/config.js` currently has `USE_MOCK = true`.
 5. Click **Save**, then run `setupWorkbook()` once from the Apps Script menu.
    Authorise the requested permissions. The list of permissions is in `SETUP.md`;
    you will not be asked for passwords or access tokens anywhere in this repo.
+   The first request to the deployed web app also runs the setup automatically.
 
 ### 3. Deploy the web app
 
