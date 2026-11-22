@@ -201,7 +201,7 @@ function seedCsvRows(games) {
 function seedGs(games) {
   const serialisable = games.map((game) => ({
     gameId: game.gameId,
-    active: game.active ? 'TRUE' : 'FALSE',
+    active: game.active,
     sortOrder: game.sortOrder,
     name: game.name,
     category: game.category,
@@ -247,7 +247,7 @@ function seedGames() {
 
   var rows = TLH_SEED_GAMES.map(function (game) {
     return [
-      game.gameId, game.active ? 'TRUE' : 'FALSE', game.sortOrder, game.name, game.category,
+      game.gameId, parseBool_(game.active, false) ? 'TRUE' : 'FALSE', game.sortOrder, game.name, game.category,
       game.format, game.divisions, game.ageGroups, game.earlyFee,
       game.regularFee, game.minPlayers, game.maxPlayers, game.maxEntries,
       game.details, game.prizes, game.coach, game.head, game.coHead1, game.coHead2
