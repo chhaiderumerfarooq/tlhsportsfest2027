@@ -9,6 +9,7 @@ var TLH_CONFIG_CACHE_KEY = 'tlh_public_config_v1';
 var TLH_CONFIG_CACHE_SECONDS = 60;
 var TLH_SPREADSHEET_ID_PROPERTY = 'TLH_SPREADSHEET_ID';
 var TLH_COUNTER_PROPERTY = 'TLH_SUBMISSION_COUNTER';
+var TLH_WORKBOOK_SETUP_ATTEMPTED = false;
 
 var TLH_ROOT_FOLDERS = {
   payment: 'TLH SF3 Payment Proofs',
@@ -23,7 +24,9 @@ var TLH_ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'application/pd
 
 /**
  * Works in a bound script and in the web app. If getActiveSpreadsheet() is
- * unavailable, setupWorkbook() stores the Sheet ID in Script Properties.
+ * unavailable, the Sheet ID stored by setupWorkbook() is used. When neither
+ * exists (first run), the workbook is created and initialised once so the
+ * web app works without opening the Apps Script editor.
  */
 function getSpreadsheet_() {
   var ss = null;
@@ -35,7 +38,47 @@ function getSpreadsheet_() {
   if (ss) return ss;
 
   var id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
-  if (id) return SpreadsheetApp.openById(id);
+  if (id) {
+    try {
+      return SpreadsheetApp.openById(id);
+    } catch (error) {
+      // The stored ID is stale; fall through and create a fresh workbook.
+    }
+  }
+
+  if (!TLH_WORKBOOK_SETUP_ATTEMPTED) {
+    TLH_WORKBOOK_SETUP_ATTEMPTED = true;
+    var lock = LockService.getScriptLock();
+    var locked = false;
+    try {
+      locked = lock.tryLock(30000);
+    } catch (error) {
+      locked = false;
+    }
+    try {
+      // Another request may have created the workbook while we waited.
+      id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
+      if (id) {
+        try {
+          return SpreadsheetApp.openById(id);
+        } catch (error) {
+          // Continue and create a fresh workbook below.
+        }
+      }
+      setupWorkbook();
+    } finally {
+      if (locked) {
+        try {
+          lock.releaseLock();
+        } catch (error) {
+          // Nothing else to do.
+        }
+      }
+    }
+    id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
+    if (id) return SpreadsheetApp.openById(id);
+  }
+
   throw new Error('Cannot find the Google Sheet. Run setupWorkbook() once from the Apps Script editor.');
 }
 
@@ -234,6 +277,7 @@ function getEntryCounts_() {
 }
 
 function getPublicGames_() {
+  repairSeedActiveFlagsOnce_();
   var counts = getEntryCounts_();
   return getGames_().filter(function (game) {
     return game.active;
