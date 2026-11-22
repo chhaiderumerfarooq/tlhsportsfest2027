@@ -5,15 +5,21 @@ into Notes or a phone list. **Do not enter passwords or access tokens here or
 in any chat with the registration system.** Where a step asks for a code, it is
 the site of Google's consent screen or the Apps Script code in your sheet.
 
-## 1. Create the Google Sheet
+## 1. Create the Google Sheet (optional)
+
+The backend creates the Sheet automatically on its first request, so this step
+is optional. If you prefer to create it yourself:
 
 1. Open `https://sheets.google.com` and sign in with the account that should
    own the system.
-2. Create a new spreadsheet called **TLH Sports Fest 3.0 — Registrations**.
+2. Create a new spreadsheet called **TLH Sports Fest 3.0**.
 3. In the menu, press **Share**, then **Restricted**, and add:
    - your own account,
    - and the account you normally use to log in to Google Apps Script.
 4. Do not add extra people unless needed.
+
+The automatic Sheet is also called **TLH Sports Fest 3.0** and lives in the
+Drive of the account that deploys the web app.
 
 ## 2. Open Apps Script
 
@@ -50,6 +56,10 @@ backend/Emails.gs
 This is the long path; use Clasp if you are comfortable with it (see README).
 
 ## 4. Run setupWorkbook()
+
+You can skip this step: the first request to the deployed web app runs the same
+setup automatically. Running it manually once is still useful because it shows
+the authorisation prompt and any setup error in a readable dialog.
 
 1. Back in the Apps Script editor, look for a custom menu item. If the project
    was just opened, you may need to click **Deploy > Install a debug deployment**
@@ -104,9 +114,12 @@ If you want a new version later:
 
 ## 6. Put the URL into the site
 
+The committed `assets/js/config.js` already points at the current deployment
+and has `USE_MOCK = false`. If you create a **new** deployment:
+
 1. Edit `assets/js/config.js`.
-2. Change `API_URL` from `''` to the URL you copied in §5.
-3. Change `USE_MOCK` from `true` to `false`.
+2. Replace `API_URL` with the URL you copied in §5.
+3. Keep `USE_MOCK = false`.
 4. Push the change to GitHub Pages.
 5. Wait until the site is live, then run a test registration.
 
