@@ -2,6 +2,20 @@
 
 Do not guess when something fails: check the **Logs** tab first.
 
+## I cannot find the Google Sheet
+
+The deployed backend creates the Sheet automatically the first time it receives
+a request. It is called **TLH Sports Fest 3.0** and lives in the Google Drive of
+the account that deployed the web app (the account that ran `clasp login` or
+clicked **Deploy**).
+
+1. Open `https://drive.google.com` with that account.
+2. Search for **TLH Sports Fest 3.0**.
+3. If it is still missing, open the Apps Script editor and run `setupWorkbook`
+   once. Read the red error text if it fails.
+4. If the Sheet exists but the site shows a server error, run
+   **TLH Sports Fest > Refresh website data** and reload the site.
+
 ## The site looks stale, or new changes do not appear
 
 1. Open the **Config** or **Games** tab, make one small change and save.
