@@ -108,11 +108,96 @@
             <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off">
           </div>
 
-          <!-- 1. Contact -->
+          <!-- 1. Gender, age category, then the games list -->
           <section class="step-panel form-section" id="step-1" aria-labelledby="step-1-title">
             <div class="step-head">
-              <p class="step-kicker">1 · Your details</p>
-              <h3 id="step-1-title" class="section-title">Who should we contact?</h3>
+              <p class="step-kicker">1 · Choose a game</p>
+              <h3 id="step-1-title" class="section-title">Start by telling us who you are playing for</h3>
+              <p class="muted">Pick your gender and age category — the games list then shows only what you can play.</p>
+            </div>
+
+            <div class="form-card">
+              <div class="fields-row">
+                <div class="field">
+                  <label for="form-gender">Gender <span class="req">*</span></label>
+                  <select id="form-gender" data-form="gender" required>
+                    <option value="">Select gender…</option>
+                    <option value="Boy">Boy</option>
+                    <option value="Girl">Girl</option>
+                  </select>
+                  <p class="field-error" data-error-for="gender" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="form-age">Age category <span class="req">*</span></label>
+                  <select id="form-age" data-form="ageCategory" required>
+                    <option value="">Select age…</option>
+                    <option value="U19">U19</option>
+                    <option value="U17">U17</option>
+                    <option value="U15">U15</option>
+                    <option value="Open">Open</option>
+                  </select>
+                  <p class="field-error" data-error-for="ageCategory" aria-live="polite"></p>
+                </div>
+              </div>
+
+              <div class="games-toolbar">
+                <label class="search-field" for="game-search">
+                  <span class="sr-only">Search games</span>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm6.2-1.3L21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <input id="game-search" type="search" placeholder="Search games…" autocomplete="off">
+                </label>
+                <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Game categories"></div>
+              </div>
+
+              <div class="games-grid" id="games-grid" aria-live="polite"></div>
+              <p class="empty-state" id="games-empty" hidden>No games match your gender, age or search. Try another word or category.</p>
+
+              <div class="selection-bar" id="selection-bar">
+                <div class="selection-summary">
+                  <span id="selection-count">Select a game</span>
+                  <strong id="selection-total">Rs 0</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button class="btn btn-primary" type="button" id="step1-next">Next: entry details</button>
+            </div>
+          </section>
+
+          <!-- 2. Entry details -->
+          <section class="step-panel form-section" id="step-2" aria-labelledby="step-2-title">
+            <div class="step-head">
+              <p class="step-kicker">2 · Entry details</p>
+              <h3 id="step-2-title" class="section-title">Set the division and team name</h3>
+              <p class="muted">Division is what separates Boys and Girls in team games. Team name goes on the scoreboard.</p>
+            </div>
+
+            <div class="form-card">
+              <div class="field">
+                <label for="entry-division">Division <span class="req">*</span></label>
+                <select id="entry-division" data-entry-field="division" required>
+                  <option value="">Select division…</option>
+                </select>
+                <p class="field-error" data-error-for="entry.division" aria-live="polite"></p>
+              </div>
+              <div class="field" id="entry-team-wrap" hidden>
+                <label for="entry-team-name">Team name <span class="req">*</span></label>
+                <input id="entry-team-name" data-entry-field="teamName" type="text" autocomplete="off" maxlength="60" placeholder="e.g. invaders">
+                <p class="field-error" data-error-for="entry.teamName" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button class="btn btn-primary" type="button" id="step2-next">Next: contact</button>
+            </div>
+          </section>
+
+          <!-- 3. Contact -->
+          <section class="step-panel form-section" id="step-3" aria-labelledby="step-3-title">
+            <div class="step-head">
+              <p class="step-kicker">3 · Your details</p>
+              <h3 id="step-3-title" class="section-title">Who should we contact?</h3>
               <p class="muted">We use these details for this registration only.</p>
             </div>
 
@@ -121,16 +206,6 @@
                 <label for="contact-name">Full name <span class="req">*</span></label>
                 <input id="contact-name" name="name" type="text" autocomplete="name" data-contact="name" required>
                 <p class="field-error" data-error-for="contact.name" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="contact-role">I am a <span class="req">*</span></label>
-                <select id="contact-role" name="role" data-contact="role" required>
-                  <option value="Student">Student</option>
-                  <option value="Parent">Parent</option>
-                  <option value="Teacher">Teacher</option>
-                </select>
-                <p class="field-error" data-error-for="contact.role" aria-live="polite"></p>
               </div>
 
               <div class="field">
@@ -155,59 +230,28 @@
             </div>
 
             <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step1-next">Continue to games</button>
+              <button class="btn btn-primary" type="button" id="step3-next">Next: players</button>
             </div>
           </section>
 
-          <!-- 2. Games -->
-          <section class="step-panel form-section" id="step-2" aria-labelledby="step-2-title">
+          <!-- 4. Players -->
+          <section class="step-panel form-section" id="step-4" aria-labelledby="step-4-title">
             <div class="step-head">
-              <p class="step-kicker">2 · Choose games</p>
-              <h3 id="step-2-title" class="section-title">Pick every game you want</h3>
-              <p class="muted">One entry is one game, age group and division. You can add the same game more than once, for example two cricket teams.</p>
-            </div>
-
-            <div class="games-toolbar">
-              <label class="search-field" for="game-search">
-                <span class="sr-only">Search games</span>
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm6.2-1.3L21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <input id="game-search" type="search" placeholder="Search games…" autocomplete="off">
-              </label>
-              <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Game categories"></div>
-            </div>
-
-            <div class="games-grid" id="games-grid" aria-live="polite"></div>
-            <p class="empty-state" id="games-empty" hidden>No games match that search. Try another word or category.</p>
-
-            <div class="selection-bar" id="selection-bar">
-              <div class="selection-summary">
-                <span id="selection-count">0 games selected</span>
-                <strong id="selection-total">Rs 0</strong>
-              </div>
-              <div class="selection-actions">
-                <button class="btn btn-primary btn-small" type="button" id="step2-next">Continue to players</button>
-              </div>
-            </div>
-          </section>
-
-          <!-- 3. Players -->
-          <section class="step-panel form-section" id="step-3" aria-labelledby="step-3-title">
-            <div class="step-head">
-              <p class="step-kicker">3 · Teams &amp; players</p>
-              <h3 id="step-3-title" class="section-title">Add the people playing</h3>
+              <p class="step-kicker">4 · Players</p>
+              <h3 id="step-4-title" class="section-title">Add the people playing</h3>
               <p class="muted">Add each person once. The same student can be reused in another game without re-entering their details.</p>
             </div>
             <div id="entries-list" class="entries-list"></div>
             <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step3-next">Continue to payment</button>
+              <button class="btn btn-primary" type="button" id="step4-next">Next: payment</button>
             </div>
           </section>
 
-          <!-- 4. Payment -->
-          <section class="step-panel form-section" id="step-4" aria-labelledby="step-4-title">
+          <!-- 5. Payment -->
+          <section class="step-panel form-section" id="step-5" aria-labelledby="step-5-title">
             <div class="step-head">
-              <p class="step-kicker">4 · Payment &amp; submit</p>
-              <h3 id="step-4-title" class="section-title">Pay and send your proof</h3>
+              <p class="step-kicker">5 · Payment &amp; submit</p>
+              <h3 id="step-5-title" class="section-title">Pay and send your proof</h3>
               <p class="muted">Transfer the exact total, keep the screenshot, then upload it here.</p>
             </div>
 
