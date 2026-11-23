@@ -1,5 +1,5 @@
 /*
- * TLH Sports Fest 3.0 - registration wizard.
+ * TLH Sports Fest 3.0 - one-page registration.
  *
  * Everything is rendered from one draft object that is saved on the device.
  * The server remains the authority: fees, ages, capacity and uploads are all
@@ -97,12 +97,11 @@ const state = {
   feeOverrides: {},
   feeNotice: '',
   personEditor: null,
+  personAddAnother: false,
   peoplePicker: null,
   dialogGameId: '',
   submitted: null,
   previewUrl: '',
-  openEntryId: null,
-  allowAutoOpen: true,
   countdownTimer: null,
   mockControls: null,
   booted: false
@@ -294,6 +293,7 @@ function boot() {
     // Paint the last good config immediately, then refresh in the background.
     state.config = cached.config;
     state.configSource = 'cache';
+    syncContactInputs();
     renderAll();
   } else {
     renderLandingLoading();
@@ -330,6 +330,7 @@ async function loadConfig({ silent = false } = {}) {
     state.configSource = 'live';
     state.configError = null;
     saveConfigCache(config, MOCK_STORAGE_MODE);
+    syncContactInputs();
     renderAll();
     return true;
   } catch (error) {
@@ -338,6 +339,7 @@ async function loadConfig({ silent = false } = {}) {
       state.config = cached.config;
       state.configSource = 'cache';
       state.configError = error;
+      syncContactInputs();
       renderAll();
       if (!silent) {
         showToast('Showing saved event details. Reconnect for live fees and dates.', 'warning', 6500);
@@ -348,6 +350,7 @@ async function loadConfig({ silent = false } = {}) {
     state.configSource = 'none';
     state.configError = error;
     renderLandingError();
+    renderFormNotice();
     updateStartButtons();
     return false;
   }
@@ -373,13 +376,43 @@ function renderAll() {
   renderAnnouncement();
   renderContacts();
   renderLanding();
+  renderFormNotice();
   updateStartButtons();
-  if (isWizardVisible()) {
+  const done = qs('#done');
+  if (state.config && state.draft && (!done || done.hidden)) {
     renderGames();
     renderEntries();
     renderReview();
-    updateProgress();
   }
+}
+
+/**
+ * A short notice at the top of the form. It covers loading, a failed config
+ * request, and a closed registration window.
+ */
+function renderFormNotice() {
+  const notice = qs('#form-notice');
+  if (!notice) return;
+  if (!state.config) {
+    notice.className = 'wizard-alert';
+    notice.textContent = state.configError
+      ? 'Event details could not load. Check your connection and refresh this page.'
+      : 'Loading games and fees…';
+    notice.hidden = false;
+    return;
+  }
+  const status = effectiveState();
+  if (status.registrationOpen) {
+    notice.hidden = true;
+    notice.textContent = '';
+    notice.className = 'wizard-alert';
+    return;
+  }
+  notice.className = 'wizard-alert is-warning';
+  notice.textContent = status.status === 'CLOSED'
+    ? 'Registration closed on ' + formatDateLong(state.config.registrationCloseDate) + '. Message the event heads if you need help.'
+    : 'Registration has not opened yet. Please check back soon.';
+  notice.hidden = false;
 }
 
 /* ------------------------------------------------------------------ *
@@ -393,6 +426,7 @@ function renderLandingLoading() {
   if (chip) chip.textContent = 'Loading dates…';
   const start = qs('#start-btn');
   if (start) start.disabled = true;
+  renderFormNotice();
 }
 
 function renderLandingError() {
@@ -408,6 +442,9 @@ function renderLandingError() {
   if (chip) chip.textContent = 'Not connected';
   const note = qs('#landing-games-note');
   if (note) note.textContent = '';
+  const grid = qs('#games-grid');
+  if (grid) grid.innerHTML = '<p class="empty-state">Games could not load. Check your connection and try again.</p>';
+  renderFormNotice();
   qs('#retry-config')?.addEventListener('click', () => loadConfig());
 }
 
@@ -557,7 +594,15 @@ function confirmDiscardDraft() {
           await clearBlobs();
           clearDraft();
           state.draft = createDraft();
+          state.entryErrors = {};
+          state.feeOverrides = {};
+          state.feeNotice = '';
+          state.uploads = {};
+          syncContactInputs();
           renderLanding();
+          renderGames();
+          renderEntries();
+          renderReview();
           updateStartButtons();
           showToast('Saved draft discarded.', 'info');
         }
@@ -570,25 +615,32 @@ function confirmDiscardDraft() {
  * Navigation
  * ------------------------------------------------------------------ */
 
-function isWizardVisible() {
-  const wizard = qs('#wizard');
-  return wizard && !wizard.hidden;
-}
-
 function showLanding() {
   qs('#landing').hidden = false;
-  qs('#wizard').hidden = true;
+  qs('#wizard').hidden = false;
+  qs('#help').hidden = false;
   qs('#done').hidden = true;
   qs('#header-register').hidden = false;
   document.body.classList.remove('wizard-open');
   document.title = 'TLH Sports Fest 3.0 — Register | 30–31 January 2027';
   state.submitted = null;
   stopCountdown();
+  ensureDraft();
+  syncContactInputs();
   renderLanding();
+  renderFormNotice();
+  renderGames();
+  renderEntries();
+  renderReview();
   updateStartButtons();
   scrollToTop();
 }
 
+/**
+ * Opens the registration form at the first section that still needs work. The
+ * form is one page, so this is a scroll: a returning family lands exactly
+ * where they stopped.
+ */
 function showWizard() {
   if (!state.config) {
     showToast('The event details are still loading. Try again in a moment.', 'warning');
@@ -606,71 +658,53 @@ function showWizard() {
     return;
   }
   ensureDraft();
-  qs('#landing').hidden = true;
+  qs('#landing').hidden = false;
   qs('#done').hidden = true;
+  qs('#help').hidden = false;
   qs('#wizard').hidden = false;
-  qs('#header-register').hidden = true;
-  document.body.classList.add('wizard-open');
+  qs('#header-register').hidden = false;
+  document.body.classList.remove('wizard-open');
   document.title = 'Register · TLH Sports Fest 3.0';
+  updateStartButtons();
   syncContactInputs();
   renderGames();
   renderEntries();
   renderReview();
-  showStep(normalizeStep(state.draft.step), { focus: false });
-  scrollToTop();
+  updateSelectionBar();
+  showStep(resumeStep(), { focus: false });
 }
 
-function normalizeStep(step) {
-  let value = Number(step) || 1;
-  if (value > 1 && !state.draft.contact.name) value = 1;
-  if (value > 2 && state.draft.entries.length === 0) value = 2;
-  if (value > 3 && state.draft.entries.length === 0) value = 2;
-  return Math.min(4, Math.max(1, value));
+function resumeStep() {
+  if (!state.draft) return 1;
+  if (validateContact(state.draft.contact).length) return 1;
+  if (!state.draft.entries.length) return state.draft.contact.name ? 2 : 1;
+  if (state.draft.entries.some((entry) => !isEntryLooksComplete(entry))) return 3;
+  return 4;
 }
 
 function showStep(step, { focus = true } = {}) {
-  state.step = Math.min(4, Math.max(1, Number(step) || 1));
+  const sectionNumber = Math.min(4, Math.max(1, Number(step) || 1));
+  state.step = sectionNumber;
   if (state.draft) {
-    state.draft.step = state.step;
+    state.draft.step = sectionNumber;
     persistNow(false);
   }
-  for (let i = 1; i <= 4; i++) {
-    const panel = qs('#step-' + i);
-    if (panel) panel.hidden = i !== state.step;
-  }
-  updateProgress();
   clearWizardAlert();
   clearSubmitError();
-  if (state.step === 2) renderGames();
-  if (state.step === 3) renderEntries();
-  if (state.step === 4) renderReview();
-  if (state.step === 4) startCountdown();
-  else stopCountdown();
+  if (sectionNumber >= 2) renderGames();
+  if (sectionNumber >= 3) renderEntries();
+  if (sectionNumber >= 4) renderReview();
+  const section = qs('#step-' + sectionNumber);
+  if (section) {
+    section.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  }
   if (focus) {
-    const heading = qs('#step-' + state.step + '-title');
+    const heading = qs('#step-' + sectionNumber + '-title');
     if (heading) {
       heading.setAttribute('tabindex', '-1');
       heading.focus({ preventScroll: true });
     }
   }
-  scrollToTop();
-}
-
-function updateProgress() {
-  qsa('.progress-item').forEach((item) => {
-    const step = Number(item.dataset.step);
-    item.classList.toggle('is-complete', step < state.step);
-    item.classList.toggle('is-current', step === state.step);
-    if (step === state.step) item.setAttribute('aria-current', 'step');
-    else item.removeAttribute('aria-current');
-  });
-  const bar = qs('#progress-bar');
-  if (bar) bar.style.width = (state.step * 25) + '%';
-}
-
-function leaveWizard() {
-  persistNow(false);
-  showLanding();
 }
 
 function showWizardAlert(message, type = 'error') {
@@ -866,8 +900,6 @@ function addGame(gameId) {
     playerKeys: []
   };
   state.draft.entries.push(entry);
-  state.openEntryId = entry.id;
-  state.allowAutoOpen = true;
   persistNow();
   renderGames();
   renderEntries();
@@ -950,20 +982,7 @@ function renderEntries() {
       '</div>';
     return;
   }
-  const firstEntry = state.draft.entries[0];
-  if (!state.draft.entries.some((entry) => entry.id === state.openEntryId)) {
-    state.openEntryId = state.allowAutoOpen && firstEntry ? firstEntry.id : null;
-  }
   list.innerHTML = state.draft.entries.map(entryCardHtml).join('');
-}
-
-function toggleEntry(entryId) {
-  const entry = entryById(entryId);
-  if (!entry) return;
-  const wasOpen = state.openEntryId === entryId;
-  state.openEntryId = wasOpen ? null : entryId;
-  state.allowAutoOpen = !wasOpen;
-  renderEntries();
 }
 
 function isEntryLooksComplete(entry) {
@@ -999,7 +1018,6 @@ function entryCardHtml(entry) {
   const countText = players.length + ' of ' + (minPlayers === maxPlayers ? minPlayers : minPlayers + '–' + maxPlayers) + (maxPlayers === 1 ? ' player' : ' players');
   const needsId = entry.ageGroup === 'U19' || entry.ageGroup === 'U17';
   const canAdd = players.length < maxPlayers;
-  const isOpen = entry.id === state.openEntryId;
   const complete = isEntryLooksComplete(entry);
 
   const roster = players.length
@@ -1014,11 +1032,10 @@ function entryCardHtml(entry) {
         '<p class="entry-sub">' + escapeHtml(formatLabel(game)) + ' · ' + escapeHtml(formatPKR(entryFee(entry))) + '</p>' +
       '</div>' +
       '<div class="entry-head-actions">' +
-        '<button class="icon-button entry-toggle" type="button" data-entry-action="toggle" data-entry-id="' + escapeHtml(entry.id) + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '" aria-label="' + (isOpen ? 'Collapse' : 'Expand') + ' ' + escapeHtml(game.name) + '">' + (isOpen ? '−' : '+') + '</button>' +
         '<button class="btn btn-ghost btn-small" type="button" data-entry-action="remove-entry" data-entry-id="' + escapeHtml(entry.id) + '">Remove</button>' +
       '</div>' +
     '</div>' +
-    '<div class="entry-body"' + (isOpen ? '' : ' hidden') + '>' +
+    '<div class="entry-body">' +
     '<div class="entry-fields">' +
       '<div class="field">' +
         '<label for="age-' + escapeHtml(entry.id) + '">Age group</label>' +
@@ -1154,23 +1171,25 @@ function validateStep3() {
  * Person dialog
  * ------------------------------------------------------------------ */
 
+function createEmptyPerson() {
+  return {
+    key: newPersonKey(),
+    name: '',
+    dob: '',
+    idNumber: '',
+    idFileKey: '',
+    idFileId: '',
+    idFileName: '',
+    idFileType: '',
+    idFileSize: 0
+  };
+}
+
 function openPersonEditor(entryId, personKey) {
   const entry = entryById(entryId);
   if (!entry) return;
   const existing = personKey ? personByKey(personKey) : null;
-  const person = existing
-    ? { ...existing }
-    : {
-        key: newPersonKey(),
-        name: '',
-        dob: '',
-        idNumber: '',
-        idFileKey: '',
-        idFileId: '',
-        idFileName: '',
-        idFileType: '',
-        idFileSize: 0
-      };
+  const person = existing ? { ...existing } : createEmptyPerson();
   state.personEditor = {
     entryId,
     personKey: personKey || '',
@@ -1178,11 +1197,17 @@ function openPersonEditor(entryId, personKey) {
     person,
     newFileKeys: []
   };
+  state.personAddAnother = false;
   const dialog = qs('#person-dialog');
   const title = qs('#person-dialog-title');
   const context = qs('#person-dialog-context');
-  if (title) title.textContent = existing ? 'Edit player' : 'Add player';
   const game = gameFor(entry.gameId);
+  const maxPlayers = Number(game && game.maxPlayers) || 1;
+  if (title) {
+    title.textContent = existing
+      ? 'Edit player'
+      : 'Add player' + ((entry.playerKeys || []).length ? ' ' + (entry.playerKeys.length + 1) : '');
+  }
   if (context) {
     context.textContent = (game ? game.name : 'This entry') + ' · ' + entry.ageGroup + (entry.division ? ' · ' + entry.division : '') +
       '. This person can be reused in another game without re-entering their details.';
@@ -1199,6 +1224,8 @@ function openPersonEditor(entryId, personKey) {
     formError.hidden = true;
     formError.textContent = '';
   }
+  const saveAnother = qs('#person-save-another');
+  if (saveAnother) saveAnother.hidden = Boolean(existing) || maxPlayers <= 1;
   updatePersonDialogFields();
   renderPersonFileArea();
   openDialog(dialog);
@@ -1354,6 +1381,8 @@ function savePerson(event) {
   event.preventDefault();
   const editor = state.personEditor;
   if (!editor) return;
+  const addAnother = state.personAddAnother === true;
+  state.personAddAnother = false;
   const entry = entryById(editor.entryId);
   if (!entry) return;
   const person = editor.person;
@@ -1435,10 +1464,20 @@ function savePerson(event) {
     delete state.entryErrors[entry.id].players[person.key];
   }
   persistNow();
-  closeDialog(qs('#person-dialog'));
-  state.personEditor = null;
   renderEntries();
   renderReview();
+
+  const game = gameFor(entry.gameId);
+  const maxPlayers = Number(game && game.maxPlayers) || 1;
+  const hasRoom = (entry.playerKeys || []).length < maxPlayers;
+  if (addAnother && editor.isNew && hasRoom) {
+    showToast('Player added. Add the next player.', 'success');
+    openPersonEditor(entry.id, '');
+    return;
+  }
+
+  closeDialog(qs('#person-dialog'));
+  state.personEditor = null;
   showToast(editor.isNew ? 'Player added.' : 'Player updated.', 'success');
 }
 
@@ -2262,6 +2301,7 @@ function renderDone() {
 
   qs('#landing').hidden = true;
   qs('#wizard').hidden = true;
+  qs('#help').hidden = true;
   qs('#done').hidden = false;
   qs('#header-register').hidden = true;
   document.body.classList.remove('wizard-open');
@@ -2361,15 +2401,7 @@ function registerAnotherTeam() {
   state.feeOverrides = {};
   state.lastAmount = 0;
   persistNow(false);
-  qs('#done').hidden = true;
-  qs('#wizard').hidden = false;
-  qs('#header-register').hidden = true;
-  document.body.classList.add('wizard-open');
-  syncContactInputs();
-  renderGames();
-  renderEntries();
-  renderReview();
-  showStep(2);
+  showWizard();
   showToast('Your contact details are kept. Choose the next team’s games.', 'info', 5000);
 }
 
@@ -2413,38 +2445,34 @@ function fillPrintSummary(submitted) {
 function wireGlobalEvents() {
   qs('#start-btn')?.addEventListener('click', showWizard);
   qs('#header-register')?.addEventListener('click', () => {
-    if (isWizardVisible()) return;
     if (state.submitted && !state.draft) {
       registerAnotherTeam();
       return;
     }
     showWizard();
   });
-  qs('#wizard-home')?.addEventListener('click', leaveWizard);
-  qs('#step1-home')?.addEventListener('click', leaveWizard);
   qs('#step1-next')?.addEventListener('click', () => {
     if (validateStep1()) {
       persistNow(false);
       showStep(2);
     }
   });
-  qs('#step2-back')?.addEventListener('click', () => showStep(1));
   qs('#step2-next')?.addEventListener('click', () => {
     if (!state.draft.entries.length) {
       showWizardAlert('Choose at least one game to continue.');
+      showToast('Choose at least one game first.', 'warning');
+      qs('#games-grid')?.scrollIntoView({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
       return;
     }
     persistNow(false);
     showStep(3);
   });
-  qs('#step3-back')?.addEventListener('click', () => showStep(2));
   qs('#step3-next')?.addEventListener('click', () => {
     if (validateStep3()) {
       persistNow(false);
       showStep(4);
     }
   });
-  qs('#step4-back')?.addEventListener('click', () => showStep(3));
   qs('#submit-btn')?.addEventListener('click', handleSubmit);
 
   qsa('[data-contact]').forEach((input) => {
@@ -2518,9 +2546,6 @@ function wireGlobalEvents() {
     const entryId = action.dataset.entryId;
     const personKey = action.dataset.personKey;
     switch (action.dataset.entryAction) {
-      case 'toggle':
-        toggleEntry(entryId);
-        break;
       case 'choose-games':
         showStep(2);
         break;
@@ -2545,6 +2570,10 @@ function wireGlobalEvents() {
   });
 
   qs('#person-form')?.addEventListener('submit', savePerson);
+  qs('#person-save-another')?.addEventListener('click', () => {
+    state.personAddAnother = true;
+    qs('#person-form').requestSubmit();
+  });
   qs('#person-dob')?.addEventListener('input', updatePersonAgeHint);
   qs('#person-name')?.addEventListener('input', updatePersonAgeHint);
   qs('#person-id')?.addEventListener('blur', () => {
@@ -2642,13 +2671,6 @@ function wireGlobalEvents() {
     });
   });
 
-  qsa('.progress-item').forEach((item) => {
-    item.addEventListener('click', () => {
-      const target = Number(item.dataset.step);
-      if (target < state.step) showStep(target);
-    });
-  });
-
   window.addEventListener('beforeunload', () => {
     if (state.draft) persistNow(false);
   });
@@ -2668,10 +2690,6 @@ function confirmRemoveEntry(entryId) {
         style: 'danger',
         onClick: () => {
           state.draft.entries = state.draft.entries.filter((item) => item.id !== entryId);
-          if (state.openEntryId === entryId) {
-            state.openEntryId = null;
-            state.allowAutoOpen = true;
-          }
           cleanupPeopleAfterEntryRemoved(entry);
           delete state.entryErrors[entryId];
           persistNow();
@@ -2745,7 +2763,7 @@ async function applyMockRefresh() {
   state.feeNotice = '';
   state.lastAmount = 0;
   await loadConfig({ silent: true });
-  if (isWizardVisible()) {
+  if (state.draft) {
     renderGames();
     renderEntries();
     renderReview();
