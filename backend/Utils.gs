@@ -10,6 +10,7 @@ var TLH_CONFIG_CACHE_SECONDS = 60;
 var TLH_SPREADSHEET_ID_PROPERTY = 'TLH_SPREADSHEET_ID';
 var TLH_COUNTER_PROPERTY = 'TLH_SUBMISSION_COUNTER';
 var TLH_WORKBOOK_SETUP_ATTEMPTED = false;
+var TLH_SCHEMA_UPGRADE_ATTEMPTED = false;
 
 var TLH_ROOT_FOLDERS = {
   payment: 'TLH SF3 Payment Proofs',
@@ -35,12 +36,12 @@ function getSpreadsheet_() {
   } catch (error) {
     ss = null;
   }
-  if (ss) return ss;
+  if (ss) return upgradeFlatSchemaIfNeeded_(ss);
 
   var id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
   if (id) {
     try {
-      return SpreadsheetApp.openById(id);
+      return upgradeFlatSchemaIfNeeded_(SpreadsheetApp.openById(id));
     } catch (error) {
       // The stored ID is stale; fall through and create a fresh workbook.
     }
@@ -60,7 +61,7 @@ function getSpreadsheet_() {
       id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
       if (id) {
         try {
-          return SpreadsheetApp.openById(id);
+          return upgradeFlatSchemaIfNeeded_(SpreadsheetApp.openById(id));
         } catch (error) {
           // Continue and create a fresh workbook below.
         }
@@ -76,10 +77,29 @@ function getSpreadsheet_() {
       }
     }
     id = PropertiesService.getScriptProperties().getProperty(TLH_SPREADSHEET_ID_PROPERTY);
-    if (id) return SpreadsheetApp.openById(id);
+    if (id) return upgradeFlatSchemaIfNeeded_(SpreadsheetApp.openById(id));
   }
 
   throw new Error('Cannot find the Google Sheet. Run setupWorkbook() once from the Apps Script editor.');
+}
+
+/**
+ * Existing deployments from the first schema have Config, Games, Submissions,
+ * Entries and Players but no Team Games / Solo Games. Upgrade once, lazily, on
+ * the first request after the new backend is deployed.
+ */
+function upgradeFlatSchemaIfNeeded_(ss) {
+  if (!ss) return ss;
+  if (ss.getSheetByName('Team Games') && ss.getSheetByName('Solo Games')) return ss;
+  if (TLH_SCHEMA_UPGRADE_ATTEMPTED) return ss;
+  TLH_SCHEMA_UPGRADE_ATTEMPTED = true;
+  try {
+    setupWorkbook();
+    logEvent_('INFO', 'upgradeFlatSchema', 'Created Team Games / Solo Games and migrated any legacy rows.');
+  } catch (error) {
+    logEvent_('ERROR', 'upgradeFlatSchema', 'Schema upgrade failed.', String(error.message || error));
+  }
+  return ss;
 }
 
 function getSheet_(name) {
@@ -261,18 +281,20 @@ function getGames_() {
 }
 
 function getEntryCounts_() {
-  var sheet = getSheet_('Entries');
-  var lastRow = sheet.getLastRow();
   var counts = {};
-  if (lastRow < 2) return counts;
-  var values = sheet.getRange(2, 4, lastRow - 1, 13).getValues();
-  for (var i = 0; i < values.length; i++) {
-    var gameId = String(values[i][0] || '').trim();
-    if (!gameId) continue;
-    var status = String(values[i][12] || '').trim();
-    if (status === 'Rejected') continue;
-    counts[gameId] = (counts[gameId] || 0) + 1;
-  }
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = getSpreadsheet_().getSheetByName(def.name);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    var width = TLH_FLAT_COL.paymentStatus - TLH_FLAT_COL.gameId + 1;
+    var values = sheet.getRange(2, TLH_FLAT_COL.gameId + 1, sheet.getLastRow() - 1, width).getValues();
+    for (var i = 0; i < values.length; i++) {
+      var gameId = String(values[i][0] || '').trim();
+      if (!gameId) continue;
+      var status = String(values[i][width - 1] || '').trim();
+      if (status === 'Rejected') continue;
+      counts[gameId] = (counts[gameId] || 0) + 1;
+    }
+  });
   return counts;
 }
 
@@ -367,6 +389,7 @@ function buildPublicConfig_() {
 
   return {
     ok: true,
+    schemaVersion: 2,
     generatedAt: now.toISOString(),
     serverTime: now.toISOString(),
     serverTimePkt: formatPktDateTime(now),
@@ -565,58 +588,8 @@ function rateLimitHit_(kind, value) {
 }
 
 /* ------------------------------------------------------------------ *
- * Submission lookups
+ * Submission cache
  * ------------------------------------------------------------------ */
-
-function findSubmissionRowByToken_(token) {
-  var sheet = getSheet_('Submissions');
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return 0;
-  var values = sheet.getRange(2, 20, lastRow - 1, 1).getValues();
-  for (var i = 0; i < values.length; i++) {
-    if (String(values[i][0] || '') === String(token)) return i + 2;
-  }
-  return 0;
-}
-
-function findSubmissionRowById_(submissionId) {
-  var sheet = getSheet_('Submissions');
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return 0;
-  var values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-  for (var i = 0; i < values.length; i++) {
-    if (String(values[i][0] || '') === String(submissionId)) return i + 2;
-  }
-  return 0;
-}
-
-function submissionSuccessFromRow_(rowNumber) {
-  var sheet = getSheet_('Submissions');
-  var row = sheet.getRange(rowNumber, 1, 1, 20).getValues()[0];
-  var submissionId = String(row[0] || '');
-  var entriesSheet = getSheet_('Entries');
-  var lastRow = entriesSheet.getLastRow();
-  var entries = [];
-  if (lastRow >= 2) {
-    var values = entriesSheet.getRange(2, 1, lastRow - 1, 14).getValues();
-    for (var i = 0; i < values.length; i++) {
-      if (String(values[i][1] || '') !== submissionId) continue;
-      entries.push({
-        entryId: String(values[i][0] || ''),
-        game: String(values[i][4] || ''),
-        fee: Number(values[i][12]) || 0
-      });
-    }
-  }
-  return {
-    ok: true,
-    submissionId: submissionId,
-    feeType: String(row[8] || '') === 'Early Bird' ? 'EARLY_BIRD' : 'REGULAR',
-    total: Number(row[10]) || 0,
-    entries: entries,
-    emailStatus: String(row[18] || 'PENDING')
-  };
-}
 
 function cacheSubmissionResult_(token, payload) {
   try {
