@@ -137,6 +137,8 @@ function createDraft() {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     step: 1,
+    gender: '',
+    ageCategory: '',
     contact: {
       name: '',
       role: 'Student',
@@ -194,6 +196,8 @@ function persistNow(showNote = true) {
 function hasDraftContent() {
   if (!state.draft) return false;
   return Boolean(
+    state.draft.gender ||
+    state.draft.ageCategory ||
     state.draft.contact.name ||
     state.draft.contact.email ||
     state.draft.entries.length ||
@@ -676,14 +680,20 @@ function showWizard() {
 
 function resumeStep() {
   if (!state.draft) return 1;
-  if (validateContact(state.draft.contact).length) return 1;
-  if (!state.draft.entries.length) return state.draft.contact.name ? 2 : 1;
-  if (state.draft.entries.some((entry) => !isEntryLooksComplete(entry))) return 3;
+  if (!state.draft.entries.length) return 1;
+  const entry = state.draft.entries[0];
+  const game = gameFor(entry.gameId);
+  if (!normalizeDivision(entry.division, game ? game.divisions : [])) return 2;
+  if (validateContact(state.draft.contact).length) return 3;
   return 4;
 }
 
+function renderContact() {
+  syncContactInputs();
+}
+
 function showStep(step, { focus = true } = {}) {
-  const sectionNumber = Math.min(4, Math.max(1, Number(step) || 1));
+  const sectionNumber = Math.min(5, Math.max(1, Number(step) || 1));
   state.step = sectionNumber;
   if (state.draft) {
     state.draft.step = sectionNumber;
@@ -691,9 +701,11 @@ function showStep(step, { focus = true } = {}) {
   }
   clearWizardAlert();
   clearSubmitError();
-  if (sectionNumber >= 2) renderGames();
-  if (sectionNumber >= 3) renderEntries();
-  if (sectionNumber >= 4) renderReview();
+  if (sectionNumber >= 1) renderGames();
+  if (sectionNumber >= 2) renderEntryDetails();
+  if (sectionNumber >= 3) renderContact();
+  if (sectionNumber >= 4) renderEntries();
+  if (sectionNumber >= 5) renderReview();
   const section = qs('#step-' + sectionNumber);
   if (section) {
     section.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
@@ -705,6 +717,11 @@ function showStep(step, { focus = true } = {}) {
       heading.focus({ preventScroll: true });
     }
   }
+}
+
+function updateStep1Buttons() {
+  const next = qs('#step1-next');
+  if (next) next.disabled = !(state.draft && state.draft.entries.length);
 }
 
 function showWizardAlert(message, type = 'error') {
@@ -777,6 +794,22 @@ function syncContactInputs() {
   if (consent) consent.checked = Boolean(state.draft.consent);
 }
 
+function syncFormSelects() {
+  if (!state.draft) return;
+  const gender = qs('#form-gender');
+  const ageCategory = qs('#form-age');
+  if (gender) {
+    state.draft.gender = gender.value || '';
+    persistNow();
+    renderGames();
+  }
+  if (ageCategory) {
+    state.draft.ageCategory = ageCategory.value || '';
+    persistNow();
+    renderGames();
+  }
+}
+
 function setFieldError(path, message) {
   const target = qsa('[data-error-for]').find((el) => el.dataset.errorFor === path);
   if (target) target.textContent = message || '';
@@ -791,6 +824,10 @@ function fieldForPath(path) {
   if (path.startsWith('contact.')) {
     return qs('[data-contact="' + path.slice('contact.'.length) + '"]');
   }
+  if (path === 'gender') return qs('#form-gender');
+  if (path === 'ageCategory') return qs('#form-age');
+  if (path === 'entry.division') return qs('#entry-division');
+  if (path === 'entry.teamName') return qs('#entry-team-name');
   if (path === 'payment.transactionId') return qs('[data-payment="transactionId"]');
   if (path === 'consent') return qs('#consent');
   return null;
@@ -803,11 +840,54 @@ function clearFieldErrors() {
 
 function validateStep1() {
   clearFieldErrors();
+  const errors = [];
+  if (!state.draft.gender) errors.push({ path: 'gender', message: 'Choose a gender.' });
+  if (!state.draft.ageCategory) errors.push({ path: 'ageCategory', message: 'Choose an age category.' });
+  if (!state.draft.entries.length) errors.push({ path: 'game', message: 'Choose a game to continue.' });
+  errors.forEach((error) => setFieldError(error.path, error.message));
+  if (!errors.length) return true;
+  showWizardAlert('Check the highlighted details before continuing.');
+  focusFirstError(qs('#step-1'));
+  return false;
+}
+
+/* ------------------------------------------------------------------ *
+ * Step 2 - entry details (division + team name)
+ * ------------------------------------------------------------------ */
+
+function validateStep2() {
+  clearFieldErrors();
+  const entry = state.draft.entries[0];
+  const game = entry && gameFor(entry.gameId);
+  if (!entry || !game) {
+    showWizardAlert('Choose a game first.');
+    return false;
+  }
+  const allowed = game.divisions && game.divisions.length ? game.divisions : ['Open'];
+  if (!normalizeDivision(entry.division, allowed)) {
+    setFieldError('entry.division', 'Choose a division.');
+    showWizardAlert('Choose a division before continuing.');
+    return false;
+  }
+  if (game.format === 'Team' && !cleanText(entry.teamName)) {
+    setFieldError('entry.teamName', 'Enter a team name.');
+    showWizardAlert('Add a team name before continuing.');
+    return false;
+  }
+  return true;
+}
+
+/* ------------------------------------------------------------------ *
+ * Step 3 - contact (role removed; students are the only fillers)
+ * ------------------------------------------------------------------ */
+
+function validateStep3() {
+  clearFieldErrors();
   const errors = validateContact(state.draft.contact);
   if (!errors.length) return true;
   errors.forEach((error) => setFieldError(error.path, error.message));
-  showWizardAlert('Check the highlighted details before continuing.');
-  focusFirstError(qs('#step-1'));
+  showWizardAlert('Check the contact details before continuing.');
+  focusFirstError(qs('#step-3'));
   return false;
 }
 
@@ -838,7 +918,11 @@ function renderGames() {
   }
 
   const search = gamesUi.search.trim().toLowerCase();
+  const gender = state.draft ? state.draft.gender : '';
+  const ageCategory = state.draft ? state.draft.ageCategory : '';
   const filtered = games.filter((game) => {
+    if (!gameVisibleForGender(game, gender)) return false;
+    if (!gameVisibleForAge(game, ageCategory)) return false;
     if (gamesUi.category !== 'All' && game.category !== gamesUi.category) return false;
     if (!search) return true;
     return [game.name, game.category, game.format, game.details, (game.ageGroups || []).join(' '), (game.divisions || []).join(' ')]
@@ -850,10 +934,11 @@ function renderGames() {
   if (empty) empty.hidden = filtered.length !== 0;
 
   updateSelectionBar();
+  updateStep1Buttons();
 }
 
 function gameCardHtml(game) {
-  const selected = state.draft.entries.filter((entry) => entry.gameId === game.id).length;
+  const isSelected = state.draft.entries.some((entry) => entry.gameId === game.id);
   const fee = feeFor(game, effectiveState().earlyBirdActive);
   const regular = regularFeeFor(game);
   const early = effectiveState().earlyBirdActive && regular > fee;
@@ -861,10 +946,10 @@ function gameCardHtml(game) {
   const ageGroups = (game.ageGroups || []).join(' · ');
   const full = Boolean(game.full);
 
-  return '<article class="game-card' + (selected ? ' is-selected' : '') + (full ? ' is-full' : '') + '" data-game-id="' + escapeHtml(game.id) + '">' +
+  return '<article class="game-card' + (isSelected ? ' is-selected' : '') + (full ? ' is-full' : '') + '" data-game-id="' + escapeHtml(game.id) + '">' +
     '<div class="game-card-top">' +
       '<span class="game-category">' + escapeHtml(game.category || 'Game') + '</span>' +
-      (full ? '<span class="badge badge-full">Full</span>' : selected ? '<span class="badge badge-added">Added ×' + selected + '</span>' : '') +
+      (full ? '<span class="badge badge-full">Full</span>' : isSelected ? '<span class="badge badge-added">Selected</span>' : '') +
     '</div>' +
     '<h3 class="game-name">' + escapeHtml(game.name) + '</h3>' +
     '<p class="game-meta">' + escapeHtml(formatLabel(game)) + (divisions ? ' · ' + escapeHtml(divisions) : '') + (ageGroups ? ' · ' + escapeHtml(ageGroups) : '') + '</p>' +
@@ -872,20 +957,57 @@ function gameCardHtml(game) {
       (early ? ' <span class="game-fee-regular">' + escapeHtml(formatPKR(regular)) + '</span>' : '') +
     '</p>' +
     '<div class="game-card-actions">' +
-      '<button class="btn btn-secondary btn-small" type="button" data-game-action="details" data-game-id="' + escapeHtml(game.id) + '">Details</button>' +
       (full
         ? '<button class="btn btn-primary btn-small" type="button" disabled>Full</button>'
-        : '<button class="btn btn-primary btn-small" type="button" data-game-action="add" data-game-id="' + escapeHtml(game.id) + '">' + (selected ? 'Add another' : 'Add game') + '</button>') +
-      (selected ? '<button class="btn btn-ghost btn-small" type="button" data-game-action="remove" data-game-id="' + escapeHtml(game.id) + '">Remove one</button>' : '') +
+        : '<button class="btn btn-primary btn-small" type="button" data-game-action="select" data-game-id="' + escapeHtml(game.id) + '">' + (isSelected ? 'Selected' : 'Select') + '</button>') +
     '</div>' +
     '</article>';
 }
 
-function addGame(gameId) {
+/** A game is visible when the user's gender and age category fit its divisions and age groups. */
+function gameVisibleForGender(game, gender) {
+  const divs = Array.isArray(game.divisions) ? game.divisions : [];
+  if (!divs.length) return true;
+  if (gender === 'Boy') return divs.includes('Boys') || divs.includes('Open');
+  if (gender === 'Girl') return divs.includes('Girls') || divs.includes('Open');
+  return true;
+}
+
+function gameVisibleForAge(game, category) {
+  const ages = Array.isArray(game.ageGroups) ? game.ageGroups : [];
+  if (!ages.length) return true;
+  if (!category) return true;
+  if (category === 'Open') return ages.includes('Open');
+  return ages.includes(category) || ages.includes('Open');
+}
+
+function ageGroupFor(game, category) {
+  const ages = Array.isArray(game.ageGroups) ? game.ageGroups : [];
+  if (ages.includes(category)) return category;
+  if (ages.includes('Open')) return 'Open';
+  return ages[0] || 'Open';
+}
+
+function defaultDivisionFor(game, gender) {
+  const divs = Array.isArray(game.divisions) ? game.divisions : [];
+  if (gender === 'Boy' && divs.includes('Boys')) return 'Boys';
+  if (gender === 'Girl' && divs.includes('Girls')) return 'Girls';
+  if (divs.includes('Open')) return 'Open';
+  if (divs.length === 1) return divs[0];
+  return normalizeDivision(divs[0] || '', divs) || 'Boys';
+}
+
+/** One form submission is for one game. Selecting another game replaces the entry. */
+function selectGame(gameId) {
   const game = gameFor(gameId);
   if (!game) return;
   if (game.full) {
     showToast(game.name + ' is full.', 'warning');
+    return;
+  }
+  const existing = state.draft.entries.find((entry) => entry.gameId === gameId);
+  if (existing) {
+    showToast(game.name + ' is already selected.', 'info');
     return;
   }
   const divisions = Array.isArray(game.divisions) ? game.divisions : [];
@@ -893,30 +1015,20 @@ function addGame(gameId) {
   const entry = {
     id: 'e_' + newUuid(),
     gameId: game.id,
-    ageGroup: ageGroups[0] || 'Open',
-    division: normalizeDivision(divisions[0] || '', divisions),
+    ageGroup: ageGroupFor(game, state.draft.ageCategory),
+    division: defaultDivisionFor(game, state.draft.gender),
     teamName: '',
     institution: state.draft.contact.institution || '',
     playerKeys: []
   };
+  state.draft.entries = state.draft.entries.filter((item) => item.gameId !== gameId);
   state.draft.entries.push(entry);
   persistNow();
-  renderGames();
-  renderEntries();
   updateSelectionBar();
-  showToast(game.name + ' added. Add another game or continue.', 'success');
-}
-
-function removeLastEntryForGame(gameId) {
-  const index = state.draft.entries.map((entry) => entry.gameId).lastIndexOf(gameId);
-  if (index === -1) return;
-  const [entry] = state.draft.entries.splice(index, 1);
-  cleanupPeopleAfterEntryRemoved(entry);
-  persistNow();
+  updateStep1Buttons();
   renderGames();
-  renderEntries();
-  updateSelectionBar();
-  showToast('Entry removed.', 'info');
+  renderEntryDetails();
+  showToast(game.name + ' selected.', 'success');
 }
 
 function cleanupPeopleAfterEntryRemoved(entry) {
@@ -931,11 +1043,35 @@ function cleanupPeopleAfterEntryRemoved(entry) {
 }
 
 function updateSelectionBar() {
-  const count = state.draft ? state.draft.entries.length : 0;
+  const entry = state.draft ? state.draft.entries[0] : null;
+  const game = entry ? gameFor(entry.gameId) : null;
   const countEl = qs('#selection-count');
   const totalEl = qs('#selection-total');
-  if (countEl) countEl.textContent = count + (count === 1 ? ' entry selected' : ' entries selected');
-  if (totalEl) totalEl.textContent = formatPKR(currentTotals().netTotal);
+  if (countEl) {
+    countEl.textContent = game ? game.name : 'Select a game to continue';
+  }
+  if (totalEl) {
+    totalEl.textContent = game ? formatPKR(feeFor(game, effectiveState().earlyBirdActive)) : '';
+  }
+}
+
+function renderEntryDetails() {
+  const entry = state.draft.entries[0];
+  const game = entry && gameFor(entry.gameId);
+  const divisionSelect = qs('#entry-division');
+  const teamWrap = qs('#entry-team-wrap');
+  const teamInput = qs('#entry-team-name');
+  if (divisionSelect) {
+    const allowed = game && game.divisions && game.divisions.length ? game.divisions : ['Open'];
+    divisionSelect.innerHTML = allowed.map((division) => {
+      const value = entry ? entry.division : '';
+      return '<option value="' + escapeHtml(division) + '"' + (value === division ? ' selected' : '') + '>' + escapeHtml(division) + '</option>';
+    }).join('');
+    divisionSelect.value = entry ? entry.division : '';
+  }
+  const isTeam = Boolean(game && game.format === 'Team');
+  if (teamWrap) teamWrap.hidden = !isTeam;
+  if (teamInput) teamInput.value = entry ? entry.teamName || '' : '';
 }
 
 function openGameDialog(gameId) {
@@ -1109,7 +1245,7 @@ function playerRowHtml(entry, person, index, game, errors) {
     '</li>';
 }
 
-function validateStep3() {
+function validateStep4() {
   clearFieldErrors();
   state.entryErrors = {};
   state.step3General = [];
@@ -2363,7 +2499,7 @@ function renderDone() {
       '<h2 class="section-title">Need help?</h2>' +
       '<div class="done-contacts">' + contactHtml + '</div>' +
       '<div class="done-actions">' +
-        '<button class="btn btn-primary" type="button" id="another-btn">Register another team</button>' +
+        '<button class="btn btn-primary" type="button" id="another-btn">Submit another form</button>' +
         '<button class="btn btn-secondary" type="button" id="print-btn">Download summary</button>' +
         '<button class="btn btn-ghost" type="button" id="done-home">Back to event page</button>' +
       '</div>' +
@@ -2458,14 +2594,10 @@ function wireGlobalEvents() {
     }
   });
   qs('#step2-next')?.addEventListener('click', () => {
-    if (!state.draft.entries.length) {
-      showWizardAlert('Choose at least one game to continue.');
-      showToast('Choose at least one game first.', 'warning');
-      qs('#games-grid')?.scrollIntoView({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-      return;
+    if (validateStep2()) {
+      persistNow(false);
+      showStep(3);
     }
-    persistNow(false);
-    showStep(3);
   });
   qs('#step3-next')?.addEventListener('click', () => {
     if (validateStep3()) {
@@ -2473,7 +2605,30 @@ function wireGlobalEvents() {
       showStep(4);
     }
   });
+  qs('#step4-next')?.addEventListener('click', () => {
+    if (validateStep4()) {
+      persistNow(false);
+      showStep(5);
+    }
+  });
   qs('#submit-btn')?.addEventListener('click', handleSubmit);
+
+  qs('#form-gender')?.addEventListener('change', syncFormSelects);
+  qs('#form-age')?.addEventListener('change', syncFormSelects);
+  qs('#entry-division')?.addEventListener('change', () => {
+    const entry = state.draft.entries[0];
+    if (entry) {
+      entry.division = qs('#entry-division').value || '';
+      persistNow();
+    }
+  });
+  qs('#entry-team-name')?.addEventListener('input', () => {
+    const entry = state.draft.entries[0];
+    if (entry) {
+      entry.teamName = qs('#entry-team-name').value || '';
+      persistNow();
+    }
+  });
 
   qsa('[data-contact]').forEach((input) => {
     const key = input.dataset.contact;
@@ -2504,17 +2659,14 @@ function wireGlobalEvents() {
     const action = event.target.closest('[data-game-action]');
     if (!action) return;
     const gameId = action.dataset.gameId;
-    if (action.dataset.gameAction === 'details') openGameDialog(gameId);
-    else if (action.dataset.gameAction === 'add') addGame(gameId);
-    else if (action.dataset.gameAction === 'remove') removeLastEntryForGame(gameId);
+    if (action.dataset.gameAction === 'select') selectGame(gameId);
   });
-  qs('#game-dialog')?.addEventListener('click', (event) => {
-    const action = event.target.closest('[data-game-action="dialog-add"]');
-    if (!action) return;
-    addGame(action.dataset.gameId);
-    closeDialog(qs('#game-dialog'));
+  qs('#games-grid')?.addEventListener('click', (event) => {
+    if (event.target.closest('.game-card')) {
+      const card = event.target.closest('.game-card');
+      selectGame(card.dataset.gameId);
+    }
   });
-
   qs('#entries-list')?.addEventListener('input', (event) => {
     const field = event.target.dataset.entryField;
     if (!field || field === 'ageGroup' || field === 'division') return;
