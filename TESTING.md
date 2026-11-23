@@ -3,67 +3,78 @@
 Use a real phone when possible. Run this list:
 
 1. **Lobby**
-   - Load the site on mobile: heading, red hero, dates, **Register now**, early-bird
+   - Load the site on mobile: red hero, dates, **Register now**, early-bird
      chip, event heads with call/WhatsApp, notice about socials tickets.
    - Make the page full width; there should be no horizontal scroll on iPhone
      Safari or Android Chrome.
-2. **Step 1 — details**
-   - Fill name, role, WhatsApp, email, school.
-   - Press **Continue**: no errors on a good name/email/phone.
-3. **Step 2 — games**
+2. **Details at the top of the form**
+   - Fill name, role, WhatsApp, email, school. All four sections stay visible.
+3. **Games**
    - Tap category tabs. **All**, **Ground Games**, **Indoor Games**, **E-Games**,
-     **Workshops**, **Other** are available.
+     **Workshops**, **Other** are available; scroll right on mobile.
    - Search works for "Cricket", "Form", etc.
-   - Add one game. The card is selected. Choose it again to add a second team of
-     the same game. The sticky bar shows **2 entries selected Rs X,XXX**.
-   - Press **Continue**.
-4. **Step 3 — people**
-   - For a single-player game, press **Add a new person**.
+   - Add one game. The card is selected and shows a "+1" style badge; the bar
+     shows **1 entry selected Rs X,XXX**. Choose a second team of the same game
+     to see **2 entries selected**.
+4. **People**
+   - Entry cards are expanded already; no collapse steps needed.
+   - For a single-player game, press **Add new person**.
    - Add name and date of birth. Check the live age text on the cutoff date.
-   - For U19, check ID number format and missing photo error.
+   - For U19/U17, check ID number format and missing photo error.
    - Upload a photo or PDF through the dialog. On Android/iOS, pick from camera
      or gallery. Wait for the file to appear in the dialog.
-   - For a U19 player, check ID number and ID photo are required.
    - Test **Add existing person**: add the same person in a second game; only
      one row is in the people list and reuse works.
    - Remove a player; the remove button shows a small modal.
-   - Continue.
-5. **Step 4 — pay**
-   - Entry fee line for early bird is correct and struck regular price if any.
-   - Bank card has Bank, Account Title, IBAN and **Amount to transfer**. Copy
-     works on iPhone Safari and Android Chrome; the button becomes a tick.
+   - **Save & add another** opens the dialog for the next player immediately.
+   - The entry **Remove** button also asks for confirmation before deleting
+     the row.
+5. **Payment**
+   - Entry fee line shows early-bird total, struck regular price if different.
+   - Bank card shows Bank, Account Title, IBAN and **Amount to transfer**. Copy
+     works on iPhone Safari and Android Chrome.
    - Payment proof upload: choose screenshot or PDF. Use **Replace** to change
      the uploaded file after checking it.
-6. **Mock errors**
-   - In the mock panel, pick an error for next submit (`FEE_CHANGED`, `VALIDATION_FAILED`,
+   - The submit button stays at the bottom of the payment section; the whole
+     page is scrollable.
+6. **Submit**
+   - Check the consent box and confirm. Press **Submit registration**.
+   - Mock errors: set the next submit result (`FEE_CHANGED`, `VALIDATION_FAILED`,
      `GAME_FULL`, `FILE_INVALID`, `RATE_LIMITED`, `BUSY`, `SERVER_ERROR`,
-     `NOT_OPEN`, `CLOSED`) and press **Submit**. Read the message and try the
-     action.
-7. **FEE_CHANGED**
-   - Set next submit to `FEE_CHANGED`. Press Submit. Check the new total and
-     then change the payment amount and submit again.
-8. **Registration closed**
-   - Set server time to `2026-12-21 09:00:00` in mock. Close the form. Check
-     that the lobby shows closed and form is disabled.
-9. **Restart / resume**
-   - Fill to step 3, close the phone or background it. Reload the tab. All your
-     data should still be there.
-10. **Second account**
-    - In a different profile on the same phone or a second account, open the
-      Drive root. It should not have your folders if Drive sharing is off.
-11. **Dashboard and config changes**
+     `NOT_OPEN`, `CLOSED`) in the mock panel and press Submit. Read the message
+     and try the action.
+   - **FEE_CHANGED**: the new total appears in the bank card; submit again
+     after confirming.
+7. **Registration closed**
+   - Set server time to `2026-12-21 09:00:00` in mock. Reload the page. The
+     form is disabled and the notice says closed.
+8. **Restart / resume**
+   - Fill in details or games, close the phone or background the tab. Reload
+     the tab. All your data should still be there; the header reads
+     **Continue registration** and scrolls to your section.
+9. **Second account**
+   - In a different profile on the same phone or a second account, open the
+     Drive root. It should not have your folders if Drive sharing is off.
+10. **Dashboard and config changes**
     - In Sheet, change an EarlyBirdEndDate to a different date. Within about a
       minute, the site updates.
-12. **Status email**
-    - In Sheet, change `PaymentStatus` to `Verified`. Check that the confirmation
-      email received earlier is still there and that the status email appears.
-13. **Done screen**
-    - Check Submission ID, registration ID, entry list, Save button, done
-      summary, and the **Copy ID** button. Press **Register another team**; the
-      contact details stay, but entries and payment details are cleared.
-14. **No network**
-    - Turn off Wi-Fi and press **Submit**. Check the error message is reasonable
-      and that a later retry resumes.
+11. **Status email**
+    - In the flat tab, type `Verified` in **PaymentStatus**, then set it back
+      to `Pending` in the other row of the same group. Check the confirmation
+      email received earlier is still there and the status email appears.
+12. **Done screen**
+    - Check Submission ID, entry list, totals and the **Copy ID** button.
+    - Press **Register another team**; the contact details stay, entries and
+      payment details are cleared.
+13. **No network**
+    - Turn off Wi-Fi and press **Submit**. Check the error message is
+      reasonable and that a later retry resumes.
+
+## Smoke test: a real submission lands in the sheet
+
+Do this once with a throwaway contact name (e.g. `SF Test`) so the real
+registrations stay clean, then run **Delete test data** as **TLH Sports Fest >
+Delete test data** when done.
 
 ## Before manual tests
 
