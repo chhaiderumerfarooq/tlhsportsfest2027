@@ -51,7 +51,7 @@
   </header>
 
   <main id="main">
-    <!-- Landing -->
+    <!-- Hero -->
     <section id="landing" class="landing" aria-labelledby="landing-title">
       <div class="hero">
         <div class="hero-gradient" aria-hidden="true"></div>
@@ -80,69 +80,26 @@
           <p class="hero-games-note" id="landing-games-note"></p>
         </div>
       </div>
-
-      <div class="shell landing-body">
-        <div class="notice notice-socials" id="landing-socials">
-          <strong>Please note:</strong> Socials tickets are sold separately. They are not included in your registration fee.
-        </div>
-
-        <div class="info-grid">
-          <article class="info-card">
-            <span class="info-number">1</span>
-            <h2>Your details</h2>
-            <p>Name, role, WhatsApp, email and your school or college. About one minute.</p>
-          </article>
-          <article class="info-card">
-            <span class="info-number">2</span>
-            <h2>Choose games</h2>
-            <p>Pick as many games as you like. One entry is one game, age group and division.</p>
-          </article>
-          <article class="info-card">
-            <span class="info-number">3</span>
-            <h2>Players &amp; payment</h2>
-            <p>Add players, upload the bank transfer proof, and submit. We verify it by hand.</p>
-          </article>
-        </div>
-
-        <section class="need-card" aria-labelledby="need-title">
-          <div>
-            <h2 id="need-title" class="section-title">Have these ready</h2>
-            <p class="muted">You can save progress and come back. Phones often reload when you switch apps — your draft is kept on this device.</p>
-          </div>
-          <ul class="need-list">
-            <li><strong>Date of birth</strong> for every player.</li>
-            <li><strong>CNIC or B-Form number and a photo</strong> for every player in U19 and U17 entries.</li>
-            <li><strong>Bank transfer screenshot or PDF</strong> for the total amount.</li>
-          </ul>
-        </section>
-
-        <section class="contact-card" aria-labelledby="contact-title">
-          <h2 id="contact-title" class="section-title">Need help?</h2>
-          <p class="muted">Talk to the event heads on call or WhatsApp.</p>
-          <div class="contact-list" id="landing-contacts"></div>
-        </section>
-      </div>
     </section>
 
-    <!-- Wizard -->
-    <section id="wizard" class="wizard" aria-labelledby="wizard-title" hidden>
+    <!-- One-page registration -->
+    <section id="wizard" class="wizard" aria-labelledby="wizard-title">
       <div class="shell wizard-shell">
         <div class="wizard-top">
           <p class="eyebrow">TLH Sports Fest 3.0 registration</p>
-          <h1 id="wizard-title" class="wizard-title">Register</h1>
-          <button class="link-button" id="wizard-home" type="button">Back to event page</button>
+          <h2 id="wizard-title" class="wizard-title">Register</h2>
         </div>
 
-        <nav class="progress" aria-label="Registration progress">
-          <ol class="progress-list">
-            <li class="progress-item" data-step="1"><span class="progress-dot">1</span><span class="progress-label">Your details</span></li>
-            <li class="progress-item" data-step="2"><span class="progress-dot">2</span><span class="progress-label">Choose games</span></li>
-            <li class="progress-item" data-step="3"><span class="progress-dot">3</span><span class="progress-label">Teams &amp; players</span></li>
-            <li class="progress-item" data-step="4"><span class="progress-dot">4</span><span class="progress-label">Review &amp; pay</span></li>
-          </ol>
-          <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-bar"></div></div>
-        </nav>
+        <div class="register-intro">
+          <p class="muted">Everything is on this page: your details, games, players and payment. Your progress is saved on this device.</p>
+          <ul class="ready-list">
+            <li><strong>Date of birth</strong> for every player.</li>
+            <li><strong>CNIC or B-Form number and photo</strong> for U19 and U17 players.</li>
+            <li><strong>Bank transfer screenshot or PDF</strong> for the total.</li>
+          </ul>
+        </div>
 
+        <div class="wizard-alert" id="form-notice" role="status" hidden></div>
         <div class="wizard-alert" id="wizard-alert" role="alert" hidden></div>
 
         <form id="wizard-form" novalidate>
@@ -151,12 +108,12 @@
             <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off">
           </div>
 
-          <!-- Step 1 -->
-          <section class="step-panel" id="step-1" data-step="1" aria-labelledby="step-1-title">
+          <!-- 1. Contact -->
+          <section class="step-panel form-section" id="step-1" aria-labelledby="step-1-title">
             <div class="step-head">
-              <p class="step-kicker">Step 1 of 4</p>
-              <h2 id="step-1-title" class="section-title">Your details</h2>
-              <p class="muted">We use these to contact you about this registration. You can use a different institution for each entry later.</p>
+              <p class="step-kicker">1 · Your details</p>
+              <h3 id="step-1-title" class="section-title">Who should we contact?</h3>
+              <p class="muted">We use these details for this registration only.</p>
             </div>
 
             <div class="form-card">
@@ -198,17 +155,16 @@
             </div>
 
             <div class="step-actions">
-              <button class="btn btn-ghost" type="button" id="step1-home">Cancel</button>
               <button class="btn btn-primary" type="button" id="step1-next">Continue to games</button>
             </div>
           </section>
 
-          <!-- Step 2 -->
-          <section class="step-panel" id="step-2" data-step="2" aria-labelledby="step-2-title" hidden>
+          <!-- 2. Games -->
+          <section class="step-panel form-section" id="step-2" aria-labelledby="step-2-title">
             <div class="step-head">
-              <p class="step-kicker">Step 2 of 4</p>
-              <h2 id="step-2-title" class="section-title">Choose games</h2>
-              <p class="muted">Tap a game to add it. One entry is one game, age group, division and team. You can add several games.</p>
+              <p class="step-kicker">2 · Choose games</p>
+              <h3 id="step-2-title" class="section-title">Pick every game you want</h3>
+              <p class="muted">One entry is one game, age group and division. You can add the same game more than once, for example two cricket teams.</p>
             </div>
 
             <div class="games-toolbar">
@@ -229,101 +185,95 @@
                 <strong id="selection-total">Rs 0</strong>
               </div>
               <div class="selection-actions">
-                <button class="btn btn-ghost btn-small" type="button" id="step2-back">Back</button>
                 <button class="btn btn-primary btn-small" type="button" id="step2-next">Continue to players</button>
               </div>
             </div>
           </section>
 
-          <!-- Step 3 -->
-          <section class="step-panel" id="step-3" data-step="3" aria-labelledby="step-3-title" hidden>
+          <!-- 3. Players -->
+          <section class="step-panel form-section" id="step-3" aria-labelledby="step-3-title">
             <div class="step-head">
-              <p class="step-kicker">Step 3 of 4</p>
-              <h2 id="step-3-title" class="section-title">Teams &amp; players</h2>
-              <p class="muted">Open each game to add players. The age check runs as you type a date of birth. A student in several games only needs to be entered once.</p>
+              <p class="step-kicker">3 · Teams &amp; players</p>
+              <h3 id="step-3-title" class="section-title">Add the people playing</h3>
+              <p class="muted">Add each person once. The same student can be reused in another game without re-entering their details.</p>
             </div>
             <div id="entries-list" class="entries-list"></div>
             <div class="step-actions">
-              <button class="btn btn-ghost" type="button" id="step3-back">Back to games</button>
-              <button class="btn btn-primary" type="button" id="step3-next">Continue to review</button>
+              <button class="btn btn-primary" type="button" id="step3-next">Continue to payment</button>
             </div>
           </section>
 
-          <!-- Step 4 -->
-          <section class="step-panel" id="step-4" data-step="4" aria-labelledby="step-4-title" hidden>
+          <!-- 4. Payment -->
+          <section class="step-panel form-section" id="step-4" aria-labelledby="step-4-title">
             <div class="step-head">
-              <p class="step-kicker">Step 4 of 4</p>
-              <h2 id="step-4-title" class="section-title">Review &amp; pay</h2>
-              <p class="muted">Check every entry, transfer the amount, then upload your payment proof.</p>
+              <p class="step-kicker">4 · Payment &amp; submit</p>
+              <h3 id="step-4-title" class="section-title">Pay and send your proof</h3>
+              <p class="muted">Transfer the exact total, keep the screenshot, then upload it here.</p>
             </div>
 
-            <div class="review-layout">
-              <div class="review-main">
-                <div class="form-card">
-                  <h3 class="card-title">Your entries</h3>
-                  <div id="review-entries"></div>
-                  <div id="review-totals" class="totals"></div>
-                </div>
-
-                <div class="form-card bank-card" id="bank-card">
-                  <div class="card-title-row">
-                    <h3 class="card-title">Bank transfer</h3>
-                    <button class="btn btn-secondary btn-small" type="button" data-action="copy-all">Copy all</button>
-                  </div>
-                  <p class="muted">Transfer the exact amount. Keep the screenshot for the next step.</p>
-                  <dl class="bank-list" id="bank-list"></dl>
-                </div>
-
-                <div class="form-card">
-                  <h3 class="card-title">Payment proof <span class="req">*</span></h3>
-                  <p class="muted">Upload a screenshot or PDF of the bank transfer. Maximum 5 MB after compression.</p>
-                  <div id="payment-upload" class="upload-area"></div>
-                  <p class="field-error" data-error-for="payment.proofFile" aria-live="polite"></p>
-
-                  <div class="field">
-                    <label for="transaction-id">Transaction ID <span class="optional">(optional)</span></label>
-                    <input id="transaction-id" type="text" data-payment="transactionId" autocomplete="off" maxlength="120">
-                    <p class="field-hint">If your bank shows a reference number, add it here.</p>
-                    <p class="field-error" data-error-for="payment.transactionId" aria-live="polite"></p>
-                  </div>
-                </div>
-
-                <div class="form-card">
-                  <div class="notice notice-socials">
-                    <strong>Please note:</strong> Socials tickets are sold separately. They are not included in your registration fee.
-                  </div>
-                  <div class="check-field">
-                    <input id="consent" type="checkbox" data-payment="consent">
-                    <label for="consent" id="consent-label">I confirm that the details are correct.</label>
-                  </div>
-                  <p class="field-error" data-error-for="consent" aria-live="polite"></p>
-                  <p class="privacy-note">We collect your contact details, player names, dates of birth, CNIC or B-Form numbers and uploaded documents only to run this event. Only the TLH Sports Fest registration team can see them. Files are stored in private Google Drive folders.</p>
-                </div>
-
-                <div class="step-actions">
-                  <button class="btn btn-ghost" type="button" id="step4-back">Back to players</button>
-                  <button class="btn btn-primary btn-submit" type="button" id="submit-btn">Submit registration</button>
-                </div>
-
-                <div class="submit-progress" id="submit-progress" hidden aria-live="polite">
-                  <div class="progress-track"><div class="progress-fill" id="upload-progress-bar"></div></div>
-                  <p id="submit-progress-text">Preparing…</p>
-                </div>
-                <div class="wizard-alert" id="submit-error" role="alert" hidden></div>
+            <div class="review-main">
+              <div class="amount-card amount-card-inline" aria-live="polite">
+                <p class="amount-label">Amount to transfer</p>
+                <p class="amount-value" id="amount-value">Rs 0</p>
+                <p class="amount-note" id="amount-note">Early bird price</p>
+                <p class="amount-save" id="amount-save" hidden></p>
               </div>
 
-              <aside class="review-aside" aria-label="Amount to transfer">
-                <div class="amount-card">
-                  <p class="amount-label">Amount to transfer</p>
-                  <p class="amount-value" id="amount-value">Rs 0</p>
-                  <p class="amount-note" id="amount-note">Early bird price</p>
-                  <p class="amount-save" id="amount-save" hidden></p>
+              <div class="form-card">
+                <h4 class="card-title">Your entries</h4>
+                <div id="review-entries"></div>
+                <div id="review-totals" class="totals"></div>
+              </div>
+
+              <div class="form-card bank-card" id="bank-card">
+                <div class="card-title-row">
+                  <h4 class="card-title">Bank transfer</h4>
+                  <button class="btn btn-secondary btn-small" type="button" data-action="copy-all">Copy all</button>
                 </div>
-                <div class="notice notice-soft">
-                  <strong>After you submit</strong>
-                  <p>Your status is Pending verification. We check the payment proof by hand and email you. Keep your submission ID.</p>
+                <p class="muted">Transfer the exact amount. Keep the screenshot for the next step.</p>
+                <dl class="bank-list" id="bank-list"></dl>
+              </div>
+
+              <div class="form-card">
+                <h4 class="card-title">Payment proof <span class="req">*</span></h4>
+                <p class="muted">Upload a screenshot or PDF of the bank transfer. Maximum 5 MB after compression.</p>
+                <div id="payment-upload" class="upload-area"></div>
+                <p class="field-error" data-error-for="payment.proofFile" aria-live="polite"></p>
+
+                <div class="field">
+                  <label for="transaction-id">Transaction ID <span class="optional">(optional)</span></label>
+                  <input id="transaction-id" type="text" data-payment="transactionId" autocomplete="off" maxlength="120">
+                  <p class="field-hint">If your bank shows a reference number, add it here.</p>
+                  <p class="field-error" data-error-for="payment.transactionId" aria-live="polite"></p>
                 </div>
-              </aside>
+              </div>
+
+              <div class="form-card">
+                <div class="notice notice-socials">
+                  <strong>Please note:</strong> Socials tickets are sold separately. They are not included in your registration fee.
+                </div>
+                <div class="check-field">
+                  <input id="consent" type="checkbox" data-payment="consent">
+                  <label for="consent" id="consent-label">I confirm that the details are correct.</label>
+                </div>
+                <p class="field-error" data-error-for="consent" aria-live="polite"></p>
+                <p class="privacy-note">We collect your contact details, player names, dates of birth, CNIC or B-Form numbers and uploaded documents only to run this event. Only the TLH Sports Fest registration team can see them. Files are stored in private Google Drive folders.</p>
+              </div>
+
+              <div class="notice notice-soft">
+                <strong>After you submit</strong>
+                <p>Your status is Pending verification. We check the payment proof by hand and email you. Keep your submission ID.</p>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn btn-primary btn-submit" type="button" id="submit-btn">Submit registration</button>
+              </div>
+
+              <div class="submit-progress" id="submit-progress" hidden aria-live="polite">
+                <div class="progress-track"><div class="progress-fill" id="upload-progress-bar"></div></div>
+                <p id="submit-progress-text">Preparing…</p>
+              </div>
+              <div class="wizard-alert" id="submit-error" role="alert" hidden></div>
             </div>
           </section>
         </form>
@@ -335,6 +285,17 @@
     <!-- Done -->
     <section id="done" class="done" aria-labelledby="done-title" hidden>
       <div class="shell done-shell" id="done-content"></div>
+    </section>
+
+    <!-- Help -->
+    <section class="landing-body" id="help" aria-labelledby="contact-title">
+      <div class="shell">
+        <section class="contact-card" aria-labelledby="contact-title">
+          <h2 id="contact-title" class="section-title">Need help?</h2>
+          <p class="muted">Talk to the event heads on call or WhatsApp before you pay, if anything is unclear.</p>
+          <div class="contact-list" id="landing-contacts"></div>
+        </section>
+      </div>
     </section>
   </main>
 
@@ -402,6 +363,7 @@
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" type="button" data-close-person>Cancel</button>
+        <button class="btn btn-secondary" type="button" id="person-save-another" hidden>Save &amp; add another</button>
         <button class="btn btn-primary" type="submit" id="person-save">Save player</button>
       </div>
     </form>
