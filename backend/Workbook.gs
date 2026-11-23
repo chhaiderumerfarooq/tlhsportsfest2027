@@ -1,12 +1,25 @@
 /*
  * TLH Sports Fest 3.0 - Google Sheet setup, menu, triggers and admin actions.
+ *
+ * The visible registration data lives in two flat tabs, one row per entry:
+ * Team Games and Solo Games. Config and Games remain editable settings tabs.
  */
 
 var TLH_SHEETS = {
-  Config: {
-    headers: ['Key', 'Value', 'Notes'],
-    widths: [230, 360, 560],
-    tabColor: '#A00509'
+  Dashboard: {
+    headers: [],
+    widths: [280, 180, 140, 40, 300, 180],
+    tabColor: '#5C2600'
+  },
+  'Team Games': {
+    headers: [],
+    widths: [],
+    tabColor: '#C83806'
+  },
+  'Solo Games': {
+    headers: [],
+    widths: [],
+    tabColor: '#F8AA14'
   },
   Games: {
     headers: [
@@ -15,39 +28,12 @@ var TLH_SHEETS = {
       'MaxEntries', 'Details', 'Prizes', 'Coach', 'Head', 'CoHead1', 'CoHead2'
     ],
     widths: [80, 70, 80, 250, 130, 100, 120, 140, 90, 95, 90, 90, 90, 520, 190, 120, 120, 120, 120],
-    tabColor: '#C83806'
-  },
-  Submissions: {
-    headers: [
-      'SubmissionID', 'Timestamp (PKT)', 'ContactName', 'ContactRole', 'WhatsApp',
-      'Email', 'Institution', 'EntryCount', 'FeeType', 'RegularTotal', 'NetTotal',
-      'PaymentProof', 'TransactionID', 'PaymentStatus', 'VerifiedAt',
-      'NoteToRegistrant', 'InternalNotes', 'DriveFolder', 'EmailStatus', 'Token'
-    ],
-    widths: [125, 155, 170, 100, 130, 220, 200, 90, 100, 110, 110, 165, 145, 120, 155, 230, 250, 180, 115, 300],
     tabColor: '#E45C06'
   },
-  Entries: {
-    headers: [
-      'EntryID', 'SubmissionID', 'Timestamp', 'GameID', 'Game', 'Category',
-      'Format', 'AgeGroup', 'Division', 'TeamName', 'Institution', 'PlayerCount',
-      'FeeCharged', 'FeeType', 'Roster', 'PaymentStatus', 'Flags', 'Notes'
-    ],
-    widths: [140, 125, 155, 80, 210, 125, 95, 80, 80, 170, 190, 85, 100, 100, 330, 115, 330, 220],
-    tabColor: '#F8AA14'
-  },
-  Players: {
-    headers: [
-      'PlayerRowID', 'EntryID', 'SubmissionID', 'Game', 'AgeGroup', 'Division',
-      'No', 'Role', 'FullName', 'DOB', 'AgeOnCutoff', 'IDNumber', 'IDFile'
-    ],
-    widths: [130, 140, 125, 210, 80, 80, 60, 85, 190, 105, 95, 165, 160],
-    tabColor: '#FFCE40'
-  },
-  Dashboard: {
-    headers: [],
-    widths: [280, 180, 140, 40, 300, 180],
-    tabColor: '#5C2600'
+  Config: {
+    headers: ['Key', 'Value', 'Notes'],
+    widths: [230, 360, 560],
+    tabColor: '#A00509'
   },
   Logs: {
     headers: ['Time', 'Level', 'Action', 'Message', 'Details'],
@@ -65,8 +51,8 @@ var TLH_CONFIG_SEED = [
   ['EarlyBirdEndDate', '2026-12-10', 'Inclusive, valid through 23:59:59 Pakistan time. Use yyyy-mm-dd or a real date.'],
   ['RegistrationCloseDate', '2026-12-20', 'Inclusive, valid through 23:59:59 Pakistan time. Use yyyy-mm-dd or a real date.'],
   ['AgeCutoffDate', '2027-01-30', 'Ages are calculated on this date. Use yyyy-mm-dd or a real date.'],
-  ['BankName', 'Bank Alfalah', 'Shown on the review step and in the confirmation email.'],
-  ['AccountTitle', 'Genesis Educational Service Pvt Ltd.', 'Shown on the review step.'],
+  ['BankName', 'Bank Alfalah', 'Shown on the payment section and in the confirmation email.'],
+  ['AccountTitle', 'Genesis Educational Service Pvt Ltd.', 'Shown on the payment section.'],
   ['IBAN', 'PK08ALFH0053001010451307', 'Shown grouped in fours on the site. Copied without spaces.'],
   ['Contact1Name', 'Javed Iqbal', 'First event head shown on the site and in emails.'],
   ['Contact1Role', 'Event Head', 'Role label for the first contact.'],
@@ -75,10 +61,10 @@ var TLH_CONFIG_SEED = [
   ['Contact2Role', 'Event Head', 'Role label for the second contact.'],
   ['Contact2Phone', '+92 324 8686769', 'Displayed phone. Call and WhatsApp links are built automatically.'],
   ['SupportEmail', '', 'Optional reply-to address on emails. Leave blank to reply to the sending account.'],
-  ['SocialsNotice', 'Socials tickets are sold separately. They are not included in your registration fee.', 'Shown on the landing page, review step, success screen and email.'],
-  ['ConsentText', "I confirm that the details are correct, every player meets the age rule for the group entered, and I have a parent or guardian's permission for any player under 18.", 'The checkbox text on the review step.'],
+  ['SocialsNotice', 'Socials tickets are sold separately. They are not included in your registration fee.', 'Shown on the event page, payment section, success screen and email.'],
+  ['ConsentText', "I confirm that the details are correct, every player meets the age rule for the group entered, and I have a parent or guardian's permission for any player under 18.", 'The checkbox text on the form.'],
   ['AnnouncementBanner', '', 'Optional. When filled, a banner appears at the top of the site.'],
-  ['ReferencePrefix', 'TSF3', 'Prefix for Submission and Entry IDs. Changing it affects new IDs only.'],
+  ['ReferencePrefix', 'TSF3', 'Prefix for Registration and Entry IDs. Changing it affects new IDs only.'],
   ['MaxFileMB', 5, 'Maximum size of each uploaded file, after browser compression.'],
   ['SendConfirmationEmails', 'TRUE', 'Send the registration confirmation email.'],
   ['SendStatusEmails', 'TRUE', 'Send an email when a payment is Verified or Rejected.'],
@@ -91,6 +77,9 @@ function onOpen() {
     .addItem('Set up or repair workbook', 'setupWorkbook')
     .addItem('Refresh website data', 'refreshWebsiteData')
     .addItem('Resend confirmation email for selected row', 'resendConfirmationEmail')
+    .addSeparator()
+    .addItem('Set payment status for selected rows…', 'setPaymentStatusForSelection')
+    .addItem('Set age check for selected rows…', 'setAgeCheckForSelection')
     .addSeparator()
     .addItem('Delete test data…', 'deleteTestData')
     .addToUi();
@@ -116,21 +105,40 @@ function getOrCreateWorkbook_() {
 
 /**
  * Safe to run many times. Creates or repairs tabs, headers, formats,
- * dropdowns, protection, the dashboard and triggers. Never deletes data.
+ * dropdowns, protection, the dashboard and triggers. Never deletes real data.
  */
 function setupWorkbook() {
   var ss = getOrCreateWorkbook_();
   PropertiesService.getScriptProperties().setProperty(TLH_SPREADSHEET_ID_PROPERTY, ss.getId());
 
-  var names = ['Config', 'Games', 'Submissions', 'Entries', 'Players', 'Dashboard', 'Logs'];
+  var names = ['Dashboard', 'Team Games', 'Solo Games', 'Games', 'Config', 'Logs'];
   names.forEach(function (name, index) {
     ensureSheet_(ss, name, index);
   });
 
-  names.forEach(function (name) {
+  // Flat tabs have a variable number of player columns.
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    ensureRows_(sheet, 1000);
+    var headers = flatHeadersForDef_(def);
+    ensureColumns_(sheet, headers.length);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.setFrozenColumns(3);
+    styleSheet_(sheet, {
+      headers: headers,
+      widths: flatWidthsForDef_(def),
+      tabColor: def.tabColor
+    });
+    sheet.hideColumns(TLH_FLAT_COL.token + 1);
+  });
+
+  removeDefaultSheet_(ss);
+
+  ['Games', 'Config', 'Logs'].forEach(function (name) {
     var definition = TLH_SHEETS[name];
     var sheet = ss.getSheetByName(name);
-    ensureRows_(sheet, 1000);
+    ensureRows_(sheet, name === 'Config' ? 100 : 1000);
     if (definition.headers.length) {
       ensureColumns_(sheet, definition.headers.length);
       sheet.getRange(1, 1, 1, definition.headers.length).setValues([definition.headers]);
@@ -145,6 +153,7 @@ function setupWorkbook() {
     seedGames();
   }
   repairSeedActiveFlagsOnce_();
+  migrateLegacySheets_(ss);
 
   applyFormats_(ss);
   applyValidations_(ss);
@@ -153,14 +162,15 @@ function setupWorkbook() {
   buildDashboard_(ss);
   installTriggers_(ss);
 
-  var submissions = ss.getSheetByName('Submissions');
-  submissions.hideColumns(20);
-
   clearConfigCache_();
-  logEvent_('INFO', 'setupWorkbook', 'Workbook set up or repaired.', { games: Math.max(0, gamesSheet.getLastRow() - 1) });
+  logEvent_('INFO', 'setupWorkbook', 'Workbook set up or repaired.', {
+    games: Math.max(0, gamesSheet.getLastRow() - 1),
+    teamRows: Math.max(0, ss.getSheetByName('Team Games').getLastRow() - 1),
+    soloRows: Math.max(0, ss.getSheetByName('Solo Games').getLastRow() - 1)
+  });
 
   try {
-    ss.toast('Workbook ready. ' + Math.max(0, gamesSheet.getLastRow() - 1) + ' games in the Games tab.', 'TLH Sports Fest', 6);
+    ss.toast('Workbook ready. Registrations are saved in Team Games and Solo Games.', 'TLH Sports Fest', 6);
   } catch (error) {
     // Toast is not available in every context.
   }
@@ -233,6 +243,19 @@ function ensureColumns_(sheet, count) {
   }
 }
 
+/** A brand-new spreadsheet starts with an empty Sheet1. Remove it once the real tabs exist. */
+function removeDefaultSheet_(ss) {
+  var sheet = ss.getSheetByName('Sheet1');
+  if (!sheet) return;
+  if (ss.getSheets().length <= 1) return;
+  if (sheet.getLastRow() > 0 || sheet.getLastColumn() > 0) return;
+  try {
+    ss.deleteSheet(sheet);
+  } catch (error) {
+    // Leaving an empty tab behind is harmless.
+  }
+}
+
 function styleSheet_(sheet, definition) {
   if (definition.headers.length) {
     var header = sheet.getRange(1, 1, 1, definition.headers.length);
@@ -273,32 +296,29 @@ function seedConfig_() {
 }
 
 function applyFormats_(ss) {
-  var submissions = ss.getSheetByName('Submissions');
-  var last = submissions.getMaxRows() - 1;
-  submissions.getRange(2, 2, last, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
-  submissions.getRange(2, 5, last, 1).setNumberFormat('@');
-  submissions.getRange(2, 8, last, 1).setNumberFormat('0');
-  submissions.getRange(2, 10, last, 2).setNumberFormat('#,##0');
-  submissions.getRange(2, 13, last, 1).setNumberFormat('@');
-  submissions.getRange(2, 15, last, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    var rows = Math.max(1, sheet.getMaxRows() - 1);
+    sheet.getRange(2, TLH_FLAT_COL.timestamp + 1, rows, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    sheet.getRange(2, TLH_FLAT_COL.fee + 1, rows, 2).setNumberFormat('#,##0');
+    sheet.getRange(2, TLH_FLAT_COL.verifiedAt + 1, rows, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    sheet.getRange(2, TLH_FLAT_COL.contactName + 1, rows, 6).setNumberFormat('@');
+    sheet.getRange(2, TLH_FLAT_COL.transactionId + 1, rows, 1).setNumberFormat('@');
+    sheet.getRange(2, TLH_FLAT_COL.token + 1, rows, 1).setNumberFormat('@');
+    for (var p = 0; p < def.maxPlayers; p++) {
+      var offset = TLH_FLAT_COL.playerStart + (p * 4);
+      sheet.getRange(2, offset + 2, rows, 1).setNumberFormat('yyyy-mm-dd');
+      sheet.getRange(2, offset + 3, rows, 1).setNumberFormat('@');
+      sheet.getRange(2, offset + 4, rows, 1).setNumberFormat('0');
+    }
+    sheet.getRange(2, 1, rows, flatRowWidth_(def)).setVerticalAlignment('top');
+  });
 
   var games = ss.getSheetByName('Games');
   games.getRange(2, 9, games.getMaxRows() - 1, 2).setNumberFormat('#,##0');
   games.getRange(2, 11, games.getMaxRows() - 1, 3).setNumberFormat('0');
   games.getRange(2, 1, games.getMaxRows() - 1, 19).setVerticalAlignment('top');
   games.getRange(2, 14, games.getMaxRows() - 1, 1).setWrap(true);
-
-  var entries = ss.getSheetByName('Entries');
-  entries.getRange(2, 3, entries.getMaxRows() - 1, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
-  entries.getRange(2, 12, entries.getMaxRows() - 1, 1).setNumberFormat('0');
-  entries.getRange(2, 13, entries.getMaxRows() - 1, 1).setNumberFormat('#,##0');
-  entries.getRange(2, 15, entries.getMaxRows() - 1, 1).setWrap(true).setVerticalAlignment('top');
-
-  var players = ss.getSheetByName('Players');
-  players.getRange(2, 7, players.getMaxRows() - 1, 1).setNumberFormat('0');
-  players.getRange(2, 10, players.getMaxRows() - 1, 1).setNumberFormat('@');
-  players.getRange(2, 11, players.getMaxRows() - 1, 1).setNumberFormat('0');
-  players.getRange(2, 12, players.getMaxRows() - 1, 1).setNumberFormat('@');
 
   var logs = ss.getSheetByName('Logs');
   logs.getRange(2, 1, logs.getMaxRows() - 1, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
@@ -310,14 +330,11 @@ function applyValidations_(ss) {
   setColumnValidation_(games, 5, ['Ground Games', 'Indoor Games', 'E-Games', 'Workshops', 'Other'], 'Choose the category shown on the site.');
   setColumnValidation_(games, 6, ['Team', 'Single', 'Double', 'Individual'], 'Team, Single, Double or Individual.');
 
-  var submissions = ss.getSheetByName('Submissions');
-  setColumnValidation_(submissions, 14, ['Pending', 'Verified', 'Rejected'], 'Change this to verify or reject a payment.');
-
-  var entries = ss.getSheetByName('Entries');
-  setColumnValidation_(entries, 16, ['Pending', 'Verified', 'Rejected'], 'Kept in sync from Submissions. Edit the Submissions row instead.');
-
-  var players = ss.getSheetByName('Players');
-  setColumnValidation_(players, 8, ['Captain', 'Player', 'Extra'], 'Captain, Player or Extra.');
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    setColumnValidation_(sheet, TLH_FLAT_COL.paymentStatus + 1, ['Pending', 'Verified', 'Rejected'], 'Change this to verify or reject a payment.');
+    setColumnValidation_(sheet, TLH_FLAT_COL.ageCheck + 1, ['OK', 'Review'], 'OK, or Review if the age or ID needs a second look.');
+  });
 
   var config = ss.getSheetByName('Config');
   setConfigValidation_(config, 'RegistrationOpen', ['TRUE', 'FALSE']);
@@ -354,21 +371,17 @@ function setConfigValidation_(sheet, key, list) {
 }
 
 function applyConditionalFormatting_(ss) {
-  var submissions = ss.getSheetByName('Submissions');
-  var statusRange = submissions.getRange(2, 14, submissions.getMaxRows() - 1, 1);
-  submissions.setConditionalFormatRules([
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Pending').setBackground('#FFF3CD').setFontColor('#7A4A00').setRanges([statusRange]).build(),
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Verified').setBackground('#D4EDDA').setFontColor('#155724').setRanges([statusRange]).build(),
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Rejected').setBackground('#F8D7DA').setFontColor('#721C24').setRanges([statusRange]).build()
-  ]);
-
-  var entries = ss.getSheetByName('Entries');
-  var entryStatus = entries.getRange(2, 16, entries.getMaxRows() - 1, 1);
-  entries.setConditionalFormatRules([
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Pending').setBackground('#FFF3CD').setFontColor('#7A4A00').setRanges([entryStatus]).build(),
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Verified').setBackground('#D4EDDA').setFontColor('#155724').setRanges([entryStatus]).build(),
-    SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Rejected').setBackground('#F8D7DA').setFontColor('#721C24').setRanges([entryStatus]).build()
-  ]);
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    var statusRange = sheet.getRange(2, TLH_FLAT_COL.paymentStatus + 1, sheet.getMaxRows() - 1, 1);
+    var ageRange = sheet.getRange(2, TLH_FLAT_COL.ageCheck + 1, sheet.getMaxRows() - 1, 1);
+    sheet.setConditionalFormatRules([
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Pending').setBackground('#FFF3CD').setFontColor('#7A4A00').setRanges([statusRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Verified').setBackground('#D4EDDA').setFontColor('#155724').setRanges([statusRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Rejected').setBackground('#F8D7DA').setFontColor('#721C24').setRanges([statusRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Review').setBackground('#FDE2E4').setFontColor('#A00509').setBold(true).setRanges([ageRange]).build()
+    ]);
+  });
 
   var games = ss.getSheetByName('Games');
   var activeRange = games.getRange(2, 2, games.getMaxRows() - 1, 1);
@@ -389,18 +402,17 @@ function applyConditionalFormatting_(ss) {
 }
 
 function applyProtection_(ss) {
-  var submissions = ss.getSheetByName('Submissions');
-  protectColumns_(submissions, [
-    { column: 1, count: 2, label: 'Submission ID and timestamp' },
-    { column: 8, count: 5, label: 'Counts, fee type and totals' },
-    { column: 18, count: 3, label: 'Drive folder, email status and token' }
-  ]);
-
-  var entries = ss.getSheetByName('Entries');
-  protectColumns_(entries, [{ column: 1, count: 16, label: 'Script-written entry columns' }]);
-
-  var players = ss.getSheetByName('Players');
-  protectColumns_(players, [{ column: 1, count: 13, label: 'Script-written player columns' }]);
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    var playerColumns = def.maxPlayers * 4;
+    protectColumns_(sheet, [
+      { column: 1, count: TLH_FLAT_COL.playerCount + 1, label: 'Script-written registration columns' },
+      { column: TLH_FLAT_COL.paymentProof + 1, count: 2, label: 'Payment proof and verified time' },
+      { column: TLH_FLAT_COL.flags + 1, count: 1, label: 'Duplicate and age flags' },
+      { column: TLH_FLAT_COL.registrationFolder + 1, count: 4, label: 'Folder links, email status and token' },
+      { column: TLH_FLAT_COL.playerStart + 1, count: playerColumns, label: 'Player columns' }
+    ]);
+  });
 }
 
 function protectColumns_(sheet, groups) {
@@ -420,6 +432,7 @@ function protectColumns_(sheet, groups) {
 function buildDashboard_(ss) {
   var sheet = ss.getSheetByName('Dashboard');
   sheet.clearContents();
+  sheet.clearConditionalFormatRules();
   sheet.setFrozenRows(1);
   sheet.setColumnWidths(1, 6, 190);
   sheet.setColumnWidth(1, 300);
@@ -431,48 +444,61 @@ function buildDashboard_(ss) {
     '=IF(IFERROR(VLOOKUP("TestNowOverride",Config!$A:$B,2,FALSE),"")="","",' +
     '"TEST MODE: server time is overridden to "&IFERROR(VLOOKUP("TestNowOverride",Config!$A:$B,2,FALSE),"")&". Clear TestNowOverride in Config to return to real time.")'
   );
+  sheet.getRange('A3').setValue('Team Games and Solo Games each contain one row per entry. Edit PaymentStatus or AgeCheck directly; the menu can do it for selected rows.').setFontColor('#5C2600');
 
-  sheet.getRange('A4').setValue('Payments by status').setFontWeight('bold').setFontSize(12);
-  sheet.getRange('A5:C5').setValues([['Status', 'Submissions', 'Amount']]).setFontWeight('bold').setBackground('#FFE0C2');
-  sheet.getRange('A6:C9').setValues([
+  sheet.getRange('A5').setValue('Payments by status').setFontWeight('bold').setFontSize(12);
+  sheet.getRange('A6:C6').setValues([['Status', 'Entries', 'Amount']]).setFontWeight('bold').setBackground('#FFE0C2');
+  sheet.getRange('A7:C10').setValues([
     ['Pending', null, null],
     ['Verified', null, null],
     ['Rejected', null, null],
     ['Total', null, null]
   ]);
-  sheet.getRange('B6').setFormula('=COUNTIF(Submissions!$N$2:$N,"Pending")');
-  sheet.getRange('C6').setFormula('=SUMIF(Submissions!$N$2:$N,"Pending",Submissions!$K$2:$K)');
-  sheet.getRange('B7').setFormula('=COUNTIF(Submissions!$N$2:$N,"Verified")');
-  sheet.getRange('C7').setFormula('=SUMIF(Submissions!$N$2:$N,"Verified",Submissions!$K$2:$K)');
-  sheet.getRange('B8').setFormula('=COUNTIF(Submissions!$N$2:$N,"Rejected")');
-  sheet.getRange('C8').setFormula('=SUMIF(Submissions!$N$2:$N,"Rejected",Submissions!$K$2:$K)');
-  sheet.getRange('B9').setFormula('=COUNTA(Submissions!$A$2:$A)');
-  sheet.getRange('C9').setFormula('=SUM(Submissions!$K$2:$K)');
-  sheet.getRange('C6:C9').setNumberFormat('"Rs "#,##0');
+  ['Pending', 'Verified', 'Rejected'].forEach(function (status, index) {
+    var row = 7 + index;
+    sheet.getRange(row, 2).setFormula(
+      '=COUNTIF(\'Team Games\'!$T$2:$T,"' + status + '")+COUNTIF(\'Solo Games\'!$T$2:$T,"' + status + '")'
+    );
+    sheet.getRange(row, 3).setFormula(
+      '=SUMIF(\'Team Games\'!$T$2:$T,"' + status + '",\'Team Games\'!$Q$2:$Q)+' +
+      'SUMIF(\'Solo Games\'!$T$2:$T,"' + status + '",\'Solo Games\'!$Q$2:$Q)'
+    );
+  });
+  sheet.getRange('B10').setFormula('=COUNTA(\'Team Games\'!$A$2:$A)+COUNTA(\'Solo Games\'!$A$2:$A)');
+  sheet.getRange('C10').setFormula('=SUM(\'Team Games\'!$Q$2:$Q)+SUM(\'Solo Games\'!$Q$2:$Q)');
+  sheet.getRange('C7:C10').setNumberFormat('"Rs "#,##0');
 
-  sheet.getRange('E4').setValue('Key numbers').setFontWeight('bold').setFontSize(12);
-  sheet.getRange('E5:F5').setValues([['Measure', 'Value']]).setFontWeight('bold').setBackground('#FFE0C2');
-  sheet.getRange('E6:F11').setValues([
+  sheet.getRange('E5').setValue('Key numbers').setFontWeight('bold').setFontSize(12);
+  sheet.getRange('E6:F6').setValues([['Measure', 'Value']]).setFontWeight('bold').setBackground('#FFE0C2');
+  sheet.getRange('E7:F12').setValues([
     ['Expected revenue (not rejected)', null],
     ['Verified revenue', null],
-    ['Early bird submissions', null],
-    ['Regular submissions', null],
+    ['Early bird entries', null],
+    ['Regular entries', null],
     ['Total entries', null],
     ['Total players', null]
   ]);
-  sheet.getRange('F6').setFormula('=SUMIF(Submissions!$N$2:$N,"<>Rejected",Submissions!$K$2:$K)');
-  sheet.getRange('F7').setFormula('=SUMIF(Submissions!$N$2:$N,"Verified",Submissions!$K$2:$K)');
-  sheet.getRange('F8').setFormula('=COUNTIF(Submissions!$I$2:$I,"Early Bird")');
-  sheet.getRange('F9').setFormula('=COUNTIF(Submissions!$I$2:$I,"Regular")');
-  sheet.getRange('F10').setFormula('=COUNTA(Entries!$A$2:$A)');
-  sheet.getRange('F11').setFormula('=COUNTA(Players!$I$2:$I)');
-  sheet.getRange('F6:F7').setNumberFormat('"Rs "#,##0');
-
-  sheet.getRange('A13').setValue('Entries per game and age group').setFontWeight('bold').setFontSize(12);
-  sheet.getRange('A14').setFormula(
-    '=IFERROR(QUERY(Entries!$A$2:$R,"select D, E, H, count(A) where D is not null group by D, E, H label D \'Game ID\', E \'Game\', H \'Age group\', count(A) \'Entries\'",0),"No entries yet")'
+  sheet.getRange('F7').setFormula(
+    '=SUMIF(\'Team Games\'!$T$2:$T,"<>Rejected",\'Team Games\'!$Q$2:$Q)+' +
+    'SUMIF(\'Solo Games\'!$T$2:$T,"<>Rejected",\'Solo Games\'!$Q$2:$Q)'
   );
-  sheet.getRange('A14:D14').setFontWeight('bold').setBackground('#FFE0C2');
+  sheet.getRange('F8').setFormula(
+    '=SUMIF(\'Team Games\'!$T$2:$T,"Verified",\'Team Games\'!$Q$2:$Q)+' +
+    'SUMIF(\'Solo Games\'!$T$2:$T,"Verified",\'Solo Games\'!$Q$2:$Q)'
+  );
+  sheet.getRange('F9').setFormula('=COUNTIF(\'Team Games\'!$S$2:$S,"Early Bird")+COUNTIF(\'Solo Games\'!$S$2:$S,"Early Bird")');
+  sheet.getRange('F10').setFormula('=COUNTIF(\'Team Games\'!$S$2:$S,"Regular")+COUNTIF(\'Solo Games\'!$S$2:$S,"Regular")');
+  sheet.getRange('F11').setFormula('=COUNTA(\'Team Games\'!$A$2:$A)+COUNTA(\'Solo Games\'!$A$2:$A)');
+  sheet.getRange('F12').setFormula('=SUM(\'Team Games\'!$P$2:$P)+SUM(\'Solo Games\'!$P$2:$P)');
+  sheet.getRange('F7:F8').setNumberFormat('"Rs "#,##0');
+
+  sheet.getRange('A14').setValue('Entries per game and age group').setFontWeight('bold').setFontSize(12);
+  sheet.getRange('A15').setFormula(
+    '=IFERROR(QUERY({\'Team Games\'!$A$2:$AE$1000;\'Solo Games\'!$A$2:$AE$1000},' +
+    '"select Col9, Col10, Col13, count(Col1) where Col9 is not null group by Col9, Col10, Col13 ' +
+    'label Col9 \'Game ID\', Col10 \'Game\', Col13 \'Age group\', count(Col1) \'Entries\'",0),"No entries yet")'
+  );
+  sheet.getRange('A15:D15').setFontWeight('bold').setBackground('#FFE0C2');
 }
 
 function installTriggers_(ss) {
@@ -485,6 +511,145 @@ function installTriggers_(ss) {
   });
   ScriptApp.newTrigger('onEditInstallable').forSpreadsheet(ss).onEdit().create();
   ScriptApp.newTrigger('cleanupPendingUploads').timeBased().atHour(3).everyDays(1).create();
+}
+
+/* ------------------------------------------------------------------ *
+ * Migration from the old Submissions / Entries / Players schema
+ * ------------------------------------------------------------------ */
+
+function migrateLegacySheets_(ss) {
+  var legacyNames = ['Submissions', 'Entries', 'Players'];
+  var sheets = legacyNames.map(function (name) { return ss.getSheetByName(name); })
+    .filter(function (sheet) { return sheet; });
+  if (!sheets.length) return;
+
+  var hasData = sheets.some(function (sheet) { return sheet.getLastRow() >= 2; });
+  if (!hasData) {
+    sheets.forEach(function (sheet) { ss.deleteSheet(sheet); });
+    logEvent_('INFO', 'migrateLegacySheets', 'Removed empty legacy tabs.');
+    return;
+  }
+
+  var flatHasData = flatSheetDefs_().some(function (def) {
+    var sheet = ss.getSheetByName(def.name);
+    return sheet && sheet.getLastRow() >= 2;
+  });
+  if (flatHasData) {
+    archiveLegacySheets_(ss, sheets);
+    return;
+  }
+
+  try {
+    var submissionsSheet = ss.getSheetByName('Submissions');
+    var entriesSheet = ss.getSheetByName('Entries');
+    var playersSheet = ss.getSheetByName('Players');
+    var submissions = {};
+    var entries = [];
+    var playersByEntry = {};
+    var gamesById = {};
+    getGames_().forEach(function (game) { gamesById[game.id] = game; });
+    var cutoff = configText_(readConfigMap_(), 'AgeCutoffDate', '');
+
+    if (submissionsSheet && submissionsSheet.getLastRow() >= 2) {
+      submissionsSheet.getRange(2, 1, submissionsSheet.getLastRow() - 1, 20).getValues().forEach(function (row) {
+        submissions[String(row[0] || '')] = row;
+      });
+    }
+    if (entriesSheet && entriesSheet.getLastRow() >= 2) {
+      entries = entriesSheet.getRange(2, 1, entriesSheet.getLastRow() - 1, 18).getValues();
+    }
+    if (playersSheet && playersSheet.getLastRow() >= 2) {
+      playersSheet.getRange(2, 1, playersSheet.getLastRow() - 1, 13).getValues().forEach(function (row) {
+        var entryId = String(row[1] || '');
+        if (!playersByEntry[entryId]) playersByEntry[entryId] = [];
+        playersByEntry[entryId].push({
+          name: String(row[8] || ''),
+          dob: parseDateOnly(row[9]),
+          idNumber: String(row[11] || ''),
+          age: row[10] === '' ? null : Number(row[10])
+        });
+      });
+    }
+
+    var items = [];
+    entries.forEach(function (entry) {
+      var submissionId = String(entry[1] || '');
+      var sub = submissions[submissionId];
+      if (!sub) return;
+      var entryId = String(entry[0] || '');
+      var game = gamesById[String(entry[3] || '')];
+      var players = playersByEntry[entryId] || [];
+      var ageCheck = 'OK';
+      if (game && String(entry[7] || '') !== 'Open') {
+        players.forEach(function (player) {
+          if (!isDobEligible(player.dob, String(entry[7] || ''), cutoff)) ageCheck = 'Review';
+        });
+      }
+      var built = buildFlatRow_({
+        registrationId: submissionId,
+        entryId: entryId,
+        timestamp: sub[1] || entry[2],
+        contact: {
+          name: String(sub[2] || ''),
+          role: String(sub[3] || ''),
+          whatsapp: String(sub[4] || ''),
+          email: String(sub[5] || ''),
+          institution: String(sub[6] || '')
+        },
+        gameId: String(entry[3] || ''),
+        game: String(entry[4] || ''),
+        category: String(entry[5] || ''),
+        format: String(entry[6] || ''),
+        ageGroup: String(entry[7] || ''),
+        division: String(entry[8] || ''),
+        teamName: String(entry[9] || ''),
+        players: players,
+        fee: Number(entry[12]) || 0,
+        regularFee: game ? regularFeeFor(game) : (Number(entry[12]) || 0),
+        feeType: String(entry[13] || sub[8] || ''),
+        paymentStatus: String(sub[13] || entry[15] || 'Pending'),
+        transactionId: String(sub[12] || ''),
+        paymentProof: sub[11] || '',
+        verifiedAt: sub[14] || '',
+        ageCheck: ageCheck,
+        flags: String(entry[16] || ''),
+        note: String(sub[15] || ''),
+        adminNotes: String(entry[17] || sub[16] || ''),
+        registrationFolder: sub[17] || '',
+        idFolder: '',
+        emailStatus: String(sub[18] || 'PENDING'),
+        token: String(sub[19] || ''),
+        ageCutoffDate: cutoff
+      });
+      items.push(built);
+    });
+
+    if (!items.length) {
+      archiveLegacySheets_(ss, sheets);
+      logEvent_('WARN', 'migrateLegacySheets', 'Legacy tabs had data but no entry rows could be migrated.');
+      return;
+    }
+
+    appendFlatRows_(items);
+    archiveLegacySheets_(ss, sheets);
+    logEvent_('INFO', 'migrateLegacySheets', 'Migrated ' + items.length + ' entries into Team Games / Solo Games.');
+  } catch (error) {
+    logEvent_('ERROR', 'migrateLegacySheets', 'Migration failed; legacy tabs were kept.', String(error.message || error));
+  }
+}
+
+function archiveLegacySheets_(ss, sheets) {
+  sheets.forEach(function (sheet) {
+    var newName = 'Archive - ' + sheet.getName();
+    try {
+      sheet.setName(newName);
+    } catch (error) {
+      // A tab with that name may already exist.
+      newName = 'Archive - ' + sheet.getName() + ' ' + Date.now();
+      sheet.setName(newName);
+    }
+    sheet.hideSheet();
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -501,43 +666,126 @@ function refreshWebsiteData() {
   }
 }
 
+function setPaymentStatusForSelection() {
+  var ui = SpreadsheetApp.getUi();
+  var sheet = SpreadsheetApp.getActiveSheet();
+  if (!isFlatSheetName_(sheet.getName())) {
+    ui.alert('Open the Team Games or Solo Games tab and select one or more rows first.');
+    return;
+  }
+  var range = sheet.getActiveRange();
+  if (!range || range.getRow() < 2) {
+    ui.alert('Select one or more registration rows (not the header).');
+    return;
+  }
+  var response = ui.prompt(
+    'Set payment status',
+    'Type Verified, Rejected or Pending for the selected rows.',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  var status = String(response.getResponseText() || '').trim();
+  var match = ['Pending', 'Verified', 'Rejected'].filter(function (item) {
+    return item.toLowerCase() === status.toLowerCase();
+  })[0];
+  if (!match) {
+    ui.alert('Type Verified, Rejected or Pending exactly.');
+    return;
+  }
+  var regIds = {};
+  for (var row = range.getRow(); row < range.getRow() + range.getNumRows(); row++) {
+    var regId = String(sheet.getRange(row, 1).getValue() || '').trim();
+    if (regId) regIds[regId] = true;
+  }
+  var results = [];
+  Object.keys(regIds).forEach(function (regId) {
+    results.push(applyPaymentStatusToRegistration_(regId, match, '', { sendEmail: true }));
+  });
+  ui.alert('Updated ' + results.length + ' registration' + (results.length === 1 ? '' : 's') + ' to ' + match + '.');
+}
+
+function setAgeCheckForSelection() {
+  var ui = SpreadsheetApp.getUi();
+  var sheet = SpreadsheetApp.getActiveSheet();
+  if (!isFlatSheetName_(sheet.getName())) {
+    ui.alert('Open the Team Games or Solo Games tab and select one or more rows first.');
+    return;
+  }
+  var range = sheet.getActiveRange();
+  if (!range || range.getRow() < 2) {
+    ui.alert('Select one or more registration rows (not the header).');
+    return;
+  }
+  var response = ui.prompt(
+    'Set age check',
+    'Type OK or Review for the selected rows.',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  var value = String(response.getResponseText() || '').trim();
+  var match = ['OK', 'Review'].filter(function (item) { return item.toLowerCase() === value.toLowerCase(); })[0];
+  if (!match) {
+    ui.alert('Type OK or Review.');
+    return;
+  }
+  var rows = [];
+  for (var row = range.getRow(); row < range.getRow() + range.getNumRows(); row++) rows.push(row);
+  var result = applyAgeCheckToRows_(sheet, rows, match);
+  ui.alert(result.ok ? 'Updated ' + result.changed + ' row(s) to ' + match + '.' : result.message);
+}
+
 function resendConfirmationEmail() {
   var ui = SpreadsheetApp.getUi();
   var sheet = SpreadsheetApp.getActiveSheet();
-  if (sheet.getName() !== 'Submissions') {
-    ui.alert('Open the Submissions tab and select a row first.');
+  if (!isFlatSheetName_(sheet.getName())) {
+    ui.alert('Open the Team Games or Solo Games tab and select a registration row first.');
     return;
   }
   var row = sheet.getActiveRange().getRow();
   if (row < 2) {
-    ui.alert('Select a submission row (not the header).');
+    ui.alert('Select a registration row (not the header).');
     return;
   }
-  var submissionId = String(sheet.getRange(row, 1).getValue() || '');
-  if (!submissionId) {
-    ui.alert('That row has no Submission ID.');
+  var registrationId = String(sheet.getRange(row, 1).getValue() || '');
+  if (!registrationId) {
+    ui.alert('That row has no Registration ID.');
     return;
   }
-  var data = buildEmailDataFromSheet_(submissionId);
+  var data = buildEmailDataFromSheet_(registrationId);
   if (!data) {
-    ui.alert('Could not read submission ' + submissionId + '.');
+    ui.alert('Could not read registration ' + registrationId + '.');
     return;
   }
   try {
     var result = sendConfirmationEmail_(data);
-    sheet.getRange(row, 19).setValue(result.sent ? 'SENT' : 'FAILED');
-    ui.alert(result.sent ? 'Confirmation email sent for ' + submissionId + '.' : 'Email failed: ' + result.error);
+    setFlatEmailStatus_(registrationId, result.sent ? 'SENT' : 'FAILED');
+    ui.alert(result.sent ? 'Confirmation email sent for ' + registrationId + '.' : 'Email failed: ' + result.error);
   } catch (error) {
-    logEvent_('ERROR', 'resendConfirmationEmail', 'Email failed for ' + submissionId, String(error.message || error));
+    logEvent_('ERROR', 'resendConfirmationEmail', 'Email failed for ' + registrationId, String(error.message || error));
     ui.alert('Email failed: ' + (error.message || error));
   }
+}
+
+function setFlatEmailStatus_(registrationId, status) {
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = getSpreadsheet_().getSheetByName(def.name);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    var last = sheet.getLastRow();
+    var ids = sheet.getRange(2, 1, last - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
+      if (String(ids[i][0] || '').trim() === registrationId) {
+        sheet.getRange(i + 2, TLH_FLAT_COL.emailStatus + 1).setValue(status);
+      }
+    }
+  });
+  SpreadsheetApp.flush();
 }
 
 function deleteTestData() {
   var ui = SpreadsheetApp.getUi();
   var response = ui.prompt(
     'Delete test data',
-    'This removes Submissions, Entries and Players rows whose ContactName starts with TEST, plus their Drive folders. Type DELETE to continue.',
+    'This removes Team Games and Solo Games rows whose ContactName starts with TEST, plus their Drive folders. Type DELETE to continue.',
     ui.ButtonSet.OK_CANCEL
   );
   if (response.getSelectedButton() !== ui.Button.OK) return;
@@ -546,44 +794,38 @@ function deleteTestData() {
     return;
   }
 
-  var ss = getSpreadsheet_();
-  var submissions = ss.getSheetByName('Submissions');
-  var entries = ss.getSheetByName('Entries');
-  var players = ss.getSheetByName('Players');
-  var removed = [];
-  var row = submissions.getLastRow();
-
-  while (row >= 2) {
-    var values = submissions.getRange(row, 1, 1, 20).getValues()[0];
-    var contactName = String(values[2] || '').trim();
-    if (/^TEST/i.test(contactName)) {
-      var submissionId = String(values[0] || '');
-      var folderName = folderSafeName_(submissionId + ' - ' + contactName);
-      if (submissionId) {
-        removed.push(submissionId);
-        deleteRowsBySubmission_(entries, submissionId, 2);
-        deleteRowsBySubmission_(players, submissionId, 3);
-        trashSubmissionFolders_(submissionId, folderName);
-      }
-      submissions.deleteRow(row);
+  var removed = {};
+  flatSheetDefs_().forEach(function (def) {
+    var sheet = getSpreadsheet_().getSheetByName(def.name);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    for (var row = sheet.getLastRow(); row >= 2; row--) {
+      var contactName = String(sheet.getRange(row, TLH_FLAT_COL.contactName + 1).getValue() || '').trim();
+      if (!/^TEST/i.test(contactName)) continue;
+      var registrationId = String(sheet.getRange(row, 1).getValue() || '').trim();
+      if (registrationId) removed[registrationId] = contactName;
     }
-    row--;
-  }
+  });
+
+  var ids = Object.keys(removed);
+  ids.forEach(function (registrationId) {
+    flatSheetDefs_().forEach(function (def) {
+      var sheet = getSpreadsheet_().getSheetByName(def.name);
+      if (!sheet) return;
+      for (var row = sheet.getLastRow(); row >= 2; row--) {
+        if (String(sheet.getRange(row, 1).getValue() || '').trim() === registrationId) {
+          sheet.deleteRow(row);
+        }
+      }
+    });
+    trashSubmissionFolders_(registrationId, folderSafeName_(registrationId + ' - ' + removed[registrationId]));
+  });
 
   clearConfigCache_();
-  logEvent_('INFO', 'deleteTestData', 'Deleted ' + removed.length + ' TEST submissions.', removed.join(', '));
-  ui.alert('Deleted ' + removed.length + ' test submission' + (removed.length === 1 ? '' : 's') + '.');
+  logEvent_('INFO', 'deleteTestData', 'Deleted ' + ids.length + ' TEST registrations.', ids.join(', '));
+  ui.alert('Deleted ' + ids.length + ' test registration' + (ids.length === 1 ? '' : 's') + '.');
 }
 
-function deleteRowsBySubmission_(sheet, submissionId, column) {
-  for (var row = sheet.getLastRow(); row >= 2; row--) {
-    if (String(sheet.getRange(row, column).getValue() || '') === submissionId) {
-      sheet.deleteRow(row);
-    }
-  }
-}
-
-function trashSubmissionFolders_(submissionId, folderName) {
+function trashSubmissionFolders_(registrationId, folderName) {
   ['payment', 'id'].forEach(function (kind) {
     try {
       var root = getDriveRoot_(kind);
@@ -591,12 +833,12 @@ function trashSubmissionFolders_(submissionId, folderName) {
       while (folders.hasNext()) {
         var folder = folders.next();
         var name = folder.getName();
-        if (name === folderName || name.indexOf(submissionId + ' - ') === 0) {
+        if (name === folderName || name.indexOf(registrationId + ' - ') === 0) {
           folder.setTrashed(true);
         }
       }
     } catch (error) {
-      logEvent_('ERROR', 'trashSubmissionFolders', 'Could not trash a folder for ' + submissionId, String(error.message || error));
+      logEvent_('ERROR', 'trashSubmissionFolders', 'Could not trash a folder for ' + registrationId, String(error.message || error));
     }
   });
 }
@@ -612,59 +854,28 @@ function onEditInstallable(e) {
 
   if (name === 'Config' || name === 'Games') {
     clearConfigCache_();
+    return;
   }
+  if (!isFlatSheetName_(name)) return;
+  if (e.range.getColumn() !== TLH_FLAT_COL.paymentStatus + 1) return;
 
-  if (name !== 'Submissions') return;
-  if (e.range.getColumn() !== 14) return;
-
+  var changes = {};
   var rows = e.range.getNumRows();
   for (var i = 0; i < rows; i++) {
     var row = e.range.getRow() + i;
     if (row < 2) continue;
-    var submissionId = String(sheet.getRange(row, 1).getValue() || '');
-    if (!submissionId) continue;
-    var status = String(sheet.getRange(row, 14).getValue() || '').trim();
-    var oldValue = rows === 1 ? String(e.oldValue || '').trim() : '';
-
-    if (status === 'Verified') {
-      sheet.getRange(row, 15).setValue(new Date());
-    } else if (status === 'Pending' || status === 'Rejected') {
-      sheet.getRange(row, 15).clearContent();
-    }
-
-    syncEntryStatus_(submissionId, status);
-    clearConfigCache_();
-
-    if (status !== oldValue && (status === 'Verified' || status === 'Rejected')) {
-      sendStatusEmailForRow_(row, submissionId, status);
-    }
+    var registrationId = String(sheet.getRange(row, 1).getValue() || '').trim();
+    if (!registrationId) continue;
+    var status = String(sheet.getRange(row, TLH_FLAT_COL.paymentStatus + 1).getValue() || '').trim();
+    if (rows === 1 && String(e.oldValue || '').trim() === status) continue;
+    if (['Pending', 'Verified', 'Rejected'].indexOf(status) === -1) continue;
+    changes[registrationId] = status;
   }
-}
 
-function syncEntryStatus_(submissionId, status) {
-  var entries = getSheet_('Entries');
-  var lastRow = entries.getLastRow();
-  if (lastRow < 2) return;
-  var values = entries.getRange(2, 2, lastRow - 1, 1).getValues();
-  for (var i = 0; i < values.length; i++) {
-    if (String(values[i][0] || '') === submissionId) {
-      entries.getRange(i + 2, 16).setValue(status);
-    }
-  }
-}
-
-function sendStatusEmailForRow_(row, submissionId, status) {
-  var map = readConfigMap_();
-  if (!configBool_(map, 'SendStatusEmails', true)) return;
-  var note = String(getSheet_('Submissions').getRange(row, 16).getValue() || '');
-  var data = buildEmailDataFromSheet_(submissionId);
-  if (!data) return;
-  try {
-    sendStatusEmail_(data, status, note);
-    logEvent_('INFO', 'statusEmail', 'Sent ' + status + ' email for ' + submissionId);
-  } catch (error) {
-    logEvent_('ERROR', 'statusEmail', 'Email failed for ' + submissionId, String(error.message || error));
-  }
+  Object.keys(changes).forEach(function (registrationId) {
+    if (paymentStatusUpdateGuarded_(registrationId)) return;
+    applyPaymentStatusToRegistration_(registrationId, changes[registrationId], '', { sendEmail: true });
+  });
 }
 
 function cleanupPendingUploads() {
