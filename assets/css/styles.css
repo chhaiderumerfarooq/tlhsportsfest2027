@@ -2469,6 +2469,7 @@ ol {
   position: sticky;
   bottom: 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   padding: 12px 16px;
@@ -2832,6 +2833,74 @@ ol {
   .hero-title {
     font-size: 132px;
   }
+}
+
+/* --------------------------------------------------------------------------
+   One-page registration
+   -------------------------------------------------------------------------- */
+
+.register-intro {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  max-width: 720px;
+}
+
+.register-intro .muted {
+  margin: 0;
+}
+
+.ready-list {
+  display: grid;
+  gap: 3px;
+  padding-left: 18px;
+  list-style: disc;
+  font-size: 13px;
+  color: var(--brown-soft);
+}
+
+.ready-list li::marker {
+  color: var(--orange);
+}
+
+.ready-list strong {
+  color: var(--brown);
+}
+
+.form-section {
+  scroll-margin-top: calc(var(--header-h) + 14px);
+}
+
+.form-section + .form-section {
+  margin-top: 34px;
+  padding-top: 30px;
+  border-top: 1px solid var(--sand);
+}
+
+#step-2 {
+  padding-bottom: 0;
+}
+
+.selection-bar {
+  position: static;
+  border-radius: var(--radius);
+}
+
+.amount-card-inline {
+  margin-bottom: 14px;
+}
+
+.review-main {
+  width: 100%;
+  max-width: 760px;
+}
+
+.review-main .form-card + .form-card {
+  margin-top: 14px;
+}
+
+#help {
+  scroll-margin-top: calc(var(--header-h) + 14px);
 }
 
 /* --------------------------------------------------------------------------
