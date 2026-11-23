@@ -29,6 +29,20 @@ easier to review later.
   form, the picker shows them; their ID photo and ID number are reused. The
   backend still receives the same file ID from every player row and moves the
   Drive file once.
+
+## Single-page form
+
+- **The form is one page.** The hero, the contact, game search, people, entries
+  and payment are all on the page; there is no 4-step wizard, no back buttons
+  between steps and no step progress bar. Returning visitors resume at the
+  first section that still needs work.
+- **Registration data is two flat tabs.** The normalized schema was replaced
+  with `Team Games` (9 player slots) and `Solo Games` (2), version 2. One row
+  per entry repeats the contact, game, fee and status, so admin review is one
+  tab. Existing workbooks upgrade on the first request after deployment.
+- **Payment status editing is direct.** Changing **PaymentStatus** on any row
+  updates the whole registration group and sends the status email. There is no
+  separate admin page.
 - **We can have several entries per game.** One entry is one game, age group,
   division and team. If two teams need the same game, add another entry. The
   player pool is shared by design, so a student who plays in three games is
@@ -45,10 +59,11 @@ easier to review later.
 ## Fees and capacity
 
 - **Capacity counts entries, not players.** For full-game detection, the backend
-  counts rows in the **Entries** tab whose `PaymentStatus` is not `Rejected` and
-  compares them with the game `MaxEntries`. This is the number the registration
-  team should use for room management: it counts people who are in teams, not
-  how many players are included.
+  counts rows in the **Team Games** and **Solo Games** tabs whose
+  `PaymentStatus` is not `Rejected` and compares them with the game
+  `MaxEntries`. This is the number the registration team should use for room
+  management: it counts people who are in teams, not how many players are
+  included.
 - **Uploads retry automatically.** Phone connections are unstable; the upload
   retries up to three times with backoff, and pressing Submit again after a
   network loss is still safe because of the token.
@@ -85,8 +100,8 @@ easier to review later.
 - **Focus and live regions.** Errors focus the first invalid field and use
   `aria-live`. Toasts and the progress bar use live regions.
 - **HTML5 inputs where possible.** Date pickers, switches and search are native.
-- **Skip link and progress bar.** Screen readers can jump to the form; the
-  progress bar is an accessible name for steps.
+- **Skip link and section names.** Screen readers jump to the form; each
+  section has a landmark and a heading it can be jumped to.
 - **Avoid sounds.** The sheet says it "says often" rather than playing audio.
 
 ## Animations and visuals
