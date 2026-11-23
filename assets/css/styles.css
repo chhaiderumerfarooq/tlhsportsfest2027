@@ -2863,6 +2863,18 @@ ol {
   color: var(--orange);
 }
 
+.fields-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .fields-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ready-list strong {
   color: var(--brown);
 }
