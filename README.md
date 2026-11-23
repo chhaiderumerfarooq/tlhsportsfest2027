@@ -6,10 +6,12 @@ plain static website, a Google Apps Script backend and a Google Sheet.
 ## What is here
 
 - **Frontend** in `index.html`, `assets/css/` and `assets/js/`: a mobile-first
-  four-step wizard, live age and fee checks, draft saving, bank-detail copy,
-  upload retries and a Print summary. No framework and no build step.
+  single-page registration form, live age and fee checks, draft saving,
+  bank-detail copy, upload retries and a print summary. No framework and no
+  build step.
 - **Backend** in `backend/`: one Apps Script project connected to the Sheet.
-  It is deployed as a web app with a stable `/exec` URL.
+  It is deployed as a web app with a stable `/exec` URL. Registrations are
+  stored in two flat tabs, **Team Games** and **Solo Games**, one row per entry.
 - **Shared rules** in `shared/rules.js`, the single source of truth for prices,
   age eligibility, division rules, contact validation and formula sanitising.
   `scripts/sync-rules.js` copies it to `backend/Rules.gs` and
@@ -35,6 +37,25 @@ plain static website, a Google Apps Script backend and a Google Sheet.
 
 `setupWorkbook()` is still the safe repair command. Running it again never
 deletes data.
+
+## Sheet layout
+
+- **Team Games** — one row per team entry, with columns for up to 9 players.
+- **Solo Games** — one row per individual or doubles entry, with 2 player slots.
+- Every row repeats the contact, game, fee, payment and age-check fields, so a
+  row can be read without joining other tabs.
+- Rows from the same registration share a `RegistrationID`. Changing
+  `PaymentStatus` on any one row updates every row in that group and can send
+  the status email.
+- `AgeCheck`, `PaymentStatus`, `NoteToRegistrant` and `AdminNotes` are the
+  editable columns for the event team. Other columns are script-written and
+  protected with a warning.
+- `Config`, `Games`, `Dashboard` and `Logs` remain the settings, game list,
+  summary and audit tabs.
+
+Older workbooks are upgraded lazily on the first request after deployment: the
+flat tabs are created, legacy `Submissions` / `Entries` / `Players` rows are
+copied in, and the old tabs are renamed `Archive - …` and hidden.
 
 ## Owners and sources
 
@@ -80,6 +101,7 @@ offline mock, or set `USE_MOCK = true` while working without a backend.
    - `backend/Utils.gs`
    - `backend/Rules.gs`
    - `backend/SeedGames.gs`
+   - `backend/FlatSheets.gs`
    - `backend/Workbook.gs`
    - `backend/Main.gs`
    - `backend/Emails.gs`
@@ -165,6 +187,7 @@ Make sure your local `clasp` project contains the same files as this repo:
 ├── Utils.gs
 ├── Rules.gs
 ├── SeedGames.gs
+├── FlatSheets.gs
 ├── Workbook.gs
 ├── Main.gs
 ├── Emails.gs
