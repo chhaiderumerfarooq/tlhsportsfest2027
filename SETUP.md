@@ -37,6 +37,7 @@ backend/appsscript.json
 backend/Utils.gs
 backend/Rules.gs
 backend/SeedGames.gs
+backend/FlatSheets.gs
 backend/Workbook.gs
 backend/Main.gs
 backend/Emails.gs
@@ -48,8 +49,8 @@ backend/Emails.gs
 3. Add the other files. For each, in the Apps Script project:
    - Click the **+ New File** icon or press **File > New > App Script**.
    - Paste the contents of the file.
-   - Set the file name: `Utils.gs`, `Rules.gs`, `SeedGames.gs`, `Workbook.gs`,
-     `Main.gs`, `Emails.gs`.
+   - Set the file name: `Utils.gs`, `Rules.gs`, `SeedGames.gs`, `FlatSheets.gs`,
+     `Workbook.gs`, `Main.gs`, `Emails.gs`.
 4. Click **Save**, then press **Deploy > Create a new deployment** and **Done**
    (see §4).
 
@@ -70,13 +71,19 @@ the authorisation prompt and any setup error in a readable dialog.
 
 The script creates and repairs these tabs:
 
-- `Config` (event dates, bank details, contacts)
+- `Team Games`, `Solo Games` — one flat row per registration, with duplicated
+  player columns so every row is self-contained
+- `Dashboard` — summary counts and revenue by status
 - `Games` (35 seed games, all `Active = TRUE` except **Mafia (Hidden Game)**)
-- `Submissions`, `Entries`, `Players`
-- `Dashboard`, `Logs`
+- `Config` (event dates, bank details, contacts)
+- `Logs`
 
-The menu **TLH Sports Fest > Set up or repair workbook** can be run again at any
-time; it never deletes data.
+The menu **TLH Sports Fest > Set up or repair workbook** can be run again at
+any time; it never deletes data. Legacy `Submissions`, `Entries` and `Players`
+tabs, if present, are renamed to `Archive - …` and hidden after migration.
+
+Older workbooks upgrade themselves on the first request after deployment: the
+flat tabs appear, legacy rows are copied in, then the archive tabs are hidden.
 
 Expected authorisation:
 
@@ -128,9 +135,12 @@ and has `USE_MOCK = false`. If you create a **new** deployment:
 Run through `TESTING.md` with a phone. Cover:
 
 - A single-player game.
-- A team game.
-- A U19 entry.
-- A reload during the bank step.
+- Details, games, players and payment are all visible on the same page.
+- Add one entry, then add players with the dialog; **Save & add another**
+  prepares the next player.
+- The bank card updates the total, then edit `PaymentStatus` to `Verified` in
+  **Team Games** or **Solo Games** and confirm the status email.
+- A reload halfway through the form. The draft is restored.
 - The mock mode if needed.
 
 ## 8. If the process is stuck
