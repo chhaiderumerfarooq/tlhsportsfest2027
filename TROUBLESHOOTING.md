@@ -2,6 +2,13 @@
 
 Do not guess when something fails: check the **Logs** tab first.
 
+## Where are my registrations?
+
+Registrations live in **Team Games** and **Solo Games**, one row per entry.
+Look there; the **Dashboard** also shows counts by status. If the sheet is old,
+look in **Archive - Submissions**, **Archive - Entries** and **Archive -
+Players** — their rows were copied into the flat tabs.
+
 ## I cannot find the Google Sheet
 
 The deployed backend creates the Sheet automatically the first time it receives
@@ -24,7 +31,21 @@ clicked **Deploy**).
    changes that do not show up on the live site.
 3. On the site, clear the browser cache (force reload on a phone), then re-open
    the page.
-4. If you are an admin, press **TLH Sports Fest > Refresh website data**.
+4. If the code changed in this build, publish a new **Deployment** from the
+   Apps Script deployment manager (or push a new Pages build) — old drafts and
+   analytics are unchanged, so republishing is safe.
+5. If you are an admin, press **TLH Sports Fest > Refresh website data**.
+
+## The flat tabs (`Team Games` / `Solo Games`) are missing
+
+On the first request after a new backend is deployed, the script upgrades the
+workbook: it creates the tabs, copies legacy rows from **Submissions**,
+**Entries** and **Players**, and hides the old tabs as
+**Archive - …**.
+
+1. Reload the page and check **Logs** for `upgradeFlatSchema` errors.
+2. If you see the error, run **TLH Sports Fest > Set up or repair workbook**
+   and then refresh the site.
 
 ## The form says the browser is offline
 
@@ -138,7 +159,7 @@ registration, but the email failed.
 If a student has a 2G/3G connection:
 
 1. Use Wi-Fi if possible.
-2. Restart the phone, or go back to the game selection screen and reload the page.
+2. Restart the phone, or scroll up to the games section and reload the page.
    The draft is saved on the device, so work is not lost.
 3. The site retries uploads up to three times.
 4. If the phone loses signal after clicking Submit, open the form again and press
@@ -153,6 +174,7 @@ first deploy:
 2. Run `setupWorkbook()` once.
 3. In **Deploy > Get started > Web app**, click **Deploy**.
 4. After a few seconds, refresh the browser.
+5. Check **Logs** for `upgradeFlatSchema` failures if the sheets are missing.
 
 If still empty after 10 minutes, call the event heads or open a ticket. The
 system remains in the Apps Script project; reinstalling the workbook is not
