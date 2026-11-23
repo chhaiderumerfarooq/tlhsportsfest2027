@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -112,4 +113,72 @@ test('index.html includes a11y and share metadata, no remote scripts', () => {
 test('package.json exposes the required scripts', () => {
   const pkg = JSON.parse(read('package.json'));
   ['test', 'sync', 'seed', 'serve'].forEach((script) => assert.ok(pkg.scripts[script], 'missing script ' + script));
+});
+
+test('the registration page is one page with all sections visible', () => {
+  const html = read('index.html');
+  const sectionIds = ['step-1', 'step-2', 'step-3', 'step-4'];
+  sectionIds.forEach((id) => {
+    const match = html.match(new RegExp('<section[^>]*id="' + id + '"[^>]*>'));
+    assert.ok(match, 'missing section ' + id);
+    assert.ok(!/hidden/.test(match[0]), id + ' must not be hidden');
+  });
+  const formIds = [
+    'contact-name', 'contact-role', 'contact-whatsapp', 'contact-email',
+    'contact-institution', 'game-search', 'games-grid', 'games-empty',
+    'entries-list', 'review-entries', 'review-totals', 'amount-value',
+    'transaction-id', 'consent', 'submit-btn'
+  ];
+  formIds.forEach((id) => assert.ok(html.includes('id="' + id + '"'), 'missing ' + id));
+  ['wizard-form', 'games-toolbar', 'step1-next', 'step2-next', 'step3-next', 'submit-btn'].forEach((id) => {
+    const needle = id === 'games-toolbar' ? 'class="games-toolbar"' : 'id="' + id + '"';
+    assert.ok(html.includes(needle), 'missing ' + id);
+  });
+});
+
+test('the page has no step wizard or progress navigation', () => {
+  const html = read('index.html');
+  assert.ok(!html.includes('step2-back'), 'the old back-to-details button must be gone');
+  assert.ok(!html.includes('step3-back'), 'the old back-to-games button must be gone');
+  assert.ok(!html.includes('step4-back'), 'the old back-to-people button must be gone');
+  assert.ok(!html.includes('id="progress-bar"'), 'there is no step progress bar');
+  assert.ok(!html.includes('class="progress-item"'), 'there are no step progress items');
+  assert.ok(!html.includes('data-step='), 'step data attributes were removed');
+  assert.ok(html.includes('id="wizard-form"'), 'the one form wraps all sections');
+});
+
+test('FlatSheets.gs defines the two registration tabs', () => {
+  const flat = read('backend/FlatSheets.gs');
+  const sandbox = {};
+  vm.createContext(sandbox);
+  vm.runInContext(flat, sandbox);
+
+  const defs = sandbox.flatSheetDefs_();
+  assert.equal(defs.length, 2);
+  assert.equal(defs[0].name, 'Team Games');
+  assert.equal(defs[1].name, 'Solo Games');
+  assert.equal(defs[0].maxPlayers, 9);
+  assert.equal(defs[1].maxPlayers, 2);
+
+  const col = sandbox.TLH_FLAT_COL;
+  const teamHeaders = sandbox.flatHeadersForDef_(defs[0]);
+  assert.equal(teamHeaders.length, col.playerStart + 9 * 4);
+  assert.equal(teamHeaders[col.paymentStatus], 'PaymentStatus');
+  assert.equal(teamHeaders[col.playerStart], 'Player1Name');
+  assert.equal(teamHeaders[col.playerStart + 8 * 4], 'Player9Name');
+  const soloHeaders = sandbox.flatHeadersForDef_(defs[1]);
+  assert.equal(soloHeaders[col.playerStart + 4], 'Player2Name');
+  assert.equal(soloHeaders[col.playerStart + 3], 'Player1Age');
+  assert.ok(read('backend/Workbook.gs').includes('setNumberFormat(\'yyyy-mm-dd\')'), 'DOB cells are date formatted');
+  assert.ok(read('backend/Workbook.gs').includes('setNumberFormat(\'@\')'), 'text cells keep strings');
+});
+
+test('workbook setup and upgrade logic repairs legacy tabs safely', () => {
+  const workbook = read('backend/Workbook.gs');
+  const utils = read('backend/Utils.gs');
+  assert.ok(workbook.includes('function removeDefaultSheet_'), 'default Sheet1 cleanup exists');
+  assert.ok(workbook.includes('migrateLegacySheets_'), 'legacy migration entry point');
+  assert.ok(workbook.includes('archiveLegacySheets_'), 'legacy tabs are archived');
+  assert.ok(workbook.includes('applyPaymentStatusToRegistration_'), 'payment status propagation exists');
+  assert.ok(utils.includes("ss.getSheetByName('Team Games') && ss.getSheetByName('Solo Games')"), 'upgrade detection');
 });
