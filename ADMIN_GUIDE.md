@@ -56,41 +56,69 @@ working example.
 
 ## 4. Verify a payment
 
-1. Open **Submissions**.
-2. Choose the row, press **Verify** in the **PaymentStatus** dropdown (or type
-   `Verified`).
-3. The script writes the time to **VerifiedAt**, copies the status to the
-   matching **Entries** rows, and sends an email to the registered email.
+Registrations live in **Team Games** and **Solo Games**, one row per entry. A
+registration with more than one entry has several rows that share the same
+`RegistrationID`.
+
+1. Open **Team Games** or **Solo Games**.
+2. Click into any row and type `Verified` or `Rejected` in the
+   **PaymentStatus** dropdown (the cell already has a dropdown; typing the same
+   values is also fine).
+3. The script writes the time to **VerifiedAt** on every row of the group and
+   sends an email to the registered email.
+
+Notes:
+
+- Editing **PaymentStatus** is the only thing that emails the person or changes
+  the website. **AgeCheck** uses a separate dropdown, and **NoteToRegistrant**
+  is text for the next status email, but setting it alone does nothing.
+- You can set **PaymentStatus** back to **Pending** anytime. A status email
+  fires each time the value actually changes.
 
 To reject a payment:
 
-1. Choose the row and set **PaymentStatus** to `Rejected`.
-2. Optionally type a note in **InternalNotes** or **NoteToRegistrant**. The note
-   text is sent to the registrant. Do not write anything sensitive in this cell;
+1. Set **PaymentStatus** to `Rejected` as above.
+2. Optionally type a note in **NoteToRegistrant**; the registrant receives it
+   with the rejection email. Do not write anything sensitive in this cell;
    anything you type goes to the person.
-3. The registrant receives an email and their Drive folder is not moved or
-   deleted.
-
-You can set **PaymentStatus** back to **Pending** anytime. Status changes are
-the only way the site tells people about Verified or Rejected.
+3. Their Drive folder is not moved or deleted.
 
 ## 5. Find every player of a game
 
-1. Open the **Players** tab.
-2. Click the filter icon on the **Game** column header, or press
-   **Data > Create a filter**, if it is not already active.
-3. Type or select the game name. You get the list of full names and DOBs.
-4. For a team entry, the **Roster** text in the **Entries** tab has one line per
-   player: `1. Name (DOB)`, `2. Name (DOB)`.
+1. Open **Team Games** or **Solo Games**.
+2. Press **Data > Create a filter** (or press **Filter** on the toolbar).
+3. Set the filter on the **Game** column to the game name.
+4. Each row shows the player columns filled in: `Player1Name`, `Player1DOB`,
+   `Player1CNIC`, `Player1Age`, and so on. Blank cells are unused slots.
+
+All rows of one registration repeat the same player data; there is no separate
+player list tab.
 
 ## 6. Find a submission by ID
 
-1. Open **Submissions**.
-2. Use the search box on the top right, type the `TSF3-0000` ID, or sort by the
-   **SubmissionID** column.
-3. Double-click the cell to edit notes if needed.
+1. Open **Team Games** or **Solo Games**; use **Find** (Ctrl/Cmd+F) or scroll
+   down.
+2. Type the `TSF3-0007` RegistrationID into the browser's find box or sort by
+   the **RegistrationID** column.
+3. Double-click **NoteToRegistrant** or **AdminNotes** to edit those cells if
+   needed.
 
-The SubmissionID is unique: `TSF3-0007`, for example.
+The RegistrationID is unique: `TSF3-0007` appears on every row of the group.
+
+## 6b. Resend a confirmation email
+
+1. In the flat tab, click any row of the registration.
+2. Choose **TLH Sports Fest > Resend confirmation email for selected row…**,
+   or re-set **PaymentStatus** to `Verified` and back to `Pending` to trigger a
+   status email.
+
+## 6c. Menu helpers
+
+**TLH Sports Fest** also offers:
+
+- **Set payment status for selected rows…** — picks Pending, Verified or
+  Rejected for every selected row (and every row of their registrations).
+- **Set age check for selected rows…** — picks OK or Review.
 
 ## 7. What to do on event day
 
@@ -99,8 +127,8 @@ The SubmissionID is unique: `TSF3-0007`, for example.
    **TLH SF3 Payment Proofs**. Each registration has a folder named
    `TSF3-0007 - Contact Name`.
 3. Keep the site open while registering ends at **20 December 2026**.
-4. After the event, send any missing status emails from the menu or re-open
-   verified submissions.
+4. After the event, re-open verified registrations or use the menu to resend
+   anything missing.
 
 ## 8. Drive access
 
@@ -125,6 +153,17 @@ Do not type a number that begins with `=`, `+`, `-` or `@`; the script treats
 that as a formula and will reject it. Type the value as text, for example
 `=HYPERLINK(...)` typed as `'=HYPERLINK(...)` when needed.
 
-Do not change `Submissions` columns except in obvious ways. If you must
-clear a column, ask a developer; the structure is used by the mail and export
-code.
+Do not change script columns. Protected columns (marked with a warning shield)
+hold timestamps, fees, proofs, folders and the flattened player slots. The
+editable columns are:
+
+- **PaymentStatus** (with the propagation behaviour above)
+- **AgeCheck** (direct editing is preferred over the menu)
+- **NoteToRegistrant** — text sent with the next status email
+- **AdminNotes** — extra internal text
+- TransactionID on new rows (whatever you type there)
+
+In `Games`, you can change names, fees and text — that is the normal admin
+workflow and the site picks it up within a minute.
+
+In `Config`, use the `yyyy-mm-dd` form the site expects for the dates.
