@@ -120,9 +120,9 @@ function apiSubmit_(data) {
   var cachedResult = getCachedSubmissionResult_(token);
   if (cachedResult) return cachedResult;
 
-  var repeatRow = findSubmissionRowByToken_(token);
-  if (repeatRow) {
-    var repeatResult = submissionSuccessFromRow_(repeatRow);
+  var repeatRows = findFlatRowsByToken_(token);
+  if (repeatRows.length) {
+    var repeatResult = submissionSuccessFromFlatRows_(repeatRows);
     cacheSubmissionResult_(token, repeatResult);
     return repeatResult;
   }
@@ -235,9 +235,9 @@ function apiSubmit_(data) {
 
   try {
     // Someone else may have completed the same token while we waited.
-    repeatRow = findSubmissionRowByToken_(token);
-    if (repeatRow) {
-      var raced = submissionSuccessFromRow_(repeatRow);
+    repeatRows = findFlatRowsByToken_(token);
+    if (repeatRows.length) {
+      var raced = submissionSuccessFromFlatRows_(repeatRows);
       cacheSubmissionResult_(token, raced);
       return raced;
     }
@@ -293,96 +293,52 @@ function apiSubmit_(data) {
         var finalIdName = submissionId + '_P' + padNumber_(playerFileCounter, 2) + '_id.' + extensionForMime_(fileToMove.getMimeType());
         fileToMove.setName(finalIdName);
         fileToMove.moveTo(idFolder);
-        movedIdFiles[playerForFile.idFileId] = {
-          url: fileToMove.getUrl(),
-          name: finalIdName
-        };
+        movedIdFiles[playerForFile.idFileId] = true;
       }
     }
 
     var entryIds = validation.entries.map(function (item, index) {
       return submissionId + '-' + padNumber_(index + 1, 2);
     });
-    var flags = computeDuplicateFlags_(validation.entries, entryIds, map.AgeCutoffDate);
+    var flags = computeDuplicateFlags_(validation.entries, entryIds);
+    var paymentProofLink = '=HYPERLINK("' + paymentFile.getUrl() + '","View payment proof")';
+    var paymentFolderLink = '=HYPERLINK("' + paymentFolder.getUrl() + '","Open payment folder")';
+    var idFolderLink = '=HYPERLINK("' + idFolder.getUrl() + '","Open ID documents")';
 
-    var feeType = totals.feeTypeLabel;
-    var submissionRow = [
-      submissionId,
-      now,
-      sanitizeCell(validation.contact.name),
-      sanitizeCell(validation.contact.role),
-      validation.contact.whatsapp,
-      sanitizeCell(validation.contact.email),
-      sanitizeCell(validation.contact.institution),
-      validation.entries.length,
-      feeType,
-      totals.subtotalRegular,
-      totals.netTotal,
-      '=HYPERLINK("' + paymentFile.getUrl() + '","View payment proof")',
-      sanitizeCell(validation.payment.transactionId),
-      'Pending',
-      '',
-      '',
-      '',
-      '=HYPERLINK("' + paymentFolder.getUrl() + '","Open Drive folder")',
-      'PENDING',
-      token
-    ];
-
-    var entryRows = validation.entries.map(function (item, index) {
-      return [
-        entryIds[index],
-        submissionId,
-        now,
-        item.gameId,
-        sanitizeCell(item.game),
-        sanitizeCell(item.category),
-        sanitizeCell(item.format),
-        sanitizeCell(item.ageGroup),
-        sanitizeCell(item.division),
-        sanitizeCell(item.teamName),
-        sanitizeCell(item.institution),
-        item.players.length,
-        totals.lines[index].fee,
-        feeType,
-        sanitizeCell(buildRoster(item.players)),
-        'Pending',
-        sanitizeCell(flags[entryIds[index]] || ''),
-        ''
-      ];
-    });
-
-    var playerRows = [];
-    validation.entries.forEach(function (item, entryIndex) {
-      item.players.forEach(function (player, playerIndex) {
-        var idLink = '';
-        if (player.idFileId && movedIdFiles[player.idFileId]) {
-          idLink = '=HYPERLINK("' + movedIdFiles[player.idFileId].url + '","View ID")';
-        }
-        var age = ageOnCutoff(player.dob, map.AgeCutoffDate);
-        playerRows.push([
-          entryIds[entryIndex] + '-P' + padNumber_(playerIndex + 1, 2),
-          entryIds[entryIndex],
-          submissionId,
-          sanitizeCell(item.game),
-          sanitizeCell(item.ageGroup),
-          sanitizeCell(item.division),
-          playerIndex + 1,
-          player.role,
-          sanitizeCell(player.name),
-          player.dob,
-          age === null ? '' : age,
-          player.idNumber ? sanitizeCell(player.idNumber) : '',
-          idLink
-        ]);
+    var items = validation.entries.map(function (item, index) {
+      return buildFlatRow_({
+        registrationId: submissionId,
+        entryId: entryIds[index],
+        timestamp: now,
+        contact: validation.contact,
+        gameId: item.gameId,
+        game: item.game,
+        category: item.category,
+        format: item.format,
+        ageGroup: item.ageGroup,
+        division: item.division,
+        teamName: item.teamName,
+        players: item.players,
+        fee: totals.lines[index].fee,
+        regularFee: totals.lines[index].regularFee,
+        feeType: totals.feeTypeLabel,
+        paymentStatus: 'Pending',
+        transactionId: validation.payment.transactionId,
+        paymentProof: paymentProofLink,
+        verifiedAt: '',
+        ageCheck: 'OK',
+        flags: flags[entryIds[index]] || '',
+        note: '',
+        adminNotes: '',
+        registrationFolder: paymentFolderLink,
+        idFolder: idFolderLink,
+        emailStatus: 'PENDING',
+        token: token,
+        ageCutoffDate: map.AgeCutoffDate
       });
     });
 
-    var submissionsSheet = getSheet_('Submissions');
-    var submissionRowNumber = submissionsSheet.getLastRow() + 1;
-    appendRows_(submissionsSheet, [submissionRow]);
-    appendRows_(getSheet_('Entries'), entryRows);
-    appendRows_(getSheet_('Players'), playerRows);
+    appendFlatRows_(items);
     SpreadsheetApp.flush();
     clearConfigCache_();
 
@@ -427,7 +383,7 @@ function apiSubmit_(data) {
       }
     }
     try {
-      submissionsSheet.getRange(submissionRowNumber, 19).setValue(emailStatus);
+      setFlatEmailStatus_(submissionId, emailStatus);
     } catch (statusError) {
       // Never fail a registration because the status cell could not be written.
     }
@@ -453,7 +409,7 @@ function apiSubmit_(data) {
 
     logEvent_('INFO', 'submit', 'Created ' + submissionId, {
       entries: validation.entries.length,
-      players: playerRows.length,
+      players: validation.entries.reduce(function (sum, item) { return sum + item.players.length; }, 0),
       total: totals.netTotal,
       emailStatus: emailStatus
     });
@@ -471,85 +427,9 @@ function apiSubmit_(data) {
 }
 
 /* ------------------------------------------------------------------ *
- * Duplicate flags (never blocks a registration)
+ * Duplicate flags live in FlatSheets.gs because they read the flat tabs.
  * ------------------------------------------------------------------ */
 
 function nameKey_(value) {
   return String(value === null || value === undefined ? '' : value).trim().replace(/\s+/g, ' ').toLowerCase();
-}
-
-function computeDuplicateFlags_(entries, entryIds, cutoffDate) {
-  var entryGame = {};
-  var existing = {};
-
-  var entriesSheet = getSheet_('Entries');
-  var lastEntry = entriesSheet.getLastRow();
-  if (lastEntry >= 2) {
-    var entryValues = entriesSheet.getRange(2, 1, lastEntry - 1, 5).getValues();
-    for (var i = 0; i < entryValues.length; i++) {
-      entryGame[String(entryValues[i][0] || '')] = String(entryValues[i][3] || '');
-    }
-  }
-
-  var playersSheet = getSheet_('Players');
-  var lastPlayer = playersSheet.getLastRow();
-  if (lastPlayer >= 2) {
-    var playerValues = playersSheet.getRange(2, 1, lastPlayer - 1, 12).getValues();
-    for (var p = 0; p < playerValues.length; p++) {
-      var existingEntryId = String(playerValues[p][1] || '');
-      var gameId = entryGame[existingEntryId];
-      if (!gameId) continue;
-      if (!existing[gameId]) existing[gameId] = [];
-      existing[gameId].push({
-        entryId: existingEntryId,
-        nameKey: nameKey_(playerValues[p][8]),
-        dob: parseDateOnly(playerValues[p][9]),
-        id: normalizeIdNumber(playerValues[p][11])
-      });
-    }
-  }
-
-  var flags = {};
-  var addedThisSubmission = {};
-
-  entries.forEach(function (entry, index) {
-    var entryId = entryIds[index];
-    var list = [];
-    var seen = {};
-
-    function addFlag(text) {
-      if (seen[text]) return;
-      seen[text] = true;
-      list.push(text);
-    }
-
-    entry.players.forEach(function (player) {
-      var playerId = normalizeIdNumber(player.idNumber);
-      var playerName = nameKey_(player.name);
-      var playerDob = parseDateOnly(player.dob);
-      var pool = (existing[entry.gameId] || []).concat(addedThisSubmission[entry.gameId] || []);
-      pool.forEach(function (other) {
-        if (playerId && other.id && playerId === other.id) {
-          addFlag('Possible duplicate ID number (also in ' + other.entryId + ')');
-        }
-        if (playerName && playerDob && playerName === other.nameKey && playerDob === other.dob) {
-          addFlag('Possible duplicate name and date of birth (also in ' + other.entryId + ')');
-        }
-      });
-    });
-
-    if (!addedThisSubmission[entry.gameId]) addedThisSubmission[entry.gameId] = [];
-    entry.players.forEach(function (player) {
-      addedThisSubmission[entry.gameId].push({
-        entryId: entryId,
-        nameKey: nameKey_(player.name),
-        dob: parseDateOnly(player.dob),
-        id: normalizeIdNumber(player.idNumber)
-      });
-    });
-
-    flags[entryId] = list.slice(0, 5).join('; ');
-  });
-
-  return flags;
 }
