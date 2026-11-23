@@ -248,77 +248,43 @@ function sendStatusEmail_(data, status, note) {
 }
 
 /**
- * Rebuilds the data needed by the emails from the Sheet. Used by status
- * emails and by the Resend confirmation menu item.
+ * Rebuilds the data needed by the emails from the flat registration tabs.
+ * Used by status emails and by the Resend confirmation menu item.
  */
-function buildEmailDataFromSheet_(submissionId) {
-  var rowNumber = findSubmissionRowById_(submissionId);
-  if (!rowNumber) return null;
-  var values = getSheet_('Submissions').getRange(rowNumber, 1, 1, 20).getValues()[0];
+function buildEmailDataFromSheet_(registrationId) {
+  var rows = findFlatRowsByRegistrationId_(registrationId);
+  if (!rows.length) return null;
+  var first = rows[0];
   var map = readConfigMap_();
-
-  var entries = [];
-  var byEntryId = {};
-  var entriesSheet = getSheet_('Entries');
-  var lastEntry = entriesSheet.getLastRow();
-  if (lastEntry >= 2) {
-    var entryValues = entriesSheet.getRange(2, 1, lastEntry - 1, 18).getValues();
-    for (var i = 0; i < entryValues.length; i++) {
-      if (String(entryValues[i][1] || '') !== submissionId) continue;
-      var entry = {
-        entryId: String(entryValues[i][0] || ''),
-        game: String(entryValues[i][4] || ''),
-        category: String(entryValues[i][5] || ''),
-        format: String(entryValues[i][6] || ''),
-        ageGroup: String(entryValues[i][7] || ''),
-        division: String(entryValues[i][8] || ''),
-        teamName: String(entryValues[i][9] || ''),
-        institution: String(entryValues[i][10] || ''),
-        fee: Number(entryValues[i][12]) || 0,
-        players: []
-      };
-      entries.push(entry);
-      byEntryId[entry.entryId] = entry;
-    }
-  }
-
-  var playersSheet = getSheet_('Players');
-  var lastPlayer = playersSheet.getLastRow();
-  if (lastPlayer >= 2) {
-    var playerValues = playersSheet.getRange(2, 1, lastPlayer - 1, 13).getValues();
-    for (var p = 0; p < playerValues.length; p++) {
-      if (String(playerValues[p][2] || '') !== submissionId) continue;
-      var parent = byEntryId[String(playerValues[p][1] || '')];
-      if (!parent) continue;
-      parent.players.push({
-        name: String(playerValues[p][8] || ''),
-        dob: parseDateOnly(playerValues[p][9]),
-        role: String(playerValues[p][7] || ''),
-        idNumber: String(playerValues[p][11] || '')
-      });
-    }
-  }
-
-  var regularTotal = Number(values[9]) || 0;
-  var netTotal = Number(values[10]) || 0;
+  var entries = rows.map(function (row) {
+    return {
+      entryId: row.entryId,
+      game: row.game,
+      category: row.category,
+      format: row.format,
+      ageGroup: row.ageGroup,
+      division: row.division,
+      teamName: row.teamName,
+      institution: row.contact.institution,
+      fee: row.fee,
+      players: row.players
+    };
+  });
+  var regularTotal = rows.reduce(function (sum, row) { return sum + row.regularFee; }, 0);
+  var netTotal = rows.reduce(function (sum, row) { return sum + row.fee; }, 0);
   return {
-    submissionId: submissionId,
-    timestamp: values[1],
-    paymentStatus: String(values[13] || ''),
-    contact: {
-      name: String(values[2] || ''),
-      role: String(values[3] || ''),
-      whatsapp: String(values[4] || ''),
-      email: String(values[5] || ''),
-      institution: String(values[6] || '')
-    },
+    submissionId: registrationId,
+    timestamp: first.timestamp,
+    paymentStatus: first.paymentStatus,
+    note: first.note,
+    contact: first.contact,
     entries: entries,
     totals: {
       subtotalRegular: regularTotal,
       netTotal: netTotal,
       savings: Math.max(0, regularTotal - netTotal),
-      feeTypeLabel: String(values[8] || ''),
-      feeType: String(values[8] || '') === 'Early Bird' ? 'EARLY_BIRD' : 'REGULAR'
+      feeTypeLabel: first.feeType,
+      feeType: first.feeType === 'Early Bird' ? 'EARLY_BIRD' : 'REGULAR'
     },
     map: map
   };
