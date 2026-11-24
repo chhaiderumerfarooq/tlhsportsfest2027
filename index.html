@@ -1,486 +1,2035 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#A00509">
-  <title>TLH Sports Fest 3.0 — Register | 30–31 January 2027</title>
-  <meta name="description" content="Register for TLH Sports Fest 3.0 at TLH Canal Campus on Saturday 30 and Sunday 31 January 2027. Early bird fees end 10 December 2026.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TLH Sports Fest 2027 — Official Registration</title>
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="TLH Sports Fest 3.0 — Register now">
-  <meta property="og:description" content="Sat 30 and Sun 31 January 2027 · TLH Canal Campus. Register for ground games, indoor games, e-games and workshops. Early bird ends 10 December 2026.">
-  <meta property="og:image" content="assets/img/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:site_name" content="TLH Sports Fest 3.0">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="TLH Sports Fest 3.0 — Register now">
-  <meta name="twitter:description" content="Sat 30 and Sun 31 January 2027 · TLH Canal Campus. Early bird ends 10 December 2026.">
-  <meta name="twitter:image" content="assets/img/og-image.png">
-
-  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
-  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="manifest" href="site.webmanifest">
-
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & Variables ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fire-red: #A30B0B;
+      --burnt-orange: #E8550C;
+      --amber: #FFB020;
+      --near-black: #140A06;
+      --white: #FFFFFF;
+      --off-white: #FFF6EE;
+      --text-dark: #2A1710;
+      --border-soft: #decbc0;
+      --error-red: #C62828;
+      --success-green: #2E7D32;
+      --font-heading: 'Bebas Neue', 'Anton', sans-serif;
+      --font-body: 'Poppins', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--near-black);
+      color: var(--text-dark);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, var(--fire-red) 0%, var(--burnt-orange) 55%, var(--amber) 100%);
+      padding: 30px 20px 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.45);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.18), transparent 70%);
+      pointer-events: none;
+    }
+    .header-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .logo-container {
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .event-logo {
+      height: 95px;
+      max-width: 250px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+    }
+    .header h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      color: var(--white);
+      letter-spacing: 3px;
+      line-height: 1;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    }
+    .header .tagline {
+      color: var(--off-white);
+      font-size: 15px;
+      font-weight: 400;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Countdowns ── */
+    .countdown-section {
+      background: var(--near-black);
+      padding: 20px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+    }
+    .countdown-card {
+      background: linear-gradient(145deg, rgba(163,11,11,0.22), rgba(232,85,12,0.15));
+      border: 1px solid rgba(232,85,12,0.4);
+      border-radius: 12px;
+      padding: 14px 20px;
+      text-align: center;
+      flex: 1;
+      min-width: 270px;
+      max-width: 420px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
+    .countdown-card.highlight {
+      border-color: var(--amber);
+      box-shadow: 0 0 15px rgba(255,176,32,0.25);
+    }
+    .countdown-card h3 {
+      font-family: var(--font-heading);
+      color: var(--amber);
+      font-size: 16px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .countdown-timer {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .timer-block {
+      background: rgba(255,176,32,0.12);
+      border: 1px solid rgba(255,176,32,0.3);
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 52px;
+    }
+    .timer-block .num {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      color: var(--white);
+      display: block;
+      line-height: 1;
+    }
+    .timer-block .label {
+      font-size: 9px;
+      color: var(--amber);
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    .countdown-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .countdown-badge.open { background: var(--success-green); color: var(--white); }
+    .countdown-badge.closed { background: var(--error-red); color: var(--white); }
+
+    /* ── Main Container ── */
+    .main-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 16px 50px;
+    }
+    .form-card {
+      background: var(--off-white);
+      border-radius: 18px;
+      padding: 36px 30px;
+      margin-top: -10px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 30px; right: 30px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--fire-red), var(--burnt-orange), var(--amber));
+      border-radius: 0 0 6px 6px;
+    }
+
+    /* ── Progressive Steps Headers ── */
+    .step-section {
+      margin-bottom: 28px;
+      transition: all 0.3s ease;
+    }
+    .step-section.locked {
+      opacity: 0.45;
+      pointer-events: none;
+      filter: grayscale(0.6);
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(232,85,12,0.25);
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--fire-red), var(--burnt-orange));
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 23px;
+      color: var(--fire-red);
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+    .step-subtext {
+      font-size: 12px;
+      color: #7b655b;
+      margin-left: auto;
+      font-family: var(--font-body);
+      font-weight: 500;
+    }
+
+    /* ── Interactive Pill Grid Controls ── */
+    .filter-prompt {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pill-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .pill-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .pill-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 580px) {
+      .pill-grid-2, .pill-grid-3 { grid-template-columns: 1fr; }
+    }
+    .pill-btn {
+      background: var(--white);
+      border: 2px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      position: relative;
+    }
+    .pill-btn:hover {
+      border-color: var(--burnt-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(232,85,12,0.15);
+    }
+    .pill-btn.active {
+      background: linear-gradient(135deg, var(--fire-red), var(--burnt-orange));
+      color: var(--white);
+      border-color: var(--fire-red);
+      box-shadow: 0 6px 16px rgba(232,85,12,0.35);
+    }
+    .pill-btn.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      border-style: dashed;
+    }
+    .pill-btn .pill-sub {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+    .pill-btn.active .pill-sub {
+      color: var(--off-white);
+    }
+
+    /* ── Narrow Down Summary Bar ── */
+    .selection-breadcrumb {
+      background: #fdf5ee;
+      border: 1px solid rgba(232,85,12,0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #6d584e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .crumb-tag {
+      background: var(--burnt-orange);
+      color: var(--white);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    /* ── Category Headings & Games ── */
+    .category-group-block {
+      margin-bottom: 22px;
+    }
+    .category-group-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      color: var(--fire-red);
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .games-row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+    }
+    .game-card {
+      background: var(--white);
+      border: 2px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .game-card:hover {
+      border-color: var(--burnt-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(232,85,12,0.15);
+    }
+    .game-card.selected {
+      border-color: var(--burnt-orange);
+      background: #fff8f3;
+      box-shadow: 0 0 0 2px var(--burnt-orange), 0 4px 14px rgba(232,85,12,0.25);
+    }
+    .game-badge-type {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      background: #f0e6dd;
+      color: #634f45;
+    }
+    .game-card.selected .game-badge-type {
+      background: var(--burnt-orange);
+      color: var(--white);
+    }
+    .game-title {
+      font-weight: 600;
+      font-size: 14.5px;
+      color: var(--text-dark);
+      padding-right: 48px;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .game-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .game-chip {
+      font-size: 10px;
+      background: #fdf0e6;
+      color: var(--burnt-orange);
+      border: 1px solid rgba(232,85,12,0.25);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-weight: 500;
+    }
+    .game-players {
+      font-size: 11.5px;
+      color: #7b655b;
+      margin-bottom: 8px;
+    }
+    .game-price-box {
+      border-top: 1px solid #f2e6dc;
+      padding-top: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .game-price {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--fire-red);
+    }
+    .game-old-price {
+      font-size: 11px;
+      text-decoration: line-through;
+      color: #9c8a80;
+    }
+
+    /* ── Fee Banner ── */
+    .fee-summary-banner {
+      background: linear-gradient(135deg, rgba(163,11,11,0.08), rgba(232,85,12,0.08));
+      border: 1.5px solid rgba(232,85,12,0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      display: none;
+    }
+    .fee-summary-banner.show { display: block; }
+    .fee-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .fee-left h4 {
+      font-size: 15px;
+      color: var(--fire-red);
+      font-weight: 600;
+    }
+    .fee-left p {
+      font-size: 12px;
+      color: #6d584e;
+    }
+    .fee-right { text-align: right; }
+    .fee-big-amount {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      color: var(--fire-red);
+      line-height: 1;
+    }
+    .fee-early-tag {
+      display: inline-block;
+      background: var(--success-green);
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* ── Form Inputs & Layout ── */
+    .field { margin-bottom: 16px; }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 580px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+    label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+    }
+    label .req { color: var(--error-red); }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      color: var(--text-dark);
+      background: var(--white);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--burnt-orange);
+      box-shadow: 0 0 0 3px rgba(232,85,12,0.15);
+    }
+    input.error, select.error {
+      border-color: var(--error-red);
+      background-color: #fff8f8;
+      box-shadow: 0 0 0 2px rgba(198,40,40,0.15);
+    }
+    .error-text {
+      color: var(--error-red);
+      font-size: 11.5px;
+      margin-top: 3px;
+      display: none;
+    }
+    input.error + .error-text,
+    .has-error .error-text {
+      display: block;
+    }
+    .field-hint {
+      font-size: 11px;
+      color: #847065;
+      margin-top: 3px;
+    }
+
+    /* ── AUTOMATIC TEAM MEMBERS ROSTER ── */
+    .roster-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .roster-card.captain-card {
+      border-color: var(--burnt-orange);
+      background: #fffaf6;
+    }
+    .roster-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed #ebd9cd;
+    }
+    .roster-card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--fire-red);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .roster-badge {
+      font-size: 10px;
+      background: var(--burnt-orange);
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .remove-roster-btn {
+      background: none;
+      border: none;
+      color: var(--error-red);
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .add-extra-player-btn {
+      background: var(--white);
+      border: 2px dashed var(--burnt-orange);
+      color: var(--burnt-orange);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      transition: all 0.2s;
+      margin-top: 6px;
+    }
+    .add-extra-player-btn:hover {
+      background: #fff3eb;
+    }
+
+    /* ── File Upload Box ── */
+    .upload-zone {
+      border: 2px dashed var(--border-soft);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--white);
+      transition: all 0.2s;
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--burnt-orange);
+      background: #fff9f5;
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-zone .icon { font-size: 22px; margin-bottom: 2px; }
+    .upload-zone .text { font-size: 11.5px; color: #725d52; }
+    .upload-zone .text strong { color: var(--burnt-orange); }
+    .upload-status {
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--success-green);
+      display: none;
+    }
+    .upload-preview-img {
+      max-height: 70px;
+      max-width: 100px;
+      border-radius: 6px;
+      margin: 6px auto 0;
+      display: none;
+      border: 1px solid #ddd;
+    }
+
+    /* ── Bank Box ── */
+    .bank-box {
+      background: linear-gradient(135deg, var(--near-black), #26160e);
+      border-radius: 12px;
+      padding: 20px;
+      color: var(--white);
+      margin: 18px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+    .bank-box h4 {
+      font-family: var(--font-heading);
+      color: var(--amber);
+      font-size: 18px;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+    .bank-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+      font-size: 12.5px;
+    }
+    .bank-detail-row:last-of-type { border-bottom: none; }
+    .bank-detail-label { color: rgba(255,246,238,0.7); }
+    .bank-detail-val {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+    .copy-button {
+      margin-top: 14px;
+      background: rgba(255,176,32,0.18);
+      border: 1px solid rgba(255,176,32,0.4);
+      color: var(--amber);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .copy-button:hover { background: rgba(255,176,32,0.3); }
+    .copy-button.copied {
+      background: var(--success-green);
+      color: var(--white);
+      border-color: var(--success-green);
+    }
+
+    /* ── Submit Button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--fire-red) 0%, var(--burnt-orange) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-heading);
+      font-size: 24px;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(232,85,12,0.35);
+      margin-top: 10px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232,85,12,0.45);
+    }
+    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .spinner {
+      display: none;
+      width: 24px; height: 24px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    .submit-btn.loading .btn-label { display: none; }
+    .submit-btn.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal & Alerts ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,10,6,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .summary-modal {
+      background: var(--off-white);
+      border-radius: 16px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: popIn 0.3s ease-out;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-top {
+      background: linear-gradient(135deg, var(--fire-red), var(--burnt-orange), var(--amber));
+      padding: 24px;
+      text-align: center;
+      color: var(--white);
+    }
+    .modal-top h2 {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .modal-scroll {
+      padding: 20px 24px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .summary-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #ebd9cd;
+    }
+    .summary-table td:first-child {
+      font-weight: 600;
+      color: var(--fire-red);
+      width: 38%;
+    }
+    .modal-bottom {
+      padding: 14px 24px;
+      border-top: 1px solid #ebd9cd;
+      text-align: center;
+      background: var(--white);
+    }
+    .modal-close-btn {
+      background: linear-gradient(135deg, var(--fire-red), var(--burnt-orange));
+      color: var(--white);
+      border: none;
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+
+    /* ── Toast ── */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-dark);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 2000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
+    .toast-msg.error { background: var(--error-red); }
+    .toast-msg.success { background: var(--success-green); }
+  </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <div id="announcement" class="announcement" role="status" hidden></div>
-
-  <header class="site-header" id="site-header">
-    <div class="shell header-inner">
-      <a class="brand" href="#landing" aria-label="TLH Sports Fest 3.0 home">
-        <picture>
-          <source srcset="assets/img/logo-640.webp" type="image/webp">
-          <img src="assets/img/logo-640.png" alt="" width="64" height="59" class="brand-mark" decoding="async">
-        </picture>
-        <span class="brand-text">
-          <span class="brand-title">TLH Sports Fest 3.0</span>
-          <span class="brand-sub">III Edition · 30–31 Jan 2027</span>
-        </span>
-      </a>
-      <button class="btn btn-primary btn-small" id="header-register" type="button">Register now</button>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="Logo.png" alt="TLH Sports Fest 2027 Logo" class="event-logo" onerror="this.style.display='none'">
+      </div>
+      <h1 id="eventTitle">TLH SPORTS FEST 2027</h1>
+      <p class="tagline" id="eventTagline">Ignite the Spirit of Sports 🔥</p>
     </div>
   </header>
 
-  <main id="main">
-    <!-- Hero -->
-    <section id="landing" class="landing" aria-labelledby="landing-title">
-      <div class="hero">
-        <div class="hero-gradient" aria-hidden="true"></div>
-        <div class="embers" id="embers" aria-hidden="true"></div>
-        <div class="shell hero-inner">
-          <div class="hero-logo-wrap">
-            <picture>
-              <source srcset="assets/img/logo-640.webp" type="image/webp">
-              <img src="assets/img/logo-640.png" alt="TLH Sports Fest 3.0 logo" width="220" height="203" class="hero-logo" decoding="async">
-            </picture>
+  <!-- Deadlines Countdown -->
+  <section class="countdown-section">
+    <div class="countdown-card highlight" id="earlyBirdBox">
+      <h3>🐦 EARLY BIRD REGISTRATION</h3>
+      <div class="countdown-timer">
+        <div class="timer-block"><span class="num" id="ebDays">--</span><span class="label">Days</span></div>
+        <div class="timer-block"><span class="num" id="ebHours">--</span><span class="label">Hours</span></div>
+        <div class="timer-block"><span class="num" id="ebMins">--</span><span class="label">Mins</span></div>
+        <div class="timer-block"><span class="num" id="ebSecs">--</span><span class="label">Secs</span></div>
+      </div>
+      <span class="countdown-badge open" id="ebStatusBadge">ACTIVE DISCOUNT</span>
+    </div>
+
+    <div class="countdown-card" id="regularRegBox">
+      <h3>⏰ FINAL REGISTRATION DEADLINE</h3>
+      <div class="countdown-timer">
+        <div class="timer-block"><span class="num" id="rdDays">--</span><span class="label">Days</span></div>
+        <div class="timer-block"><span class="num" id="rdHours">--</span><span class="label">Hours</span></div>
+        <div class="timer-block"><span class="num" id="rdMins">--</span><span class="label">Mins</span></div>
+        <div class="timer-block"><span class="num" id="rdSecs">--</span><span class="label">Secs</span></div>
+      </div>
+      <span class="countdown-badge open" id="rdStatusBadge">REGISTRATIONS OPEN</span>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <div class="main-wrap">
+    <div class="form-card">
+      <form id="sportsFestForm" novalidate>
+
+        <!-- STEP 1: GENDER SELECTION -->
+        <div class="step-section" id="stepGenderSection">
+          <div class="step-header">
+            <div class="step-num">1</div>
+            <div class="step-title">SELECT GENDER</div>
+            <div class="step-subtext">Step 1 of 4</div>
           </div>
-          <p class="hero-kicker">TLH</p>
-          <h1 id="landing-title" class="hero-title display">Sports Fest</h1>
-          <p class="hero-edition display">3.0 <span>III Edition</span></p>
-          <p class="hero-meta">Sat 30 &amp; Sun 31 January 2027 <span class="dot">·</span> TLH Canal Campus</p>
+          <div class="filter-prompt">
+            <span>Participant / Team Gender:</span>
+            <span style="font-size:11px;color:#856e63;">Select to view eligible categories</span>
+          </div>
+          <div class="pill-grid pill-grid-2" id="genderGrid">
+            <button type="button" class="pill-btn" data-gender="Boys">
+              <span>👦 Boys / Male</span>
+              <span class="pill-sub">Includes Boys-only & Co-ed events</span>
+            </button>
+            <button type="button" class="pill-btn" data-gender="Girls">
+              <span>👧 Girls / Female</span>
+              <span class="pill-sub">Includes Girls & Co-ed events</span>
+            </button>
+          </div>
+        </div>
 
-          <div class="hero-actions">
-            <button class="btn btn-primary btn-hero" id="start-btn" type="button">Register now</button>
-            <div class="early-chip" id="landing-early-chip" aria-live="polite">
-              <span class="early-chip-label">Early bird</span>
-              <span class="early-chip-text">Loading dates…</span>
+        <!-- STEP 2: AGE CATEGORY SELECTION -->
+        <div class="step-section locked" id="stepAgeSection">
+          <div class="step-header">
+            <div class="step-num">2</div>
+            <div class="step-title">SELECT AGE CATEGORY</div>
+            <div class="step-subtext">Step 2 of 4</div>
+          </div>
+          <div class="filter-prompt">
+            <span>Eligible Age Bracket:</span>
+            <span style="font-size:11px;color:#856e63;">Strictly verified at registration</span>
+          </div>
+          <div class="pill-grid pill-grid-3" id="ageCategoryGrid">
+            <button type="button" class="pill-btn" data-age="U15">
+              <span>🟢 Under 15 (U15)</span>
+              <span class="pill-sub">CNIC / B-Form No. only</span>
+            </button>
+            <button type="button" class="pill-btn" data-age="U17">
+              <span>🟠 Under 17 (U17)</span>
+              <span class="pill-sub">CNIC Photo Verification required</span>
+            </button>
+            <button type="button" class="pill-btn" data-age="U19">
+              <span>🔴 Under 19 (U19)</span>
+              <span class="pill-sub">CNIC Photo Verification required</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: FORMAT SELECTION (Individual vs Team vs Doubles) -->
+        <div class="step-section locked" id="stepFormatSection">
+          <div class="step-header">
+            <div class="step-num">3</div>
+            <div class="step-title">INDIVIDUAL OR TEAM?</div>
+            <div class="step-subtext">Step 3 of 4</div>
+          </div>
+          <div class="filter-prompt">
+            <span>Choose Your Participation Format:</span>
+            <span style="font-size:11px;color:#856e63;" id="formatAvailabilityNote"></span>
+          </div>
+          <div class="pill-grid pill-grid-3" id="formatGrid">
+            <button type="button" class="pill-btn" data-format="Individual" id="formatBtnIndividual">
+              <span>🏃 Individual / Solo</span>
+              <span class="pill-sub" id="countIndividual">Single player & Workshops</span>
+            </button>
+            <button type="button" class="pill-btn" data-format="Team" id="formatBtnTeam">
+              <span>👥 Team Games</span>
+              <span class="pill-sub" id="countTeam">Full squads (5 to 9 players)</span>
+            </button>
+            <button type="button" class="pill-btn" data-format="Doubles" id="formatBtnDoubles">
+              <span>🎾 Doubles / Pairs</span>
+              <span class="pill-sub" id="countDoubles">2 Players per team</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4: GAME OR WORKSHOP SELECTION -->
+        <div class="step-section locked" id="stepGameSection">
+          <div class="step-header">
+            <div class="step-num">4</div>
+            <div class="step-title">CHOOSE YOUR GAME OR WORKSHOP</div>
+            <div class="step-subtext">Final Selection</div>
+          </div>
+
+          <!-- Current active filter breadcrumb -->
+          <div class="selection-breadcrumb" id="selectionBreadcrumb">
+            <span>Filtered for:</span>
+            <span class="crumb-tag" id="crumbGender">-</span>
+            <span class="crumb-tag" id="crumbAge">-</span>
+            <span class="crumb-tag" id="crumbFormat">-</span>
+          </div>
+
+          <!-- Grouped Games Container -->
+          <div id="groupedGamesContainer">
+            <!-- Dynamically populated grouped by Ground Games, Indoor Games, E-Games, Workshops -->
+          </div>
+
+          <div id="gameSelectionError" class="error-text" style="display:none;margin-top:8px;">⚠️ Please click on a game or workshop card above to select it.</div>
+
+          <!-- Selected Fee Banner -->
+          <div class="fee-summary-banner" id="feeSummaryBanner">
+            <div class="fee-flex">
+              <div class="fee-left">
+                <h4 id="feeGameName">Cricket</h4>
+                <p id="feeCategoryMeta">Team Game • U19, U17, U15</p>
+              </div>
+              <div class="fee-right">
+                <div class="fee-big-amount" id="feePayableText">Rs. 6,000</div>
+                <div id="feeTagContainer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: REGISTRATION DETAILS & ROSTER POPULATION -->
+        <div class="step-section" id="stepDetailsSection" style="display:none;">
+          <div class="step-header">
+            <div class="step-num">5</div>
+            <div class="step-title" id="detailsSectionHeading">REGISTRATION DETAILS</div>
+          </div>
+
+          <!-- TEAM SPECIFIC DETAILS (Team Name, School, Chaperone) -->
+          <div id="teamSpecificFields" style="display:none;">
+            <div class="field-row">
+              <div class="field">
+                <label>Team Name <span class="req">*</span></label>
+                <input type="text" id="teamNameInput" placeholder="e.g. Lahore Titans">
+                <div class="error-text">Please enter team name</div>
+              </div>
+              <div class="field">
+                <label>School / Institution Name <span class="req">*</span></label>
+                <input type="text" id="teamSchoolInput" placeholder="e.g. Roots Millennium">
+                <div class="error-text">Please enter school / institution</div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Chaperone / Coach / Teacher Name</label>
+                <input type="text" id="chaperoneNameInput" placeholder="Accompanying teacher or coach">
+              </div>
+              <div class="field">
+                <label>Chaperone Phone Number</label>
+                <input type="tel" id="chaperonePhoneInput" placeholder="03XX-XXXXXXX">
+              </div>
+            </div>
+
+            <div style="margin: 18px 0 10px; font-weight:700; color:var(--fire-red); font-size:14px; border-bottom:1.5px dashed var(--border-soft); padding-bottom:4px;">
+              Team Members Roster:
             </div>
           </div>
 
-          <p class="hero-status" id="landing-status" role="status"></p>
-          <p class="hero-games-note" id="landing-games-note"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- One-page registration -->
-    <section id="wizard" class="wizard" aria-labelledby="wizard-title">
-      <div class="shell wizard-shell">
-        <div class="wizard-top">
-          <p class="eyebrow">TLH Sports Fest 3.0 registration</p>
-          <h2 id="wizard-title" class="wizard-title">Register</h2>
-        </div>
-
-        <div class="register-intro">
-          <p class="muted">Everything is on this page: your details, games, players and payment. Your progress is saved on this device.</p>
-          <ul class="ready-list">
-            <li><strong>Date of birth</strong> for every player.</li>
-            <li><strong>CNIC or B-Form number and photo</strong> for U19 and U17 players.</li>
-            <li><strong>Bank transfer screenshot or PDF</strong> for the total.</li>
-          </ul>
-        </div>
-
-        <div class="wizard-alert" id="form-notice" role="status" hidden></div>
-        <div class="wizard-alert" id="wizard-alert" role="alert" hidden></div>
-
-        <form id="wizard-form" novalidate>
-          <div class="hp-field" aria-hidden="true">
-            <label for="hp-website">Leave this field empty</label>
-            <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          <!-- DYNAMICALLY POPULATED PLAYERS (For Solo: 1 player; For Team: Auto-populated roster) -->
+          <div id="rosterCardsContainer">
+            <!-- Populated via renderRosterFields() -->
           </div>
 
-          <!-- 1. Gender, age category, then the games list -->
-          <section class="step-panel form-section" id="step-1" aria-labelledby="step-1-title">
-            <div class="step-head">
-              <p class="step-kicker">1 · Choose a game</p>
-              <h3 id="step-1-title" class="section-title">Start by telling us who you are playing for</h3>
-              <p class="muted">Pick your gender and age category — the games list then shows only what you can play.</p>
-            </div>
-
-            <div class="form-card">
-              <div class="fields-row">
-                <div class="field">
-                  <label for="form-gender">Gender <span class="req">*</span></label>
-                  <select id="form-gender" data-form="gender" required>
-                    <option value="">Select gender…</option>
-                    <option value="Boy">Boy</option>
-                    <option value="Girl">Girl</option>
-                  </select>
-                  <p class="field-error" data-error-for="gender" aria-live="polite"></p>
-                </div>
-                <div class="field">
-                  <label for="form-age">Age category <span class="req">*</span></label>
-                  <select id="form-age" data-form="ageCategory" required>
-                    <option value="">Select age…</option>
-                    <option value="U19">U19</option>
-                    <option value="U17">U17</option>
-                    <option value="U15">U15</option>
-                    <option value="Open">Open</option>
-                  </select>
-                  <p class="field-error" data-error-for="ageCategory" aria-live="polite"></p>
-                </div>
-              </div>
-
-              <div class="games-toolbar">
-                <label class="search-field" for="game-search">
-                  <span class="sr-only">Search games</span>
-                  <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm6.2-1.3L21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <input id="game-search" type="search" placeholder="Search games…" autocomplete="off">
-                </label>
-                <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Game categories"></div>
-              </div>
-
-              <div class="games-grid" id="games-grid" aria-live="polite"></div>
-              <p class="empty-state" id="games-empty" hidden>No games match your gender, age or search. Try another word or category.</p>
-
-              <div class="selection-bar" id="selection-bar">
-                <div class="selection-summary">
-                  <span id="selection-count">Select a game</span>
-                  <strong id="selection-total">Rs 0</strong>
-                </div>
-              </div>
-            </div>
-
-            <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step1-next">Next: entry details</button>
-            </div>
-          </section>
-
-          <!-- 2. Entry details -->
-          <section class="step-panel form-section" id="step-2" aria-labelledby="step-2-title">
-            <div class="step-head">
-              <p class="step-kicker">2 · Entry details</p>
-              <h3 id="step-2-title" class="section-title">Set the division and team name</h3>
-              <p class="muted">Division is what separates Boys and Girls in team games. Team name goes on the scoreboard.</p>
-            </div>
-
-            <div class="form-card">
-              <div class="field">
-                <label for="entry-division">Division <span class="req">*</span></label>
-                <select id="entry-division" data-entry-field="division" required>
-                  <option value="">Select division…</option>
-                </select>
-                <p class="field-error" data-error-for="entry.division" aria-live="polite"></p>
-              </div>
-              <div class="field" id="entry-team-wrap" hidden>
-                <label for="entry-team-name">Team name <span class="req">*</span></label>
-                <input id="entry-team-name" data-entry-field="teamName" type="text" autocomplete="off" maxlength="60" placeholder="e.g. invaders">
-                <p class="field-error" data-error-for="entry.teamName" aria-live="polite"></p>
-              </div>
-            </div>
-
-            <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step2-next">Next: contact</button>
-            </div>
-          </section>
-
-          <!-- 3. Contact -->
-          <section class="step-panel form-section" id="step-3" aria-labelledby="step-3-title">
-            <div class="step-head">
-              <p class="step-kicker">3 · Your details</p>
-              <h3 id="step-3-title" class="section-title">Who should we contact?</h3>
-              <p class="muted">We use these details for this registration only.</p>
-            </div>
-
-            <div class="form-card">
-              <div class="field">
-                <label for="contact-name">Full name <span class="req">*</span></label>
-                <input id="contact-name" name="name" type="text" autocomplete="name" data-contact="name" required>
-                <p class="field-error" data-error-for="contact.name" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="contact-whatsapp">WhatsApp number <span class="req">*</span></label>
-                <input id="contact-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="0300 1234567" data-contact="whatsapp" required>
-                <p class="field-hint">Pakistani mobile. We use this for registration questions only.</p>
-                <p class="field-error" data-error-for="contact.whatsapp" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="contact-email">Email <span class="req">*</span></label>
-                <input id="contact-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="name@gmail.com" data-contact="email" required>
-                <p class="field-hint">Your confirmation and payment status are sent here.</p>
-                <p class="field-error" data-error-for="contact.email" aria-live="polite"></p>
-              </div>
-
-              <div class="field">
-                <label for="contact-institution">School or college <span class="req">*</span></label>
-                <input id="contact-institution" name="institution" type="text" autocomplete="organization" data-contact="institution" required>
-                <p class="field-error" data-error-for="contact.institution" aria-live="polite"></p>
-              </div>
-            </div>
-
-            <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step3-next">Next: players</button>
-            </div>
-          </section>
-
-          <!-- 4. Players -->
-          <section class="step-panel form-section" id="step-4" aria-labelledby="step-4-title">
-            <div class="step-head">
-              <p class="step-kicker">4 · Players</p>
-              <h3 id="step-4-title" class="section-title">Add the people playing</h3>
-              <p class="muted">Add each person once. The same student can be reused in another game without re-entering their details.</p>
-            </div>
-            <div id="entries-list" class="entries-list"></div>
-            <div class="step-actions">
-              <button class="btn btn-primary" type="button" id="step4-next">Next: payment</button>
-            </div>
-          </section>
-
-          <!-- 5. Payment -->
-          <section class="step-panel form-section" id="step-5" aria-labelledby="step-5-title">
-            <div class="step-head">
-              <p class="step-kicker">5 · Payment &amp; submit</p>
-              <h3 id="step-5-title" class="section-title">Pay and send your proof</h3>
-              <p class="muted">Transfer the exact total, keep the screenshot, then upload it here.</p>
-            </div>
-
-            <div class="review-main">
-              <div class="amount-card amount-card-inline" aria-live="polite">
-                <p class="amount-label">Amount to transfer</p>
-                <p class="amount-value" id="amount-value">Rs 0</p>
-                <p class="amount-note" id="amount-note">Early bird price</p>
-                <p class="amount-save" id="amount-save" hidden></p>
-              </div>
-
-              <div class="form-card">
-                <h4 class="card-title">Your entries</h4>
-                <div id="review-entries"></div>
-                <div id="review-totals" class="totals"></div>
-              </div>
-
-              <div class="form-card bank-card" id="bank-card">
-                <div class="card-title-row">
-                  <h4 class="card-title">Bank transfer</h4>
-                  <button class="btn btn-secondary btn-small" type="button" data-action="copy-all">Copy all</button>
-                </div>
-                <p class="muted">Transfer the exact amount. Keep the screenshot for the next step.</p>
-                <dl class="bank-list" id="bank-list"></dl>
-              </div>
-
-              <div class="form-card">
-                <h4 class="card-title">Payment proof <span class="req">*</span></h4>
-                <p class="muted">Upload a screenshot or PDF of the bank transfer. Maximum 5 MB after compression.</p>
-                <div id="payment-upload" class="upload-area"></div>
-                <p class="field-error" data-error-for="payment.proofFile" aria-live="polite"></p>
-
-                <div class="field">
-                  <label for="transaction-id">Transaction ID <span class="optional">(optional)</span></label>
-                  <input id="transaction-id" type="text" data-payment="transactionId" autocomplete="off" maxlength="120">
-                  <p class="field-hint">If your bank shows a reference number, add it here.</p>
-                  <p class="field-error" data-error-for="payment.transactionId" aria-live="polite"></p>
-                </div>
-              </div>
-
-              <div class="form-card">
-                <div class="notice notice-socials">
-                  <strong>Please note:</strong> Socials tickets are sold separately. They are not included in your registration fee.
-                </div>
-                <div class="check-field">
-                  <input id="consent" type="checkbox" data-payment="consent">
-                  <label for="consent" id="consent-label">I confirm that the details are correct.</label>
-                </div>
-                <p class="field-error" data-error-for="consent" aria-live="polite"></p>
-                <p class="privacy-note">We collect your contact details, player names, dates of birth, CNIC or B-Form numbers and uploaded documents only to run this event. Only the TLH Sports Fest registration team can see them. Files are stored in private Google Drive folders.</p>
-              </div>
-
-              <div class="notice notice-soft">
-                <strong>After you submit</strong>
-                <p>Your status is Pending verification. We check the payment proof by hand and email you. Keep your submission ID.</p>
-              </div>
-
-              <div class="step-actions">
-                <button class="btn btn-primary btn-submit" type="button" id="submit-btn">Submit registration</button>
-              </div>
-
-              <div class="submit-progress" id="submit-progress" hidden aria-live="polite">
-                <div class="progress-track"><div class="progress-fill" id="upload-progress-bar"></div></div>
-                <p id="submit-progress-text">Preparing…</p>
-              </div>
-              <div class="wizard-alert" id="submit-error" role="alert" hidden></div>
-            </div>
-          </section>
-        </form>
-
-        <p class="saved-note" id="saved-note" role="status" aria-live="polite"></p>
-      </div>
-    </section>
-
-    <!-- Done -->
-    <section id="done" class="done" aria-labelledby="done-title" hidden>
-      <div class="shell done-shell" id="done-content"></div>
-    </section>
-
-    <!-- Help -->
-    <section class="landing-body" id="help" aria-labelledby="contact-title">
-      <div class="shell">
-        <section class="contact-card" aria-labelledby="contact-title">
-          <h2 id="contact-title" class="section-title">Need help?</h2>
-          <p class="muted">Talk to the event heads on call or WhatsApp before you pay, if anything is unclear.</p>
-          <div class="contact-list" id="landing-contacts"></div>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="shell footer-inner">
-      <div class="footer-brand">
-        <picture>
-          <source srcset="assets/img/logo-640.webp" type="image/webp">
-          <img src="assets/img/logo-640.png" alt="" width="80" height="74" loading="lazy" decoding="async">
-        </picture>
-        <div>
-          <p class="footer-title">TLH Sports Fest 3.0</p>
-          <p class="footer-sub">III Edition · Sat 30 and Sun 31 January 2027 · TLH Canal Campus</p>
+          <!-- Add extra player button (only for team games with available substitute slots) -->
+          <button type="button" class="add-extra-player-btn" id="addExtraPlayerBtn" style="display:none;">
+            + Add Substitute / Extra Player
+          </button>
         </div>
-      </div>
-      <div class="footer-contacts" id="footer-contacts"></div>
-      <p class="footer-note">Socials tickets are sold separately and are not included in the registration fee.</p>
-    </div>
-  </footer>
 
-  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+        <!-- STEP 6: PAYMENT & PROOF -->
+        <div class="step-section" id="stepPaymentSection" style="display:none;">
+          <div class="step-header">
+            <div class="step-num">6</div>
+            <div class="step-title">BANK PAYMENT & PROOF</div>
+          </div>
 
-  <dialog id="game-dialog" class="modal" aria-labelledby="game-dialog-title">
-    <div class="modal-head">
-      <h2 id="game-dialog-title">Game details</h2>
-      <button class="icon-button" type="button" data-close-dialog aria-label="Close">×</button>
-    </div>
-    <div class="modal-body" id="game-dialog-body"></div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" type="button" data-close-dialog>Close</button>
-    </div>
-  </dialog>
+          <!-- Bank Alfalah Details -->
+          <div class="bank-box">
+            <h4>OFFICIAL BANK ACCOUNT DETAILS</h4>
+            <div class="bank-detail-row">
+              <span class="bank-detail-label">Bank Name</span>
+              <span class="bank-detail-val" id="bankNameDisplay">Bank ALFALAH</span>
+            </div>
+            <div class="bank-detail-row">
+              <span class="bank-detail-label">Account Title</span>
+              <span class="bank-detail-val" id="bankTitleDisplay">Genesis Educational Service Pvt Ltd.</span>
+            </div>
+            <div class="bank-detail-row">
+              <span class="bank-detail-label">IBAN / Account Number</span>
+              <span class="bank-detail-val" id="bankAccountDisplay">PK98ALFH0053001010451307</span>
+            </div>
+            <button type="button" class="copy-button" id="copyBankBtn" onclick="copyBankInfo()">
+              📋 Copy Bank Account Details
+            </button>
+          </div>
 
-  <dialog id="person-dialog" class="modal modal-person" aria-labelledby="person-dialog-title">
-    <form id="person-form" novalidate>
-      <div class="modal-head">
-        <h2 id="person-dialog-title">Add player</h2>
-        <button class="icon-button" type="button" data-close-person aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <p class="muted" id="person-dialog-context"></p>
-        <div class="field">
-          <label for="person-name">Full name <span class="req">*</span></label>
-          <input id="person-name" type="text" autocomplete="off" maxlength="80" required>
-          <p class="field-error" id="person-name-error" aria-live="polite"></p>
+          <!-- Payment Proof Upload -->
+          <div class="field">
+            <label>Payment Receipt / Transfer Screenshot <span class="req">*</span></label>
+            <div class="upload-zone" id="paymentDrop">
+              <input type="file" id="paymentProofFile" accept="image/*" required>
+              <div class="icon">🧾</div>
+              <div class="text"><strong>Click to upload</strong> screenshot of payment receipt / online transfer</div>
+              <div class="upload-status" id="paymentFileName">✓ Proof attached</div>
+              <img class="upload-preview-img" id="paymentPreview" alt="Payment preview">
+            </div>
+            <div class="error-text" id="paymentProofError" style="display:none;">Please attach screenshot of your payment receipt</div>
+            <div class="field-hint">Accepted formats: JPG, PNG, WEBP (Max 5MB)</div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-btn" id="submitFormBtn">
+            <span class="btn-label">🚀 SUBMIT REGISTRATION</span>
+            <div class="spinner"></div>
+          </button>
         </div>
-        <div class="field">
-          <label for="person-dob">Date of birth <span class="req">*</span></label>
-          <input id="person-dob" type="date" autocomplete="off" required>
-          <p class="field-hint" id="person-age-hint"></p>
-          <p class="field-error" id="person-dob-error" aria-live="polite"></p>
-        </div>
-        <div class="field" id="person-id-wrap" hidden>
-          <label for="person-id">CNIC or B-Form number <span class="req">*</span></label>
-          <input id="person-id" type="text" inputmode="numeric" autocomplete="off" maxlength="15" placeholder="35202-1234567-8">
-          <p class="field-hint">13 digits, with or without dashes.</p>
-          <p class="field-error" id="person-id-error" aria-live="polite"></p>
-        </div>
-        <div class="field" id="person-file-wrap" hidden>
-          <span class="field-label">CNIC or B-Form photo <span class="req">*</span></span>
-          <div class="upload-area upload-compact" id="person-file-area"></div>
-          <p class="field-error" id="person-file-error" aria-live="polite"></p>
-        </div>
-        <div class="wizard-alert" id="person-form-error" role="alert" hidden></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" type="button" data-close-person>Cancel</button>
-        <button class="btn btn-secondary" type="button" id="person-save-another" hidden>Save &amp; add another</button>
-        <button class="btn btn-primary" type="submit" id="person-save">Save player</button>
-      </div>
-    </form>
-  </dialog>
 
-  <dialog id="people-dialog" class="modal" aria-labelledby="people-dialog-title">
-    <form id="people-form" novalidate>
-      <div class="modal-head">
-        <h2 id="people-dialog-title">Add someone already in this form</h2>
-        <button class="icon-button" type="button" data-close-people aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <p class="muted" id="people-dialog-context"></p>
-        <div class="people-list" id="people-list"></div>
-        <p class="field-error" id="people-error" aria-live="polite"></p>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" type="button" id="people-new">Add a new person instead</button>
-        <button class="btn btn-primary" type="submit" id="people-add">Add selected</button>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog id="message-dialog" class="modal" aria-labelledby="message-dialog-title">
-    <div class="modal-head">
-      <h2 id="message-dialog-title">Please check</h2>
-      <button class="icon-button" type="button" data-close-dialog aria-label="Close">×</button>
+      </form>
     </div>
-    <div class="modal-body" id="message-dialog-body"></div>
-    <div class="modal-actions" id="message-dialog-actions"></div>
-  </dialog>
+  </div>
 
-  <div id="print-summary" class="print-summary" aria-hidden="true"></div>
-
-  <details id="mock-panel" class="mock-panel" hidden>
-    <summary>Mock mode <span class="mock-badge">no backend</span></summary>
-    <div class="mock-body">
-      <p class="mock-help">Preview controls. These do not appear in production.</p>
-      <label>Server time
-        <select data-mock="now">
-          <option value="real">Real time</option>
-          <option value="early-last">10 Dec 2026, 23:59 (early bird)</option>
-          <option value="regular">11 Dec 2026 (regular fees)</option>
-          <option value="close-last">20 Dec 2026, 23:59 (open)</option>
-          <option value="closed">21 Dec 2026 (closed)</option>
-        </select>
-      </label>
-      <label>Next submit result
-        <select data-mock="nextError">
-          <option value="SUCCESS">Success</option>
-          <option value="FEE_CHANGED">FEE_CHANGED</option>
-          <option value="VALIDATION_FAILED">VALIDATION_FAILED</option>
-          <option value="GAME_FULL">GAME_FULL</option>
-          <option value="FILE_INVALID">FILE_INVALID</option>
-          <option value="RATE_LIMITED">RATE_LIMITED</option>
-          <option value="BUSY">BUSY</option>
-          <option value="SERVER_ERROR">SERVER_ERROR</option>
-          <option value="NOT_OPEN">NOT_OPEN</option>
-          <option value="CLOSED">CLOSED</option>
-        </select>
-      </label>
-      <label class="mock-check"><input type="checkbox" data-mock="offline"> Simulate no connection</label>
-      <label class="mock-check"><input type="checkbox" data-mock="failFirstUpload"> Fail the first upload attempt</label>
-      <label class="mock-check"><input type="checkbox" data-mock="fullGame"> Make Cricket full</label>
-      <label class="mock-check"><input type="checkbox" data-mock="notOpen"> Registration switched off</label>
-      <button class="btn btn-secondary btn-small" type="button" id="mock-reset">Reset preview</button>
+  <!-- Success Confirmation Modal -->
+  <div class="modal-backdrop" id="confirmationModal">
+    <div class="summary-modal">
+      <div class="modal-top">
+        <div style="font-size:36px;margin-bottom:6px;">🎉</div>
+        <h2>REGISTRATION SUBMITTED!</h2>
+        <p style="font-size:12px;opacity:0.9;margin-top:4px;">A confirmation receipt has been sent to your email.</p>
+      </div>
+      <div class="modal-scroll">
+        <table class="summary-table" id="summaryTableBody"></table>
+      </div>
+      <div class="modal-bottom">
+        <button type="button" class="modal-close-btn" onclick="resetFormAfterSubmit()">REGISTER ANOTHER</button>
+      </div>
     </div>
-  </details>
+  </div>
 
-  <noscript>
-    <div class="noscript">This registration form needs JavaScript. Please open the link in a modern phone browser, or contact the event heads.</div>
-  </noscript>
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toastMessage"></div>
 
-  <script type="module" src="assets/js/app.js"></script>
+  <script>
+    // ============================================================
+    // TLH SPORTS FEST 2027 — Frontend Application Logic
+    // ============================================================
+
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzNt73Jkh8oDNGHJw4QVbDCz188VZW8rbAzGu7gvVUDFqOclwoq1cQB7QG2RfHVWGaq/exec';
+
+    // State Variables
+    let appConfig = null;
+    let masterGames = [];
+    let selectedGender = null;   // 'Boys' | 'Girls'
+    let selectedAge = null;      // 'U15' | 'U17' | 'U19'
+    let selectedFormat = null;   // 'Individual' | 'Team' | 'Doubles'
+    let selectedGame = null;     // Game object
+    let isEarlyBirdActive = true;
+
+    // Roster state
+    let rosterPlayers = [];      // Array of player objects { role, name, dob, cnic, phone, email, school, fileBase64, fileName, fileMime }
+    let paymentProofBase64 = null;
+
+    // ── Master Dataset matching user's exact specification ──
+    const defaultMasterGames = [
+      // Ground Games
+      { sr: 1, game: "Cricket", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 6000, regularFee: 7000, players: "7 players + 2 extra", type: "Team", gender: "Both", minPlayers: 7, maxPlayers: 9, isTeamGame: true },
+      { sr: 2, game: "Futsal", format: "Team", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 6000, regularFee: 7000, players: "5 players + 2 extra", type: "Team", gender: "Both", minPlayers: 5, maxPlayers: 7, isTeamGame: true },
+      { sr: 3, game: "Basketball", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 6000, regularFee: 7000, players: "5 players + 2 extra", type: "Team", gender: "Both", minPlayers: 5, maxPlayers: 7, isTeamGame: true },
+      { sr: 4, game: "Paddle Tennis", format: "Individual", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 2000, regularFee: 2500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 5, game: "Paddle Tennis (Doubles)", format: "Doubles", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 3500, regularFee: 4500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 6, game: "Dodgeball", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 5000, regularFee: 6000, players: "6 players", type: "Team", gender: "Both", minPlayers: 6, maxPlayers: 8, isTeamGame: true },
+      { sr: 7, game: "Frisbee (Flying Disc)", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 2000, regularFee: 2500, players: "7 players", type: "Team", gender: "Both", minPlayers: 7, maxPlayers: 9, isTeamGame: true },
+      { sr: 8, game: "Squid Game", format: "Individual", category: "Ground Games", ageCategory: "U19", earlyFee: 700, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+
+      // Indoor Games
+      { sr: 9, game: "Badminton", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 1000, regularFee: 1500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 10, game: "Badminton (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 2000, regularFee: 2500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 11, game: "Table Tennis", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 12, game: "Table Tennis (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 1200, regularFee: 1500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 13, game: "Carrom", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 14, game: "Ludo", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 15, game: "Chess", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 700, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 16, game: "Foosball", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 500, regularFee: 700, players: "1 player", type: "Individual", gender: "Boys", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 17, game: "Arm Wrestling", format: "Individual", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 18, game: "Snooker Junior", format: "Individual", category: "Indoor Games", ageCategory: "U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Boys", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 19, game: "Mafia", format: "Team", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "4-8 players", type: "Team", gender: "Both", minPlayers: 4, maxPlayers: 8, isTeamGame: true },
+
+      // E-Games
+      { sr: 20, game: "PUBG Mobile", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 21, game: "Tekken 8 (PS)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 22, game: "FIFA 2027 (PS)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 23, game: "Call of Duty PVP (PS)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 24, game: "Free Fire Custom (Mobile)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 500, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 25, game: "Fortnite (PS)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 26, game: "Minecraft PVP (PC)", format: "Individual", category: "E-Games", ageCategory: "U19", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+
+      // Workshops
+      { sr: 27, game: "Mud Pottery", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2000, regularFee: 2500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 28, game: "Tote Bag Painting", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 1000, regularFee: 1000, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 29, game: "Canvas Painting", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2000, regularFee: 2500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 30, game: "Beaded Craft", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 3000, regularFee: 3500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 31, game: "Bedazzling", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2000, regularFee: 2500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 32, game: "Trinket Tray Painting", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2000, regularFee: 2500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 33, game: "3D Floral Bloom", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2000, regularFee: 2500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 34, game: "Mirror Painting", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 2500, regularFee: 3000, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 35, game: "Feel the Beat", format: "Individual", category: "Workshops", ageCategory: "U19", earlyFee: 1500, regularFee: 1500, players: "1 participant", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false }
+    ];
+
+    // ── App Initialization ──
+    document.addEventListener('DOMContentLoaded', () => {
+      masterGames = defaultMasterGames;
+      initCountdowns('2027-01-15T23:59:59', '2027-01-31T23:59:59');
+      bindPillSelections();
+      setupPaymentDropzone();
+      fetchBackendConfig();
+    });
+
+    async function fetchBackendConfig() {
+      try {
+        const res = await fetch(API_URL + '?action=getConfig');
+        const data = await res.json();
+        if (data.success && data.games && data.games.length > 0) {
+          appConfig = data;
+          masterGames = data.games;
+          if (data.eventName) document.getElementById('eventTitle').textContent = data.eventName;
+          if (data.eventTagline) document.getElementById('eventTagline').textContent = data.eventTagline;
+          if (data.bankName) document.getElementById('bankNameDisplay').textContent = data.bankName;
+          if (data.bankTitle) document.getElementById('bankTitleDisplay').textContent = data.bankTitle;
+          if (data.bankAccount) document.getElementById('bankAccountDisplay').textContent = data.bankAccount;
+          initCountdowns(data.earlyBirdDeadline, data.registrationDeadline);
+        }
+      } catch (err) {
+        console.warn('Backend fetch failed, using fallback:', err);
+      }
+    }
+
+    // ── Countdowns ──
+    function initCountdowns(ebStr, regStr) {
+      const ebDate = new Date(ebStr || '2027-01-15T23:59:59');
+      const regDate = new Date(regStr || '2027-01-31T23:59:59');
+
+      function update() {
+        const now = new Date();
+        const ebDiff = ebDate - now;
+        if (ebDiff > 0) {
+          isEarlyBirdActive = true;
+          document.getElementById('ebDays').textContent = String(Math.floor(ebDiff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+          document.getElementById('ebHours').textContent = String(Math.floor((ebDiff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+          document.getElementById('ebMins').textContent = String(Math.floor((ebDiff / (1000 * 60)) % 60)).padStart(2, '0');
+          document.getElementById('ebSecs').textContent = String(Math.floor((ebDiff / 1000) % 60)).padStart(2, '0');
+          document.getElementById('ebStatusBadge').className = 'countdown-badge open';
+          document.getElementById('ebStatusBadge').textContent = 'ACTIVE DISCOUNT';
+        } else {
+          isEarlyBirdActive = false;
+          document.getElementById('ebDays').textContent = '00';
+          document.getElementById('ebHours').textContent = '00';
+          document.getElementById('ebMins').textContent = '00';
+          document.getElementById('ebSecs').textContent = '00';
+          document.getElementById('ebStatusBadge').className = 'countdown-badge closed';
+          document.getElementById('ebStatusBadge').textContent = 'EXPIRED';
+        }
+
+        const regDiff = regDate - now;
+        if (regDiff > 0) {
+          document.getElementById('rdDays').textContent = String(Math.floor(regDiff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+          document.getElementById('rdHours').textContent = String(Math.floor((regDiff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+          document.getElementById('rdMins').textContent = String(Math.floor((regDiff / (1000 * 60)) % 60)).padStart(2, '0');
+          document.getElementById('rdSecs').textContent = String(Math.floor((regDiff / 1000) % 60)).padStart(2, '0');
+          document.getElementById('rdStatusBadge').className = 'countdown-badge open';
+          document.getElementById('rdStatusBadge').textContent = 'REGISTRATIONS OPEN';
+        } else {
+          document.getElementById('rdDays').textContent = '00';
+          document.getElementById('rdHours').textContent = '00';
+          document.getElementById('rdMins').textContent = '00';
+          document.getElementById('rdSecs').textContent = '00';
+          document.getElementById('rdStatusBadge').className = 'countdown-badge closed';
+          document.getElementById('rdStatusBadge').textContent = 'CLOSED';
+        }
+
+        if (selectedGame) updateFeeBanner();
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    // ── Progressive Step Selection Bindings ──
+    function bindPillSelections() {
+      // Step 1: Gender
+      document.querySelectorAll('#genderGrid .pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#genderGrid .pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedGender = btn.dataset.gender;
+
+          // Unlock Step 2 (Age)
+          const ageSec = document.getElementById('stepAgeSection');
+          ageSec.classList.remove('locked');
+
+          // If age was already selected, refresh options
+          if (selectedAge) updateFormatOptions();
+          else smoothScrollTo(ageSec);
+        });
+      });
+
+      // Step 2: Age Category
+      document.querySelectorAll('#ageCategoryGrid .pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#ageCategoryGrid .pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedAge = btn.dataset.age;
+
+          // Unlock Step 3 (Format)
+          const fmtSec = document.getElementById('stepFormatSection');
+          fmtSec.classList.remove('locked');
+
+          updateFormatOptions();
+          smoothScrollTo(fmtSec);
+        });
+      });
+
+      // Step 3: Format (Individual / Team / Doubles)
+      document.querySelectorAll('#formatGrid .pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('disabled')) return;
+          document.querySelectorAll('#formatGrid .pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedFormat = btn.dataset.format;
+
+          // Unlock Step 4 (Game selection)
+          const gameSec = document.getElementById('stepGameSection');
+          gameSec.classList.remove('locked');
+
+          renderGroupedGames();
+          smoothScrollTo(gameSec);
+        });
+      });
+
+      // Extra player button
+      document.getElementById('addExtraPlayerBtn').addEventListener('click', addSubstitutePlayerSlot);
+    }
+
+    function smoothScrollTo(el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+
+    // ── Helper: Check if Game is Eligible ──
+    function isGameEligible(game, gender, age, format) {
+      // 1. Gender check
+      if (gender && game.gender !== 'Both' && game.gender !== gender) return false;
+
+      // 2. Age check
+      if (age) {
+        const rawAges = (game.ageCategory || '').toUpperCase();
+        if (rawAges && !rawAges.includes('ALL')) {
+          const tokens = rawAges.split(/[\s,.]+/).filter(Boolean);
+          if (!tokens.includes(age.toUpperCase())) return false;
+        }
+      }
+
+      // 3. Format check
+      if (format) {
+        const gFormat = (game.format || game.type || '').toLowerCase();
+        if (format === 'Individual') {
+          if (gFormat === 'team' || gFormat === 'doubles') return false;
+        } else if (format === 'Team') {
+          if (gFormat !== 'team') return false;
+        } else if (format === 'Doubles') {
+          if (gFormat !== 'doubles') return false;
+        }
+      }
+
+      return true;
+    }
+
+    // ── Step 3: Update Format Button Counts & Disabled states ──
+    function updateFormatOptions() {
+      if (!selectedGender || !selectedAge) return;
+
+      const indGames = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, 'Individual'));
+      const teamGames = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, 'Team'));
+      const dblGames = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, 'Doubles'));
+
+      // Update badges
+      document.getElementById('countIndividual').textContent = `${indGames.length} available (Single & Workshops)`;
+      document.getElementById('countTeam').textContent = `${teamGames.length} available (Full Squads)`;
+      document.getElementById('countDoubles').textContent = `${dblGames.length} available (Pairs)`;
+
+      // Check disabled state for formats with 0 games
+      toggleFormatBtn('formatBtnIndividual', indGames.length > 0);
+      toggleFormatBtn('formatBtnTeam', teamGames.length > 0);
+      toggleFormatBtn('formatBtnDoubles', dblGames.length > 0);
+
+      // If currently active format has 0 games, clear it
+      if (selectedFormat) {
+        const activeCount = selectedFormat === 'Individual' ? indGames.length :
+                            selectedFormat === 'Team' ? teamGames.length : dblGames.length;
+        if (activeCount === 0) {
+          selectedFormat = null;
+          document.querySelectorAll('#formatGrid .pill-btn').forEach(b => b.classList.remove('active'));
+          document.getElementById('stepGameSection').classList.add('locked');
+          document.getElementById('stepDetailsSection').style.display = 'none';
+          document.getElementById('stepPaymentSection').style.display = 'none';
+        } else {
+          renderGroupedGames();
+        }
+      }
+    }
+
+    function toggleFormatBtn(btnId, isEnabled) {
+      const btn = document.getElementById(btnId);
+      if (isEnabled) {
+        btn.classList.remove('disabled');
+      } else {
+        btn.classList.add('disabled');
+      }
+    }
+
+    // ── Step 4: Render Grouped Games ──
+    function renderGroupedGames() {
+      if (!selectedGender || !selectedAge || !selectedFormat) return;
+
+      // Update breadcrumbs
+      document.getElementById('crumbGender').textContent = selectedGender;
+      document.getElementById('crumbAge').textContent = selectedAge;
+      document.getElementById('crumbFormat').textContent = selectedFormat;
+
+      const container = document.getElementById('groupedGamesContainer');
+      container.innerHTML = '';
+
+      const eligible = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, selectedFormat));
+
+      if (eligible.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:30px;color:#856e63;">
+            <p style="font-size:28px;margin-bottom:6px;">⚠️</p>
+            <p style="font-weight:600;">No games found for this exact combination.</p>
+            <p style="font-size:12px;margin-top:4px;">Please choose another format or age bracket above.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by Category: Ground Games, Indoor Games, E-Games, Workshops
+      const categoriesOrder = ['Ground Games', 'Indoor Games', 'E-Games', 'Workshops'];
+
+      categoriesOrder.forEach(categoryName => {
+        const catGames = eligible.filter(g => g.category === categoryName);
+        if (catGames.length === 0) return;
+
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'category-group-block';
+
+        const categoryIcons = {
+          'Ground Games': '🏟️',
+          'Indoor Games': '🏸',
+          'E-Games': '🎮',
+          'Workshops': '🎨'
+        };
+
+        groupDiv.innerHTML = `
+          <div class="category-group-title">
+            <span>${categoryIcons[categoryName] || '🏆'}</span>
+            <span>${categoryName}</span>
+            <span style="font-size:12px;color:#847065;font-weight:400;margin-left:4px;">(${catGames.length})</span>
+          </div>
+          <div class="games-row-grid"></div>
+        `;
+
+        const grid = groupDiv.querySelector('.games-row-grid');
+
+        catGames.forEach(game => {
+          const card = document.createElement('div');
+          const isSelected = selectedGame && selectedGame.sr === game.sr;
+          card.className = 'game-card' + (isSelected ? ' selected' : '');
+
+          const fee = isEarlyBirdActive ? game.earlyFee : game.regularFee;
+          const oldFee = (isEarlyBirdActive && game.earlyFee < game.regularFee) ? `Rs. ${game.regularFee.toLocaleString()}` : '';
+
+          card.innerHTML = `
+            <div class="game-badge-type">${game.format}</div>
+            <div>
+              <div class="game-title">${game.game}</div>
+              <div class="game-chips">
+                <span class="game-chip">${game.category}</span>
+                <span class="game-chip">${game.ageCategory}</span>
+              </div>
+              <div class="game-players">👥 ${game.players || 'Single player'}</div>
+            </div>
+            <div class="game-price-box">
+              <span class="game-price">Rs. ${Number(fee).toLocaleString()}</span>
+              ${oldFee ? `<span class="game-old-price">${oldFee}</span>` : ''}
+            </div>
+          `;
+
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            onGameSelected(game);
+          });
+
+          grid.appendChild(card);
+        });
+
+        container.appendChild(groupDiv);
+      });
+    }
+
+    // ── Handle Selected Game & Prepopulate Roster ──
+    function onGameSelected(game) {
+      selectedGame = game;
+      document.getElementById('gameSelectionError').style.display = 'none';
+
+      updateFeeBanner();
+
+      // Reveal Details and Payment sections
+      const detailsSec = document.getElementById('stepDetailsSection');
+      const paymentSec = document.getElementById('stepPaymentSection');
+      detailsSec.style.display = 'block';
+      paymentSec.style.display = 'block';
+
+      // Pre-populate players roster based on game format & rules
+      setupRosterForGame(game);
+
+      smoothScrollTo(detailsSec);
+    }
+
+    function updateFeeBanner() {
+      if (!selectedGame) return;
+      const banner = document.getElementById('feeSummaryBanner');
+      banner.classList.add('show');
+
+      document.getElementById('feeGameName').textContent = selectedGame.game;
+      document.getElementById('feeCategoryMeta').textContent = `${selectedGame.category} • Format: ${selectedGame.format} • Age: ${selectedGame.ageCategory}`;
+
+      const early = Number(selectedGame.earlyFee) || 0;
+      const reg = Number(selectedGame.regularFee) || 0;
+      const payable = (isEarlyBirdActive && early > 0) ? early : reg;
+
+      document.getElementById('feePayableText').textContent = 'Rs. ' + payable.toLocaleString();
+
+      const tagContainer = document.getElementById('feeTagContainer');
+      if (isEarlyBirdActive && early < reg) {
+        tagContainer.innerHTML = '<span class="fee-early-tag">🐦 Early Bird Discount Applied!</span>';
+      } else {
+        tagContainer.innerHTML = '';
+      }
+    }
+
+    // ── Pre-populate Team or Solo Roster Fields ──
+    function setupRosterForGame(game) {
+      const isTeam = game.isTeamGame;
+      const teamFields = document.getElementById('teamSpecificFields');
+      const addExtraBtn = document.getElementById('addExtraPlayerBtn');
+      const heading = document.getElementById('detailsSectionHeading');
+
+      rosterPlayers = [];
+
+      if (isTeam) {
+        teamFields.style.display = 'block';
+        heading.textContent = `TEAM & ROSTER DETAILS (${game.game.toUpperCase()})`;
+
+        // Determine player count
+        const minCount = game.minPlayers || (game.format === 'Doubles' ? 2 : 5);
+        const maxCount = game.maxPlayers || minCount;
+
+        // Populate Player 1 (Captain) + all remaining core players
+        for (let i = 0; i < minCount; i++) {
+          rosterPlayers.push({
+            role: i === 0 ? 'Team Captain / Head' : (game.format === 'Doubles' ? 'Partner Player' : `Player #${i + 1}`),
+            isCaptain: i === 0,
+            name: '',
+            dob: '',
+            cnic: '',
+            phone: '',
+            email: '',
+            fileBase64: null,
+            fileName: '',
+            fileMime: ''
+          });
+        }
+
+        // Show/hide "+ Add Extra Player" button
+        if (maxCount > minCount) {
+          addExtraBtn.style.display = 'block';
+          addExtraBtn.textContent = `+ Add Substitute / Extra Player (Up to ${maxCount} total)`;
+        } else {
+          addExtraBtn.style.display = 'none';
+        }
+
+      } else {
+        // Individual / Workshop / Solo
+        teamFields.style.display = 'none';
+        addExtraBtn.style.display = 'none';
+        heading.textContent = `PARTICIPANT DETAILS (${game.game.toUpperCase()})`;
+
+        rosterPlayers.push({
+          role: 'Participant',
+          isCaptain: true,
+          name: '',
+          dob: '',
+          cnic: '',
+          phone: '',
+          email: '',
+          school: '',
+          fileBase64: null,
+          fileName: '',
+          fileMime: ''
+        });
+      }
+
+      renderRosterFields();
+    }
+
+    function addSubstitutePlayerSlot() {
+      if (!selectedGame) return;
+      const maxCount = selectedGame.maxPlayers || 9;
+      if (rosterPlayers.length >= maxCount) {
+        showToast(`Maximum ${maxCount} players allowed for ${selectedGame.game}`, 'error');
+        return;
+      }
+      rosterPlayers.push({
+        role: `Substitute / Extra Player #${rosterPlayers.length + 1}`,
+        isCaptain: false,
+        name: '',
+        dob: '',
+        cnic: '',
+        phone: '',
+        email: '',
+        fileBase64: null,
+        fileName: '',
+        fileMime: ''
+      });
+      renderRosterFields();
+    }
+
+    function removeRosterSlot(idx) {
+      if (rosterPlayers.length <= (selectedGame.minPlayers || 1)) {
+        showToast(`At least ${selectedGame.minPlayers || 1} players are required.`, 'error');
+        return;
+      }
+      rosterPlayers.splice(idx, 1);
+      renderRosterFields();
+    }
+
+    // ── Render Dynamic Player Form Cards ──
+    function renderRosterFields() {
+      const container = document.getElementById('rosterCardsContainer');
+      container.innerHTML = '';
+
+      const isTeam = selectedGame && selectedGame.isTeamGame;
+      const isU17orU19 = (selectedAge === 'U17' || selectedAge === 'U19');
+      const minRequired = (selectedGame && selectedGame.minPlayers) || 1;
+
+      rosterPlayers.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'roster-card' + (p.isCaptain ? ' captain-card' : '');
+
+        const canRemove = isTeam && (idx >= minRequired);
+
+        card.innerHTML = `
+          <div class="roster-card-header">
+            <div class="roster-card-title">
+              <span>👤 ${p.role}</span>
+              ${p.isCaptain ? '<span class="roster-badge">LEAD CONTACT</span>' : ''}
+            </div>
+            ${canRemove ? `<button type="button" class="remove-roster-btn" onclick="removeRosterSlot(${idx})">Remove</button>` : ''}
+          </div>
+
+          <!-- Name & DOB / Age -->
+          <div class="field-row">
+            <div class="field">
+              <label>Full Name <span class="req">*</span></label>
+              <input type="text" id="roster_name_${idx}" value="${p.name || ''}" placeholder="Player full name" required oninput="rosterPlayers[${idx}].name = this.value">
+              <div class="error-text">Please enter player full name</div>
+            </div>
+            <div class="field">
+              <label>${p.isCaptain ? 'Date of Birth' : 'Age or Date of Birth'} <span class="req">*</span></label>
+              <input type="${p.isCaptain ? 'date' : 'text'}" id="roster_dob_${idx}" value="${p.dob || ''}" placeholder="e.g. 16 or 2008-05-14" required oninput="rosterPlayers[${idx}].dob = this.value">
+              <div class="error-text">Please enter date of birth or age</div>
+            </div>
+          </div>
+
+          <!-- Contact Details (Only required for Captain / Solo participant) -->
+          ${p.isCaptain ? `
+          <div class="field-row">
+            <div class="field">
+              <label>WhatsApp / Phone Number <span class="req">*</span></label>
+              <input type="tel" id="roster_phone_${idx}" value="${p.phone || ''}" placeholder="03XXXXXXXXX" required oninput="rosterPlayers[${idx}].phone = this.value">
+              <div class="error-text">Please enter valid 11-digit mobile number</div>
+            </div>
+            <div class="field">
+              <label>Email Address <span class="req">*</span></label>
+              <input type="email" id="roster_email_${idx}" value="${p.email || ''}" placeholder="yourname@gmail.com" required oninput="rosterPlayers[${idx}].email = this.value">
+              <div class="error-text">Please enter valid email address for receipt</div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Solo participant School -->
+          ${(!isTeam && p.isCaptain) ? `
+          <div class="field">
+            <label>School / College / Institution <span class="req">*</span></label>
+            <input type="text" id="solo_school_input" value="${p.school || ''}" placeholder="Enter school / college name" required oninput="rosterPlayers[${idx}].school = this.value">
+            <div class="error-text">Please enter school / institution</div>
+          </div>
+          ` : ''}
+
+          <!-- CNIC Number & CNIC Photo Upload -->
+          <div class="field-row">
+            <div class="field">
+              <label>CNIC / B-Form Number <span class="req">*</span></label>
+              <input type="text" id="roster_cnic_${idx}" value="${p.cnic || ''}" placeholder="XXXXX-XXXXXXX-X" maxlength="15" required oninput="rosterPlayers[${idx}].cnic = this.value">
+              <div class="error-text">Please enter 13-digit CNIC or B-Form number</div>
+              <div class="field-hint">e.g. 35201-1234567-1</div>
+            </div>
+
+            <div class="field">
+              <label>
+                CNIC / B-Form Photo
+                ${isU17orU19 ? '<span class="req">*</span>' : '<span style="font-weight:400;color:#856e63;">(Optional for U15)</span>'}
+              </label>
+              <div class="upload-zone" id="zone_roster_${idx}">
+                <input type="file" accept="image/*" onchange="handleRosterFileUpload(this, ${idx})">
+                <div class="icon">🪪</div>
+                <div class="text"><strong>Upload document</strong> or drag photo</div>
+                <div class="upload-status" id="status_roster_${idx}" style="display:${p.fileBase64 ? 'block' : 'none'};">✓ ${p.fileName || 'Photo attached'}</div>
+                <img class="upload-preview-img" id="prev_roster_${idx}" style="display:${p.fileBase64 ? 'block' : 'none'};" src="${p.fileBase64 ? ('data:' + (p.fileMime || 'image/jpeg') + ';base64,' + p.fileBase64) : ''}">
+              </div>
+              <div class="error-text" id="err_roster_file_${idx}" style="display:none;">Photo required for ${selectedAge} age verification</div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // ── Handle Roster File Upload ──
+    window.handleRosterFileUpload = function(input, idx) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('File size must be under 5MB', 'error');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result.split(',')[1];
+        rosterPlayers[idx].fileBase64 = base64;
+        rosterPlayers[idx].fileName = file.name;
+        rosterPlayers[idx].fileMime = file.type;
+
+        document.getElementById(`status_roster_${idx}`).style.display = 'block';
+        document.getElementById(`status_roster_${idx}`).textContent = '✓ ' + file.name;
+        const prev = document.getElementById(`prev_roster_${idx}`);
+        prev.src = e.target.result;
+        prev.style.display = 'block';
+        document.getElementById(`err_roster_file_${idx}`).style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // ── Payment Proof Dropzone ──
+    function setupPaymentDropzone() {
+      const input = document.getElementById('paymentProofFile');
+      const nameEl = document.getElementById('paymentFileName');
+      const preview = document.getElementById('paymentPreview');
+      const zone = document.getElementById('paymentDrop');
+
+      input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('Payment receipt must be under 5MB', 'error');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          nameEl.textContent = '✓ ' + file.name;
+          nameEl.style.display = 'block';
+          paymentProofBase64 = {
+            data: e.target.result.split(',')[1],
+            name: file.name,
+            mime: file.type
+          };
+          document.getElementById('paymentProofError').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ── Copy Bank Account Info ──
+    function copyBankInfo() {
+      const bank = document.getElementById('bankNameDisplay').textContent;
+      const title = document.getElementById('bankTitleDisplay').textContent;
+      const iban = document.getElementById('bankAccountDisplay').textContent;
+      const text = `Bank: ${bank}\nAccount Title: ${title}\nIBAN: ${iban}`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBankBtn');
+        btn.classList.add('copied');
+        btn.innerHTML = '✅ Copied to Clipboard!';
+        showToast('Bank details copied to clipboard!', 'success');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '📋 Copy Bank Account Details';
+        }, 2500);
+      });
+    }
+
+    // ── Client-side Validation ──
+    function validateCompleteForm() {
+      let isValid = true;
+      const isTeam = selectedGame && selectedGame.isTeamGame;
+      const isU17orU19 = (selectedAge === 'U17' || selectedAge === 'U19');
+
+      // 1. Team Info Validation
+      if (isTeam) {
+        const teamName = document.getElementById('teamNameInput');
+        if (!teamName.value.trim()) { teamName.classList.add('error'); isValid = false; }
+        else teamName.classList.remove('error');
+
+        const school = document.getElementById('teamSchoolInput');
+        if (!school.value.trim()) { school.classList.add('error'); isValid = false; }
+        else school.classList.remove('error');
+      }
+
+      // 2. Validate Every Roster Member
+      rosterPlayers.forEach((p, idx) => {
+        const nameEl = document.getElementById(`roster_name_${idx}`);
+        if (!p.name || p.name.trim().length < 2) {
+          if (nameEl) nameEl.classList.add('error');
+          isValid = false;
+        } else {
+          if (nameEl) nameEl.classList.remove('error');
+        }
+
+        const dobEl = document.getElementById(`roster_dob_${idx}`);
+        if (!p.dob || p.dob.trim().length === 0) {
+          if (dobEl) dobEl.classList.add('error');
+          isValid = false;
+        } else {
+          if (dobEl) dobEl.classList.remove('error');
+        }
+
+        const cnicEl = document.getElementById(`roster_cnic_${idx}`);
+        const cnicClean = (p.cnic || '').replace(/[^0-9]/g, '');
+        if (cnicClean.length < 13) {
+          if (cnicEl) cnicEl.classList.add('error');
+          isValid = false;
+        } else {
+          if (cnicEl) cnicEl.classList.remove('error');
+        }
+
+        // Captain contact check
+        if (p.isCaptain) {
+          const phoneEl = document.getElementById(`roster_phone_${idx}`);
+          const phoneClean = (p.phone || '').replace(/[^0-9+]/g, '');
+          if (phoneClean.length < 10) {
+            if (phoneEl) phoneEl.classList.add('error');
+            isValid = false;
+          } else {
+            if (phoneEl) phoneEl.classList.remove('error');
+          }
+
+          const emailEl = document.getElementById(`roster_email_${idx}`);
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email || '')) {
+            if (emailEl) emailEl.classList.add('error');
+            isValid = false;
+          } else {
+            if (emailEl) emailEl.classList.remove('error');
+          }
+
+          if (!isTeam) {
+            const soloSchool = document.getElementById('solo_school_input');
+            if (!p.school || p.school.trim().length < 2) {
+              if (soloSchool) soloSchool.classList.add('error');
+              isValid = false;
+            } else {
+              if (soloSchool) soloSchool.classList.remove('error');
+            }
+          }
+        }
+
+        // CNIC Image upload check for U17 / U19
+        if (isU17orU19) {
+          const fileErr = document.getElementById(`err_roster_file_${idx}`);
+          if (!p.fileBase64) {
+            if (fileErr) fileErr.style.display = 'block';
+            isValid = false;
+          } else {
+            if (fileErr) fileErr.style.display = 'none';
+          }
+        }
+      });
+
+      // 3. Payment Proof
+      if (!paymentProofBase64) {
+        document.getElementById('paymentProofError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('paymentProofError').style.display = 'none';
+      }
+
+      return isValid;
+    }
+
+    // ── Helper to upload file via GAS ──
+    async function uploadSingleFile(base64Data, fileName, mimeType, fileType, prefix) {
+      if (!base64Data) return '';
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'uploadFile',
+            fileType: fileType,
+            prefix: prefix || '',
+            fileData: base64Data,
+            fileName: fileName || 'upload.jpg',
+            mimeType: mimeType || 'image/jpeg'
+          })
+        });
+        const json = await res.json();
+        return json.fileUrl || '';
+      } catch (err) {
+        console.warn('Upload error:', err);
+        return '';
+      }
+    }
+
+    // ── Submit Registration ──
+    document.getElementById('sportsFestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!validateCompleteForm()) {
+        showToast('Please fill all highlighted fields and upload required documents', 'error');
+        const firstErr = document.querySelector('.error, .error-text[style*="display: block"]');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitFormBtn');
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+
+      try {
+        const isTeam = selectedGame.isTeamGame;
+        const captain = rosterPlayers[0];
+        const teamName = isTeam ? document.getElementById('teamNameInput').value.trim() : '';
+        const schoolName = isTeam ? document.getElementById('teamSchoolInput').value.trim() : (captain.school || '');
+        const chaperone = isTeam ? (document.getElementById('chaperoneNameInput').value.trim() + ' (' + document.getElementById('chaperonePhoneInput').value.trim() + ')') : '';
+
+        // 1. Upload payment proof
+        const paymentProofUrl = await uploadSingleFile(
+          paymentProofBase64.data,
+          paymentProofBase64.name,
+          paymentProofBase64.mime,
+          'payment',
+          'Pay_' + captain.name.replace(/\s+/g, '_')
+        );
+
+        // 2. Upload roster members' CNIC files
+        const finalizedMembers = [];
+        let captainCnicUrl = '';
+
+        for (let i = 0; i < rosterPlayers.length; i++) {
+          const p = rosterPlayers[i];
+          let cnicUrl = '';
+          if (p.fileBase64) {
+            cnicUrl = await uploadSingleFile(
+              p.fileBase64,
+              p.fileName,
+              p.fileMime,
+              'cnic',
+              (p.isCaptain ? 'Captain_' : `Member${i+1}_`) + p.name.replace(/\s+/g, '_')
+            );
+          }
+          if (p.isCaptain) captainCnicUrl = cnicUrl;
+
+          finalizedMembers.push({
+            role: p.role,
+            name: p.name,
+            ageOrDob: p.dob,
+            cnic: p.cnic,
+            cnicUrl: cnicUrl
+          });
+        }
+
+        // 3. Send payload to Google Apps Script backend
+        const payload = {
+          action: 'register',
+          category: selectedGame.category,
+          format: selectedGame.format,
+          isTeamGame: isTeam,
+          gender: selectedGender,
+          ageCategory: selectedAge,
+          game: selectedGame.game,
+          name: captain.name,
+          email: captain.email,
+          phone: captain.phone,
+          dob: captain.dob,
+          school: schoolName,
+          teamName: teamName,
+          teamHead: isTeam ? captain.name : '',
+          chaperone: chaperone,
+          teamMembers: finalizedMembers,
+          cnicNumber: captain.cnic,
+          cnicImageUrl: captainCnicUrl,
+          paymentProofUrl: paymentProofUrl,
+          earlyFee: selectedGame.earlyFee,
+          regularFee: selectedGame.regularFee
+        };
+
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (!result.success) throw new Error(result.error || 'Registration failed');
+
+        // Show Success Modal
+        showSuccessModal(payload, result);
+        showToast('Registration submitted successfully!', 'success');
+
+      } catch (err) {
+        console.error('Submission failed:', err);
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    });
+
+    // ── Show Success Modal ──
+    function showSuccessModal(data, result) {
+      const tbody = document.getElementById('summaryTableBody');
+      const rows = [
+        ['Official Reg ID', `<strong style="color:var(--fire-red);font-size:15px;">${result.regId}</strong>`],
+        ['Event / Game', `<strong>${data.game}</strong>`],
+        ['Format & Category', `${data.format} • ${data.category}`],
+        ['Age Bracket & Gender', `${data.ageCategory} (${data.gender})`],
+        ['Participant / Captain', data.name],
+        ['School / Institution', data.school || '-'],
+        ['Contact Details', `${data.phone} • ${data.email}`]
+      ];
+
+      if (data.teamName) {
+        rows.push(['Team Name', `<strong>${data.teamName}</strong>`]);
+        if (data.chaperone) rows.push(['Chaperone', data.chaperone]);
+      }
+
+      if (data.teamMembers && data.teamMembers.length > 1) {
+        const list = data.teamMembers.map((m, i) => `${i+1}. ${m.name} (${m.ageOrDob}) - CNIC: ${m.cnic}`).join('<br>');
+        rows.push(['Squad Members', list]);
+      }
+
+      rows.push(['Fee Paid', `<strong>Rs. ${Number(result.feePaid).toLocaleString()}</strong> ${result.isEarlyBird ? '(Early Bird 🐦)' : '(Regular)'}`]);
+      rows.push(['Email Receipt', result.emailSent ? '✅ Sent to ' + data.email : 'Dispatched']);
+      rows.push(['Status', '<span style="color:var(--burnt-orange);font-weight:600;">Pending Payment Verification</span>']);
+
+      tbody.innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+      document.getElementById('confirmationModal').classList.add('show');
+    }
+
+    function resetFormAfterSubmit() {
+      document.getElementById('confirmationModal').classList.remove('show');
+      location.reload();
+    }
+
+    // ── Toast Helper ──
+    function showToast(msg, type = 'info') {
+      const el = document.getElementById('toastMessage');
+      el.textContent = msg;
+      el.className = `toast-msg ${type} show`;
+      setTimeout(() => el.classList.remove('show'), 3500);
+    }
+  </script>
 </body>
 </html>
