@@ -131,6 +131,27 @@ function getMasterGamesData() {
   ];
 }
 
+// ── Robust Helpers for Boolean & Date evaluation ──
+function parseBoolValue(val, defaultVal = true) {
+  if (val === undefined || val === null || val === '') return defaultVal;
+  if (typeof val === 'boolean') return val;
+  const s = String(val).trim().toLowerCase();
+  if (s === 'false' || s === 'no' || s === '0' || s === 'closed' || s === 'close' || s === 'off') return false;
+  if (s === 'true' || s === 'yes' || s === '1' || s === 'open' || s === 'on') return true;
+  return defaultVal;
+}
+
+function parseDateValue(val) {
+  if (!val) return null;
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+  try {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  } catch (e) {
+    return null;
+  }
+}
+
 function buildConfig() {
   let config = {};
   let games = [];
@@ -195,14 +216,32 @@ function buildConfig() {
     }));
   }
 
+  const now = new Date();
+
+  // Evaluate Registration Open
+  let isRegOpen = parseBoolValue(config['RegistrationOpen'], true);
+  const regDeadline = parseDateValue(config['RegistrationDeadline']);
+  if (regDeadline && now > regDeadline) {
+    isRegOpen = false;
+  }
+
+  // Evaluate Early Bird Open
+  let isEbOpen = parseBoolValue(config['EarlyBirdOpen'], true);
+  const ebDeadline = parseDateValue(config['EarlyBirdDeadline']);
+  if (ebDeadline && now > ebDeadline) {
+    isEbOpen = false;
+  }
+
   return {
     success: true,
     games: games,
+    isRegistrationOpen: isRegOpen,
+    isEarlyBirdOpen: isEbOpen,
     bankTitle: config['BankTitle'] || 'Genesis Educational Service Pvt Ltd.',
     bankName: config['BankName'] || 'Bank ALFALAH',
     bankAccount: config['BankAccount'] || 'PK98ALFH0053001010451307',
-    earlyBirdDeadline: config['EarlyBirdDeadline'] || '2027-01-15T23:59:59',
-    registrationDeadline: config['RegistrationDeadline'] || '2027-01-31T23:59:59',
+    earlyBirdDeadline: config['EarlyBirdDeadline'] ? (config['EarlyBirdDeadline'] instanceof Date ? config['EarlyBirdDeadline'].toISOString() : String(config['EarlyBirdDeadline'])) : '',
+    registrationDeadline: config['RegistrationDeadline'] ? (config['RegistrationDeadline'] instanceof Date ? config['RegistrationDeadline'].toISOString() : String(config['RegistrationDeadline'])) : '',
     eventName: config['EventName'] || 'TLH SPORTS FEST 2027',
     eventTagline: config['EventTagline'] || 'Ignite the Spirit of Sports 🔥',
     uploadFolderId: config['UploadFolderId'] || ''
@@ -211,11 +250,19 @@ function buildConfig() {
 
 // ── TWO SEPARATE SHEETS FOR REGISTRATIONS ──
 function handleRegistration(payload) {
+  const config = buildConfig();
+
+  // Enforce Registration Closed check
+  if (!config.isRegistrationOpen) {
+    return {
+      success: false,
+      error: 'Online registrations for TLH Sports Fest 2027 are officially closed.'
+    };
+  }
+
   const isTeam = (payload.format === 'Team' || payload.format === 'Doubles' || payload.isTeamGame === true);
   const now = new Date();
-  const config = buildConfig();
-  const earlyDeadline = config.earlyBirdDeadline ? new Date(config.earlyBirdDeadline) : null;
-  const isEarlyBird = earlyDeadline && now <= earlyDeadline;
+  const isEarlyBird = config.isEarlyBirdOpen;
   const feePaid = isEarlyBird ? payload.earlyFee : payload.regularFee;
 
   let regId = '';
@@ -479,64 +526,95 @@ function sendTeamConfirmationEmail(data, regId, feePaid, isEarlyBird) {
   });
 }
 
-function handleFileUpload(payload) {
+// ── Google Drive Folder & Sensible File Naming ──
+function getUploadFolders() {
   const ss = getSpreadsheet();
-  let folderId = '';
+  let rootFolderId = '';
   try {
     const configSheet = ss.getSheetByName(SHEET_CONFIG);
     if (configSheet) {
       const data = configSheet.getDataRange().getValues();
       for (let i = 1; i < data.length; i++) {
         if (data[i][0] === 'UploadFolderId') {
-          folderId = data[i][1];
+          rootFolderId = data[i][1];
           break;
         }
       }
     }
   } catch (e) {}
 
-  let folder;
-  if (folderId) {
-    try { folder = DriveApp.getFolderById(folderId); } catch (e) {}
+  let rootFolder;
+  if (rootFolderId) {
+    try { rootFolder = DriveApp.getFolderById(rootFolderId); } catch (e) {}
   }
 
-  if (!folder) {
-    folder = DriveApp.createFolder('TLH Sports Fest 2027 — Uploads');
-    folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  if (!rootFolder) {
+    rootFolder = DriveApp.createFolder('TLH Sports Fest 2027 — Uploads');
+    rootFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     try {
       const configSheet = getOrCreateSheet(SHEET_CONFIG, ['Key', 'Value']);
-      configSheet.appendRow(['UploadFolderId', folder.getId()]);
+      configSheet.appendRow(['UploadFolderId', rootFolder.getId()]);
     } catch (e) {}
   }
 
-  const subFolderName = (payload.fileType === 'cnic' || payload.fileType === 'member_cnic') 
-    ? 'CNIC Photos' 
-    : 'Payment Proofs';
-    
-  let subFolder;
-  const existingSub = folder.getFoldersByName(subFolderName);
-  if (existingSub.hasNext()) {
-    subFolder = existingSub.next();
-  } else {
-    subFolder = folder.createFolder(subFolderName);
-    subFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  // Subfolders: CNIC & Payment
+  let cnicFolder, paymentFolder;
+
+  const cnicSubs = rootFolder.getFoldersByName('CNIC & B-Form Photos');
+  if (cnicSubs.hasNext()) cnicFolder = cnicSubs.next();
+  else {
+    cnicFolder = rootFolder.createFolder('CNIC & B-Form Photos');
+    cnicFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   }
 
+  const paySubs = rootFolder.getFoldersByName('Payment Receipts');
+  if (paySubs.hasNext()) paymentFolder = paySubs.next();
+  else {
+    paymentFolder = rootFolder.createFolder('Payment Receipts');
+    paymentFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  }
+
+  return { rootFolder, cnicFolder, paymentFolder };
+}
+
+function handleFileUpload(payload) {
+  const { cnicFolder, paymentFolder } = getUploadFolders();
+  const isCnic = (payload.fileType === 'cnic' || payload.fileType === 'member_cnic');
+  const targetFolder = isCnic ? cnicFolder : paymentFolder;
+
+  // Generate Sensible, Descriptive Filename
+  // Format: [TYPE]_[EVENT]_[TEAM_OR_IND]_[PLAYER_ROLE]_[NAME]_[CNIC_OR_AMT].[EXT]
   const cleanBase64 = payload.fileData.replace(/^data:[^;]+;base64,/, '');
   const decoded = Utilities.base64Decode(cleanBase64);
+
+  let ext = 'jpg';
+  if (payload.fileName && payload.fileName.includes('.')) {
+    ext = payload.fileName.split('.').pop().toLowerCase();
+  } else if (payload.mimeType && payload.mimeType.includes('/')) {
+    ext = payload.mimeType.split('/').pop().toLowerCase();
+  }
+  if (ext === 'jpeg') ext = 'jpg';
+
+  const cleanSanitize = (str) => (str || '').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+
+  const prefix = cleanSanitize(payload.prefix || (isCnic ? 'CNIC' : 'PAYMENT'));
+  const timestamp = Utilities.formatDate(new Date(), 'Asia/Karachi', 'yyyyMMdd_HHmmss');
+  const finalFileName = `${prefix}_${timestamp}.${ext}`;
+
   const blob = Utilities.newBlob(
     decoded,
     payload.mimeType || 'image/jpeg',
-    (payload.prefix ? payload.prefix + '_' : '') + (payload.fileName || 'upload.jpg')
+    finalFileName
   );
 
-  const file = subFolder.createFile(blob);
+  const file = targetFolder.createFile(blob);
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
   return {
     success: true,
     fileUrl: file.getUrl(),
-    fileId: file.getId()
+    fileId: file.getId(),
+    fileName: finalFileName
   };
 }
 
@@ -553,6 +631,8 @@ function setupSheets() {
     ['BankAccount', 'PK98ALFH0053001010451307'],
     ['EarlyBirdDeadline', '2027-01-15T23:59:59'],
     ['RegistrationDeadline', '2027-01-31T23:59:59'],
+    ['RegistrationOpen', 'TRUE'],
+    ['EarlyBirdOpen', 'TRUE'],
     ['UploadFolderId', '']
   ];
   configSheet.clear();
@@ -603,14 +683,6 @@ function setupSheets() {
   for (let c = 1; c <= indHeaders.length; c++) indSheet.autoResizeColumn(c);
   for (let c = 1; c <= teamHeaders.length; c++) teamSheet.autoResizeColumn(c);
 
-  // Delete legacy "Registrations" or "Sheet1" if they exist
-  try {
-    const oldReg = ss.getSheetByName('Registrations');
-    if (oldReg && ss.getSheets().length > 1) ss.deleteSheet(oldReg);
-    const sheet1 = ss.getSheetByName('Sheet1');
-    if (sheet1 && ss.getSheets().length > 1) ss.deleteSheet(sheet1);
-  } catch (e) {}
-
-  Logger.log('Setup successfully completed with 2 registration sheets!');
-  return 'Setup completed successfully with Individual_Registrations and Team_Registrations!';
+  Logger.log('Setup successfully completed!');
+  return 'Setup completed successfully!';
 }

@@ -109,12 +109,19 @@
       border-color: var(--amber);
       box-shadow: 0 0 15px rgba(255,176,32,0.25);
     }
+    .countdown-card.expired {
+      border-color: var(--error-red);
+      background: rgba(198,40,40,0.12);
+    }
     .countdown-card h3 {
       font-family: var(--font-heading);
       color: var(--amber);
       font-size: 16px;
       letter-spacing: 2px;
       margin-bottom: 8px;
+    }
+    .countdown-card.expired h3 {
+      color: #ff8888;
     }
     .countdown-timer {
       display: flex;
@@ -152,6 +159,30 @@
     }
     .countdown-badge.open { background: var(--success-green); color: var(--white); }
     .countdown-badge.closed { background: var(--error-red); color: var(--white); }
+
+    /* ── Closed Banner ── */
+    .closed-banner {
+      background: linear-gradient(135deg, #8a0606, var(--error-red));
+      color: var(--white);
+      padding: 24px 20px;
+      border-radius: 14px;
+      text-align: center;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 20px rgba(198,40,40,0.35);
+      border: 2px solid #ff6b6b;
+      display: none;
+    }
+    .closed-banner.show { display: block; }
+    .closed-banner h3 {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .closed-banner p {
+      font-size: 13.5px;
+      opacity: 0.95;
+    }
 
     /* ── Main Container ── */
     .main-wrap {
@@ -694,7 +725,7 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(232,85,12,0.45);
     }
-    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; background: #888; }
     .spinner {
       display: none;
       width: 24px; height: 24px;
@@ -826,29 +857,36 @@
     <div class="countdown-card highlight" id="earlyBirdBox">
       <h3>🐦 EARLY BIRD REGISTRATION</h3>
       <div class="countdown-timer">
-        <div class="timer-block"><span class="num" id="ebDays">--</span><span class="label">Days</span></div>
-        <div class="timer-block"><span class="num" id="ebHours">--</span><span class="label">Hours</span></div>
-        <div class="timer-block"><span class="num" id="ebMins">--</span><span class="label">Mins</span></div>
-        <div class="timer-block"><span class="num" id="ebSecs">--</span><span class="label">Secs</span></div>
+        <div class="timer-block"><span class="num" id="ebDays">00</span><span class="label">Days</span></div>
+        <div class="timer-block"><span class="num" id="ebHours">00</span><span class="label">Hours</span></div>
+        <div class="timer-block"><span class="num" id="ebMins">00</span><span class="label">Mins</span></div>
+        <div class="timer-block"><span class="num" id="ebSecs">00</span><span class="label">Secs</span></div>
       </div>
-      <span class="countdown-badge open" id="ebStatusBadge">ACTIVE DISCOUNT</span>
+      <span class="countdown-badge open" id="ebStatusBadge">CHECKING...</span>
     </div>
 
     <div class="countdown-card" id="regularRegBox">
       <h3>⏰ FINAL REGISTRATION DEADLINE</h3>
       <div class="countdown-timer">
-        <div class="timer-block"><span class="num" id="rdDays">--</span><span class="label">Days</span></div>
-        <div class="timer-block"><span class="num" id="rdHours">--</span><span class="label">Hours</span></div>
-        <div class="timer-block"><span class="num" id="rdMins">--</span><span class="label">Mins</span></div>
-        <div class="timer-block"><span class="num" id="rdSecs">--</span><span class="label">Secs</span></div>
+        <div class="timer-block"><span class="num" id="rdDays">00</span><span class="label">Days</span></div>
+        <div class="timer-block"><span class="num" id="rdHours">00</span><span class="label">Hours</span></div>
+        <div class="timer-block"><span class="num" id="rdMins">00</span><span class="label">Mins</span></div>
+        <div class="timer-block"><span class="num" id="rdSecs">00</span><span class="label">Secs</span></div>
       </div>
-      <span class="countdown-badge open" id="rdStatusBadge">REGISTRATIONS OPEN</span>
+      <span class="countdown-badge open" id="rdStatusBadge">CHECKING...</span>
     </div>
   </section>
 
   <!-- Main Container -->
   <div class="main-wrap">
-    <div class="form-card">
+
+    <!-- Closed Banner (Shown if registrations are closed in config) -->
+    <div class="closed-banner" id="registrationClosedBanner">
+      <h3>🚫 REGISTRATIONS ARE CURRENTLY CLOSED</h3>
+      <p>Online registrations for TLH Sports Fest 2027 have officially ended. Thank you for the overwhelming response! For queries or fixture updates, please contact the organizing committee.</p>
+    </div>
+
+    <div class="form-card" id="registrationFormCard">
       <form id="sportsFestForm" novalidate>
 
         <!-- STEP 1: GENDER SELECTION -->
@@ -1101,10 +1139,12 @@
     let selectedAge = null;      // 'U15' | 'U17' | 'U19'
     let selectedFormat = null;   // 'Individual' | 'Team' | 'Doubles'
     let selectedGame = null;     // Game object
-    let isEarlyBirdActive = true;
+    let isEarlyBirdActive = false; // Controlled by backend config
+    let isRegistrationOpen = true; // Controlled by backend config
+    let countdownTimerId = null;
 
     // Roster state
-    let rosterPlayers = [];      // Array of player objects { role, name, dob, cnic, phone, email, school, fileBase64, fileName, fileMime }
+    let rosterPlayers = [];
     let paymentProofBase64 = null;
 
     // ── Master Dataset matching user's exact specification ──
@@ -1156,7 +1196,6 @@
     // ── App Initialization ──
     document.addEventListener('DOMContentLoaded', () => {
       masterGames = defaultMasterGames;
-      initCountdowns('2027-01-15T23:59:59', '2027-01-31T23:59:59');
       bindPillSelections();
       setupPaymentDropzone();
       fetchBackendConfig();
@@ -1166,68 +1205,132 @@
       try {
         const res = await fetch(API_URL + '?action=getConfig');
         const data = await res.json();
-        if (data.success && data.games && data.games.length > 0) {
+        if (data.success) {
           appConfig = data;
-          masterGames = data.games;
+          if (data.games && data.games.length > 0) {
+            masterGames = data.games;
+          }
           if (data.eventName) document.getElementById('eventTitle').textContent = data.eventName;
           if (data.eventTagline) document.getElementById('eventTagline').textContent = data.eventTagline;
           if (data.bankName) document.getElementById('bankNameDisplay').textContent = data.bankName;
           if (data.bankTitle) document.getElementById('bankTitleDisplay').textContent = data.bankTitle;
           if (data.bankAccount) document.getElementById('bankAccountDisplay').textContent = data.bankAccount;
-          initCountdowns(data.earlyBirdDeadline, data.registrationDeadline);
+
+          // Process status flags from backend
+          isRegistrationOpen = data.isRegistrationOpen !== false;
+          isEarlyBirdActive = data.isEarlyBirdOpen === true;
+
+          // Apply Registration Closed UI state
+          applyRegistrationStatusUI(isRegistrationOpen);
+
+          // Initialize / update countdowns
+          initCountdowns(data.earlyBirdDeadline, data.registrationDeadline, isEarlyBirdActive, isRegistrationOpen);
+
+          // Re-render games if already selected format
+          if (selectedFormat) {
+            renderGroupedGames();
+          }
+          if (selectedGame) {
+            updateFeeBanner();
+          }
         }
       } catch (err) {
         console.warn('Backend fetch failed, using fallback:', err);
+        initCountdowns('2027-01-15T23:59:59', '2027-01-31T23:59:59', true, true);
+      }
+    }
+
+    // ── Apply Registration Closed UI state ──
+    function applyRegistrationStatusUI(isOpen) {
+      const banner = document.getElementById('registrationClosedBanner');
+      const formCard = document.getElementById('registrationFormCard');
+      const submitBtn = document.getElementById('submitFormBtn');
+
+      if (!isOpen) {
+        banner.classList.add('show');
+        // Hide form steps to prevent registrations
+        document.getElementById('stepGenderSection').style.display = 'none';
+        document.getElementById('stepAgeSection').style.display = 'none';
+        document.getElementById('stepFormatSection').style.display = 'none';
+        document.getElementById('stepGameSection').style.display = 'none';
+        document.getElementById('stepDetailsSection').style.display = 'none';
+        document.getElementById('stepPaymentSection').style.display = 'none';
+        if (submitBtn) submitBtn.disabled = true;
+      } else {
+        banner.classList.remove('show');
+        document.getElementById('stepGenderSection').style.display = 'block';
+        if (submitBtn) submitBtn.disabled = false;
       }
     }
 
     // ── Countdowns ──
-    function initCountdowns(ebStr, regStr) {
-      const ebDate = new Date(ebStr || '2027-01-15T23:59:59');
-      const regDate = new Date(regStr || '2027-01-31T23:59:59');
+    function initCountdowns(ebStr, regStr, ebForceOpen, regForceOpen) {
+      if (countdownTimerId) clearInterval(countdownTimerId);
+
+      const ebDate = ebStr ? new Date(ebStr) : new Date('2027-01-15T23:59:59');
+      const regDate = regStr ? new Date(regStr) : new Date('2027-01-31T23:59:59');
 
       function update() {
         const now = new Date();
-        const ebDiff = ebDate - now;
-        if (ebDiff > 0) {
+
+        // 1. Early Bird Countdown
+        const ebDiff = (ebDate instanceof Date && !isNaN(ebDate.getTime())) ? (ebDate - now) : -1;
+        const ebCard = document.getElementById('earlyBirdBox');
+        const ebBadge = document.getElementById('ebStatusBadge');
+
+        if (ebForceOpen && ebDiff > 0) {
           isEarlyBirdActive = true;
+          ebCard.classList.remove('expired');
+          ebCard.classList.add('highlight');
           document.getElementById('ebDays').textContent = String(Math.floor(ebDiff / (1000 * 60 * 60 * 24))).padStart(2, '0');
           document.getElementById('ebHours').textContent = String(Math.floor((ebDiff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
           document.getElementById('ebMins').textContent = String(Math.floor((ebDiff / (1000 * 60)) % 60)).padStart(2, '0');
           document.getElementById('ebSecs').textContent = String(Math.floor((ebDiff / 1000) % 60)).padStart(2, '0');
-          document.getElementById('ebStatusBadge').className = 'countdown-badge open';
-          document.getElementById('ebStatusBadge').textContent = 'ACTIVE DISCOUNT';
+          ebBadge.className = 'countdown-badge open';
+          ebBadge.textContent = 'ACTIVE DISCOUNT';
         } else {
           isEarlyBirdActive = false;
+          ebCard.classList.remove('highlight');
+          ebCard.classList.add('expired');
           document.getElementById('ebDays').textContent = '00';
           document.getElementById('ebHours').textContent = '00';
           document.getElementById('ebMins').textContent = '00';
           document.getElementById('ebSecs').textContent = '00';
-          document.getElementById('ebStatusBadge').className = 'countdown-badge closed';
-          document.getElementById('ebStatusBadge').textContent = 'EXPIRED';
+          ebBadge.className = 'countdown-badge closed';
+          ebBadge.textContent = 'EXPIRED / CLOSED';
         }
 
-        const regDiff = regDate - now;
-        if (regDiff > 0) {
+        // 2. Regular Registration Countdown
+        const regDiff = (regDate instanceof Date && !isNaN(regDate.getTime())) ? (regDate - now) : -1;
+        const regCard = document.getElementById('regularRegBox');
+        const rdBadge = document.getElementById('rdStatusBadge');
+
+        if (regForceOpen && regDiff > 0) {
+          isRegistrationOpen = true;
+          regCard.classList.remove('expired');
           document.getElementById('rdDays').textContent = String(Math.floor(regDiff / (1000 * 60 * 60 * 24))).padStart(2, '0');
           document.getElementById('rdHours').textContent = String(Math.floor((regDiff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
           document.getElementById('rdMins').textContent = String(Math.floor((regDiff / (1000 * 60)) % 60)).padStart(2, '0');
           document.getElementById('rdSecs').textContent = String(Math.floor((regDiff / 1000) % 60)).padStart(2, '0');
-          document.getElementById('rdStatusBadge').className = 'countdown-badge open';
-          document.getElementById('rdStatusBadge').textContent = 'REGISTRATIONS OPEN';
+          rdBadge.className = 'countdown-badge open';
+          rdBadge.textContent = 'REGISTRATIONS OPEN';
         } else {
+          isRegistrationOpen = false;
+          regCard.classList.add('expired');
           document.getElementById('rdDays').textContent = '00';
           document.getElementById('rdHours').textContent = '00';
           document.getElementById('rdMins').textContent = '00';
           document.getElementById('rdSecs').textContent = '00';
-          document.getElementById('rdStatusBadge').className = 'countdown-badge closed';
-          document.getElementById('rdStatusBadge').textContent = 'CLOSED';
+          rdBadge.className = 'countdown-badge closed';
+          rdBadge.textContent = 'CLOSED';
+          applyRegistrationStatusUI(false);
         }
 
         if (selectedGame) updateFeeBanner();
       }
+
       update();
-      setInterval(update, 1000);
+      countdownTimerId = setInterval(update, 1000);
     }
 
     // ── Progressive Step Selection Bindings ──
@@ -1239,11 +1342,9 @@
           btn.classList.add('active');
           selectedGender = btn.dataset.gender;
 
-          // Unlock Step 2 (Age)
           const ageSec = document.getElementById('stepAgeSection');
           ageSec.classList.remove('locked');
 
-          // If age was already selected, refresh options
           if (selectedAge) updateFormatOptions();
           else smoothScrollTo(ageSec);
         });
@@ -1256,7 +1357,6 @@
           btn.classList.add('active');
           selectedAge = btn.dataset.age;
 
-          // Unlock Step 3 (Format)
           const fmtSec = document.getElementById('stepFormatSection');
           fmtSec.classList.remove('locked');
 
@@ -1273,7 +1373,6 @@
           btn.classList.add('active');
           selectedFormat = btn.dataset.format;
 
-          // Unlock Step 4 (Game selection)
           const gameSec = document.getElementById('stepGameSection');
           gameSec.classList.remove('locked');
 
@@ -1282,7 +1381,6 @@
         });
       });
 
-      // Extra player button
       document.getElementById('addExtraPlayerBtn').addEventListener('click', addSubstitutePlayerSlot);
     }
 
@@ -1294,10 +1392,8 @@
 
     // ── Helper: Check if Game is Eligible ──
     function isGameEligible(game, gender, age, format) {
-      // 1. Gender check
       if (gender && game.gender !== 'Both' && game.gender !== gender) return false;
 
-      // 2. Age check
       if (age) {
         const rawAges = (game.ageCategory || '').toUpperCase();
         if (rawAges && !rawAges.includes('ALL')) {
@@ -1306,7 +1402,6 @@
         }
       }
 
-      // 3. Format check
       if (format) {
         const gFormat = (game.format || game.type || '').toLowerCase();
         if (format === 'Individual') {
@@ -1329,17 +1424,14 @@
       const teamGames = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, 'Team'));
       const dblGames = masterGames.filter(g => isGameEligible(g, selectedGender, selectedAge, 'Doubles'));
 
-      // Update badges
       document.getElementById('countIndividual').textContent = `${indGames.length} available (Single & Workshops)`;
       document.getElementById('countTeam').textContent = `${teamGames.length} available (Full Squads)`;
       document.getElementById('countDoubles').textContent = `${dblGames.length} available (Pairs)`;
 
-      // Check disabled state for formats with 0 games
       toggleFormatBtn('formatBtnIndividual', indGames.length > 0);
       toggleFormatBtn('formatBtnTeam', teamGames.length > 0);
       toggleFormatBtn('formatBtnDoubles', dblGames.length > 0);
 
-      // If currently active format has 0 games, clear it
       if (selectedFormat) {
         const activeCount = selectedFormat === 'Individual' ? indGames.length :
                             selectedFormat === 'Team' ? teamGames.length : dblGames.length;
@@ -1368,7 +1460,6 @@
     function renderGroupedGames() {
       if (!selectedGender || !selectedAge || !selectedFormat) return;
 
-      // Update breadcrumbs
       document.getElementById('crumbGender').textContent = selectedGender;
       document.getElementById('crumbAge').textContent = selectedAge;
       document.getElementById('crumbFormat').textContent = selectedFormat;
@@ -1389,7 +1480,6 @@
         return;
       }
 
-      // Group by Category: Ground Games, Indoor Games, E-Games, Workshops
       const categoriesOrder = ['Ground Games', 'Indoor Games', 'E-Games', 'Workshops'];
 
       categoriesOrder.forEach(categoryName => {
@@ -1422,6 +1512,7 @@
           const isSelected = selectedGame && selectedGame.sr === game.sr;
           card.className = 'game-card' + (isSelected ? ' selected' : '');
 
+          // Price display: Early bird vs Regular
           const fee = isEarlyBirdActive ? game.earlyFee : game.regularFee;
           const oldFee = (isEarlyBirdActive && game.earlyFee < game.regularFee) ? `Rs. ${game.regularFee.toLocaleString()}` : '';
 
@@ -1461,15 +1552,12 @@
 
       updateFeeBanner();
 
-      // Reveal Details and Payment sections
       const detailsSec = document.getElementById('stepDetailsSection');
       const paymentSec = document.getElementById('stepPaymentSection');
       detailsSec.style.display = 'block';
       paymentSec.style.display = 'block';
 
-      // Pre-populate players roster based on game format & rules
       setupRosterForGame(game);
-
       smoothScrollTo(detailsSec);
     }
 
@@ -1508,11 +1596,9 @@
         teamFields.style.display = 'block';
         heading.textContent = `TEAM & ROSTER DETAILS (${game.game.toUpperCase()})`;
 
-        // Determine player count
         const minCount = game.minPlayers || (game.format === 'Doubles' ? 2 : 5);
         const maxCount = game.maxPlayers || minCount;
 
-        // Populate Player 1 (Captain) + all remaining core players
         for (let i = 0; i < minCount; i++) {
           rosterPlayers.push({
             role: i === 0 ? 'Team Captain / Head' : (game.format === 'Doubles' ? 'Partner Player' : `Player #${i + 1}`),
@@ -1528,7 +1614,6 @@
           });
         }
 
-        // Show/hide "+ Add Extra Player" button
         if (maxCount > minCount) {
           addExtraBtn.style.display = 'block';
           addExtraBtn.textContent = `+ Add Substitute / Extra Player (Up to ${maxCount} total)`;
@@ -1537,7 +1622,6 @@
         }
 
       } else {
-        // Individual / Workshop / Solo
         teamFields.style.display = 'none';
         addExtraBtn.style.display = 'none';
         heading.textContent = `PARTICIPANT DETAILS (${game.game.toUpperCase()})`;
@@ -1615,7 +1699,6 @@
             ${canRemove ? `<button type="button" class="remove-roster-btn" onclick="removeRosterSlot(${idx})">Remove</button>` : ''}
           </div>
 
-          <!-- Name & DOB / Age -->
           <div class="field-row">
             <div class="field">
               <label>Full Name <span class="req">*</span></label>
@@ -1629,7 +1712,6 @@
             </div>
           </div>
 
-          <!-- Contact Details (Only required for Captain / Solo participant) -->
           ${p.isCaptain ? `
           <div class="field-row">
             <div class="field">
@@ -1645,7 +1727,6 @@
           </div>
           ` : ''}
 
-          <!-- Solo participant School -->
           ${(!isTeam && p.isCaptain) ? `
           <div class="field">
             <label>School / College / Institution <span class="req">*</span></label>
@@ -1654,7 +1735,6 @@
           </div>
           ` : ''}
 
-          <!-- CNIC Number & CNIC Photo Upload -->
           <div class="field-row">
             <div class="field">
               <label>CNIC / B-Form Number <span class="req">*</span></label>
@@ -1715,7 +1795,6 @@
       const input = document.getElementById('paymentProofFile');
       const nameEl = document.getElementById('paymentFileName');
       const preview = document.getElementById('paymentPreview');
-      const zone = document.getElementById('paymentDrop');
 
       input.addEventListener('change', () => {
         const file = input.files[0];
@@ -1763,11 +1842,15 @@
 
     // ── Client-side Validation ──
     function validateCompleteForm() {
+      if (!isRegistrationOpen) {
+        showToast('Online registrations are currently closed.', 'error');
+        return false;
+      }
+
       let isValid = true;
       const isTeam = selectedGame && selectedGame.isTeamGame;
       const isU17orU19 = (selectedAge === 'U17' || selectedAge === 'U19');
 
-      // 1. Team Info Validation
       if (isTeam) {
         const teamName = document.getElementById('teamNameInput');
         if (!teamName.value.trim()) { teamName.classList.add('error'); isValid = false; }
@@ -1778,7 +1861,6 @@
         else school.classList.remove('error');
       }
 
-      // 2. Validate Every Roster Member
       rosterPlayers.forEach((p, idx) => {
         const nameEl = document.getElementById(`roster_name_${idx}`);
         if (!p.name || p.name.trim().length < 2) {
@@ -1805,7 +1887,6 @@
           if (cnicEl) cnicEl.classList.remove('error');
         }
 
-        // Captain contact check
         if (p.isCaptain) {
           const phoneEl = document.getElementById(`roster_phone_${idx}`);
           const phoneClean = (p.phone || '').replace(/[^0-9+]/g, '');
@@ -1835,7 +1916,6 @@
           }
         }
 
-        // CNIC Image upload check for U17 / U19
         if (isU17orU19) {
           const fileErr = document.getElementById(`err_roster_file_${idx}`);
           if (!p.fileBase64) {
@@ -1847,7 +1927,6 @@
         }
       });
 
-      // 3. Payment Proof
       if (!paymentProofBase64) {
         document.getElementById('paymentProofError').style.display = 'block';
         isValid = false;
@@ -1858,7 +1937,7 @@
       return isValid;
     }
 
-    // ── Helper to upload file via GAS ──
+    // ── Helper to upload file via GAS with sensible names ──
     async function uploadSingleFile(base64Data, fileName, mimeType, fileType, prefix) {
       if (!base64Data) return '';
       try {
@@ -1887,7 +1966,7 @@
       e.preventDefault();
 
       if (!validateCompleteForm()) {
-        showToast('Please fill all highlighted fields and upload required documents', 'error');
+        showToast('Please fix all errors marked in red', 'error');
         const firstErr = document.querySelector('.error, .error-text[style*="display: block"]');
         if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
@@ -1903,17 +1982,20 @@
         const teamName = isTeam ? document.getElementById('teamNameInput').value.trim() : '';
         const schoolName = isTeam ? document.getElementById('teamSchoolInput').value.trim() : (captain.school || '');
         const chaperone = isTeam ? (document.getElementById('chaperoneNameInput').value.trim() + ' (' + document.getElementById('chaperonePhoneInput').value.trim() + ')') : '';
+        const cleanGame = selectedGame.game.replace(/[^a-zA-Z0-9]/g, '_');
+        const cleanTeam = teamName.replace(/[^a-zA-Z0-9]/g, '_');
 
-        // 1. Upload payment proof
+        // 1. Upload payment proof with sensible filename
+        const paymentPrefix = `PAY_${cleanGame}_${isTeam ? cleanTeam : captain.name.replace(/\s+/g, '_')}`;
         const paymentProofUrl = await uploadSingleFile(
           paymentProofBase64.data,
           paymentProofBase64.name,
           paymentProofBase64.mime,
           'payment',
-          'Pay_' + captain.name.replace(/\s+/g, '_')
+          paymentPrefix
         );
 
-        // 2. Upload roster members' CNIC files
+        // 2. Upload roster members' CNIC files with sensible filenames
         const finalizedMembers = [];
         let captainCnicUrl = '';
 
@@ -1921,12 +2003,14 @@
           const p = rosterPlayers[i];
           let cnicUrl = '';
           if (p.fileBase64) {
+            const roleTag = p.isCaptain ? 'Captain' : `Player${i+1}`;
+            const cnicPrefix = `CNIC_${roleTag}_${selectedAge}_${cleanGame}_${p.name.replace(/\s+/g, '_')}_${p.cnic.replace(/[^0-9]/g, '')}`;
             cnicUrl = await uploadSingleFile(
               p.fileBase64,
               p.fileName,
               p.fileMime,
               'cnic',
-              (p.isCaptain ? 'Captain_' : `Member${i+1}_`) + p.name.replace(/\s+/g, '_')
+              cnicPrefix
             );
           }
           if (p.isCaptain) captainCnicUrl = cnicUrl;
