@@ -45,12 +45,16 @@ To eliminate decision fatigue across 35 games, the registration form employs a *
 
 ```
 [ Step 1: Gender ] ──> [ Step 2: Age Category ] ──> [ Step 3: Format ] ──> [ Step 4: Game Cards ]
- (Boys / Girls)          (U15 / U17 / U19)          (Individual / Team)      (Ground, Indoor,
+ (Boys / Girls)        (U15 / U17 / U19 / Open)     (Individual / Team)      (Ground, Indoor,
                                                                               E-Games, Workshops)
 ```
 
 1. **Step 1: Gender Selection** (`Boys` or `Girls`). Filters gender-restricted games (e.g., Foosball & Snooker Junior are Boys only).
-2. **Step 2: Age Category** (`U15`, `U17`, `U19`). Filters events eligible for that age bracket.
+2. **Step 2: Age Category** (`U15`, `U17`, `U19`, `Open Category`). Filters events eligible for that age bracket:
+   - **U15**: Maximum accepted age 15 years.
+   - **U17**: Maximum accepted age 17 years (includes all games with both U15 & U19).
+   - **U19**: Maximum accepted age 19 years.
+   - **Open Category**: Maximum accepted age 19 years (includes Carrom, Ludo, Chess).
 3. **Step 3: Format Selection** (`Individual`, `Team`, or `Doubles`). Displays active counts of available events.
 4. **Step 4: Categorized Game Selection**: Games and workshops render under clear category headers:
    - 🏃 Ground Games (Cricket, Futsal, Basketball, Paddle Tennis, Dodgeball, Frisbee, Squid Game)
@@ -67,7 +71,7 @@ To eliminate decision fatigue across 35 games, the registration form employs a *
    - For team games, dedicated inputs for **Team Name**, **School / Institution**, and **Chaperone Name & Contact** are required.
 6. **Age-Aware Verification Policy**:
    - **U15**: Requires only the candidate's CNIC / B-Form number.
-   - **U17 & U19**: Strict requirement — every player in the roster must provide both their CNIC / B-Form number **and** upload a clear verification photo.
+   - **U17, U19 & Open Category**: Strict requirement — every player in the roster must provide both their CNIC / B-Form number **and** upload a clear verification photo. Maximum accepted age is enforced (15 for U15, 17 for U17, 19 for U19 and Open Category).
 7. **Banking & Fee Total**:
    - Account Title: `Genesis Educational Service Pvt Ltd.`
    - Bank: `Bank ALFALAH`

@@ -923,18 +923,22 @@
             <span>Eligible Age Bracket:</span>
             <span style="font-size:11px;color:#856e63;">Strictly verified at registration</span>
           </div>
-          <div class="pill-grid pill-grid-3" id="ageCategoryGrid">
+          <div class="pill-grid pill-grid-2" id="ageCategoryGrid">
             <button type="button" class="pill-btn" data-age="U15">
               <span>🟢 Under 15 (U15)</span>
-              <span class="pill-sub">CNIC / B-Form No. only</span>
+              <span class="pill-sub">Max Age: 15 yrs • CNIC / B-Form No. only</span>
             </button>
             <button type="button" class="pill-btn" data-age="U17">
               <span>🟠 Under 17 (U17)</span>
-              <span class="pill-sub">CNIC Photo Verification required</span>
+              <span class="pill-sub">Max Age: 17 yrs • CNIC Photo Verification required</span>
             </button>
             <button type="button" class="pill-btn" data-age="U19">
               <span>🔴 Under 19 (U19)</span>
-              <span class="pill-sub">CNIC Photo Verification required</span>
+              <span class="pill-sub">Max Age: 19 yrs • CNIC Photo Verification required</span>
+            </button>
+            <button type="button" class="pill-btn" data-age="Open Category">
+              <span>🌟 Open Category</span>
+              <span class="pill-sub">Max Age: 19 yrs • CNIC Photo Verification required (Ludo, Chess, Carrom)</span>
             </button>
           </div>
         </div>
@@ -1151,23 +1155,23 @@
     const defaultMasterGames = [
       // Ground Games
       { sr: 1, game: "Cricket", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 6000, regularFee: 7000, players: "7 players + 2 extra", type: "Team", gender: "Both", minPlayers: 7, maxPlayers: 9, isTeamGame: true },
-      { sr: 2, game: "Futsal", format: "Team", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 6000, regularFee: 7000, players: "5 players + 2 extra", type: "Team", gender: "Both", minPlayers: 5, maxPlayers: 7, isTeamGame: true },
+      { sr: 2, game: "Futsal", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 6000, regularFee: 7000, players: "5 players + 2 extra", type: "Team", gender: "Both", minPlayers: 5, maxPlayers: 7, isTeamGame: true },
       { sr: 3, game: "Basketball", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 6000, regularFee: 7000, players: "5 players + 2 extra", type: "Team", gender: "Both", minPlayers: 5, maxPlayers: 7, isTeamGame: true },
-      { sr: 4, game: "Paddle Tennis", format: "Individual", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 2000, regularFee: 2500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 5, game: "Paddle Tennis (Doubles)", format: "Doubles", category: "Ground Games", ageCategory: "U19, U15", earlyFee: 3500, regularFee: 4500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 4, game: "Paddle Tennis", format: "Individual", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 2000, regularFee: 2500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 5, game: "Paddle Tennis (Doubles)", format: "Doubles", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 3500, regularFee: 4500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
       { sr: 6, game: "Dodgeball", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 5000, regularFee: 6000, players: "6 players", type: "Team", gender: "Both", minPlayers: 6, maxPlayers: 8, isTeamGame: true },
       { sr: 7, game: "Frisbee (Flying Disc)", format: "Team", category: "Ground Games", ageCategory: "U19, U17, U15", earlyFee: 2000, regularFee: 2500, players: "7 players", type: "Team", gender: "Both", minPlayers: 7, maxPlayers: 9, isTeamGame: true },
       { sr: 8, game: "Squid Game", format: "Individual", category: "Ground Games", ageCategory: "U19", earlyFee: 700, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
 
       // Indoor Games
-      { sr: 9, game: "Badminton", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 1000, regularFee: 1500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 10, game: "Badminton (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 2000, regularFee: 2500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
-      { sr: 11, game: "Table Tennis", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 12, game: "Table Tennis (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 1200, regularFee: 1500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
-      { sr: 13, game: "Carrom", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 14, game: "Ludo", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 15, game: "Chess", format: "Individual", category: "Indoor Games", ageCategory: "U19", earlyFee: 700, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
-      { sr: 16, game: "Foosball", format: "Individual", category: "Indoor Games", ageCategory: "U19, U15", earlyFee: 500, regularFee: 700, players: "1 player", type: "Individual", gender: "Boys", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 9, game: "Badminton", format: "Individual", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 1000, regularFee: 1500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 10, game: "Badminton (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 2000, regularFee: 2500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 11, game: "Table Tennis", format: "Individual", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 12, game: "Table Tennis (Doubles)", format: "Doubles", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 1200, regularFee: 1500, players: "2 players", type: "Doubles", gender: "Both", minPlayers: 2, maxPlayers: 2, isTeamGame: true },
+      { sr: 13, game: "Carrom", format: "Individual", category: "Indoor Games", ageCategory: "Open Category", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 14, game: "Ludo", format: "Individual", category: "Indoor Games", ageCategory: "Open Category", earlyFee: 500, regularFee: 500, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 15, game: "Chess", format: "Individual", category: "Indoor Games", ageCategory: "Open Category", earlyFee: 700, regularFee: 700, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
+      { sr: 16, game: "Foosball", format: "Individual", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 500, regularFee: 700, players: "1 player", type: "Individual", gender: "Boys", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
       { sr: 17, game: "Arm Wrestling", format: "Individual", category: "Indoor Games", ageCategory: "U19, U17, U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Both", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
       { sr: 18, game: "Snooker Junior", format: "Individual", category: "Indoor Games", ageCategory: "U15", earlyFee: 800, regularFee: 1000, players: "1 player", type: "Individual", gender: "Boys", minPlayers: 1, maxPlayers: 1, isTeamGame: false },
       { sr: 19, game: "Mafia", format: "Team", category: "Indoor Games", ageCategory: "U19", earlyFee: 500, regularFee: 500, players: "4-8 players", type: "Team", gender: "Both", minPlayers: 4, maxPlayers: 8, isTeamGame: true },
@@ -1397,8 +1401,11 @@
       if (age) {
         const rawAges = (game.ageCategory || '').toUpperCase();
         if (rawAges && !rawAges.includes('ALL')) {
-          const tokens = rawAges.split(/[\s,.]+/).filter(Boolean);
-          if (!tokens.includes(age.toUpperCase())) return false;
+          const tokens = rawAges.split(/[,;/|]+/).map(s => s.trim()).filter(Boolean);
+          const targetAge = age.toUpperCase();
+          const matched = tokens.includes(targetAge) ||
+            (targetAge === 'OPEN CATEGORY' && (tokens.includes('OPEN') || tokens.includes('OPEN CATEGORY')));
+          if (!matched) return false;
         }
       }
 
@@ -1437,11 +1444,21 @@
                             selectedFormat === 'Team' ? teamGames.length : dblGames.length;
         if (activeCount === 0) {
           selectedFormat = null;
+          selectedGame = null;
           document.querySelectorAll('#formatGrid .pill-btn').forEach(b => b.classList.remove('active'));
           document.getElementById('stepGameSection').classList.add('locked');
+          document.getElementById('feeSummaryBanner').classList.remove('show');
           document.getElementById('stepDetailsSection').style.display = 'none';
           document.getElementById('stepPaymentSection').style.display = 'none';
         } else {
+          if (selectedGame && !isGameEligible(selectedGame, selectedGender, selectedAge, selectedFormat)) {
+            selectedGame = null;
+            document.getElementById('feeSummaryBanner').classList.remove('show');
+            document.getElementById('stepDetailsSection').style.display = 'none';
+            document.getElementById('stepPaymentSection').style.display = 'none';
+          } else if (selectedGame) {
+            renderRosterFields();
+          }
           renderGroupedGames();
         }
       }
@@ -1675,13 +1692,46 @@
       renderRosterFields();
     }
 
+    function getMaxAgeForCategory(ageCat) {
+      const s = String(ageCat || '').trim().toUpperCase();
+      if (s === 'U15') return 15;
+      if (s === 'U17') return 17;
+      if (s === 'U19' || s === 'OPEN' || s === 'OPEN CATEGORY') return 19;
+      return null;
+    }
+
+    function parseAgeYears(val) {
+      if (val === undefined || val === null || val === '') return null;
+      const s = String(val).trim();
+      if (/^\d{1,2}$/.test(s)) return Number(s);
+      let d = null;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        const parts = s.split('-');
+        d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      } else if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/.test(s)) {
+        const parts = s.split(/[\/-]/);
+        d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+      } else {
+        d = new Date(s);
+      }
+      if (!d || isNaN(d.getTime())) return null;
+      const today = new Date();
+      let age = today.getFullYear() - d.getFullYear();
+      const m = today.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < d.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
     // ── Render Dynamic Player Form Cards ──
     function renderRosterFields() {
       const container = document.getElementById('rosterCardsContainer');
       container.innerHTML = '';
 
       const isTeam = selectedGame && selectedGame.isTeamGame;
-      const isU17orU19 = (selectedAge === 'U17' || selectedAge === 'U19');
+      const requiresCnicPhoto = (selectedAge === 'U17' || selectedAge === 'U19' || selectedAge === 'Open Category');
+      const maxAge = getMaxAgeForCategory(selectedAge);
       const minRequired = (selectedGame && selectedGame.minPlayers) || 1;
 
       rosterPlayers.forEach((p, idx) => {
@@ -1708,7 +1758,8 @@
             <div class="field">
               <label>${p.isCaptain ? 'Date of Birth' : 'Age or Date of Birth'} <span class="req">*</span></label>
               <input type="${p.isCaptain ? 'date' : 'text'}" id="roster_dob_${idx}" value="${p.dob || ''}" placeholder="e.g. 16 or 2008-05-14" required oninput="rosterPlayers[${idx}].dob = this.value">
-              <div class="error-text">Please enter date of birth or age</div>
+              <div class="error-text" id="err_roster_dob_${idx}">Please enter date of birth or age</div>
+              ${maxAge ? `<div class="field-hint">Maximum accepted age for ${selectedAge}: ${maxAge} years</div>` : ''}
             </div>
           </div>
 
@@ -1746,7 +1797,7 @@
             <div class="field">
               <label>
                 CNIC / B-Form Photo
-                ${isU17orU19 ? '<span class="req">*</span>' : '<span style="font-weight:400;color:#856e63;">(Optional for U15)</span>'}
+                ${requiresCnicPhoto ? '<span class="req">*</span>' : '<span style="font-weight:400;color:#856e63;">(Optional for U15)</span>'}
               </label>
               <div class="upload-zone" id="zone_roster_${idx}">
                 <input type="file" accept="image/*" onchange="handleRosterFileUpload(this, ${idx})">
@@ -1849,7 +1900,8 @@
 
       let isValid = true;
       const isTeam = selectedGame && selectedGame.isTeamGame;
-      const isU17orU19 = (selectedAge === 'U17' || selectedAge === 'U19');
+      const requiresCnicPhoto = (selectedAge === 'U17' || selectedAge === 'U19' || selectedAge === 'Open Category');
+      const maxAge = getMaxAgeForCategory(selectedAge);
 
       if (isTeam) {
         const teamName = document.getElementById('teamNameInput');
@@ -1871,7 +1923,18 @@
         }
 
         const dobEl = document.getElementById(`roster_dob_${idx}`);
+        const dobErrEl = document.getElementById(`err_roster_dob_${idx}`);
+        const parsedAge = parseAgeYears(p.dob);
         if (!p.dob || p.dob.trim().length === 0) {
+          if (dobErrEl) dobErrEl.textContent = 'Please enter date of birth or age';
+          if (dobEl) dobEl.classList.add('error');
+          isValid = false;
+        } else if (parsedAge === null || parsedAge < 4 || parsedAge > 99) {
+          if (dobErrEl) dobErrEl.textContent = 'Please enter a valid date of birth or age';
+          if (dobEl) dobEl.classList.add('error');
+          isValid = false;
+        } else if (maxAge !== null && parsedAge > maxAge) {
+          if (dobErrEl) dobErrEl.textContent = `Maximum accepted age for ${selectedAge} is ${maxAge} years (entered: ${parsedAge})`;
           if (dobEl) dobEl.classList.add('error');
           isValid = false;
         } else {
@@ -1916,7 +1979,7 @@
           }
         }
 
-        if (isU17orU19) {
+        if (requiresCnicPhoto) {
           const fileErr = document.getElementById(`err_roster_file_${idx}`);
           if (!p.fileBase64) {
             if (fileErr) fileErr.style.display = 'block';
@@ -2004,7 +2067,8 @@
           let cnicUrl = '';
           if (p.fileBase64) {
             const roleTag = p.isCaptain ? 'Captain' : `Player${i+1}`;
-            const cnicPrefix = `CNIC_${roleTag}_${selectedAge}_${cleanGame}_${p.name.replace(/\s+/g, '_')}_${p.cnic.replace(/[^0-9]/g, '')}`;
+            const ageTag = (selectedAge || '').replace(/\s+/g, '');
+            const cnicPrefix = `CNIC_${roleTag}_${ageTag}_${cleanGame}_${p.name.replace(/\s+/g, '_')}_${p.cnic.replace(/[^0-9]/g, '')}`;
             cnicUrl = await uploadSingleFile(
               p.fileBase64,
               p.fileName,

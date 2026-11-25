@@ -54,6 +54,20 @@ function doGet(e) {
       setupSheets();
       return jsonResponse({ success: true, message: 'Setup completed successfully!' });
     }
+    if (action === 'syncGames') {
+      const result = syncGamesSheet();
+      return jsonResponse(result);
+    }
+    if (action === 'fixFolders') {
+      const folders = getUploadFolders();
+      return jsonResponse({
+        success: true,
+        rootFolderId: folders.rootFolder.getId(),
+        rootFolderName: folders.rootFolder.getName(),
+        cnicFolderId: folders.cnicFolder.getId(),
+        paymentFolderId: folders.paymentFolder.getId()
+      });
+    }
     return jsonResponse({ error: 'Unknown action' });
   } catch (err) {
     return jsonResponse({ success: false, error: err.message, stack: err.stack });
@@ -88,23 +102,23 @@ function getMasterGamesData() {
   return [
     // Ground Games
     [1, 'Cricket', 'Team', 'Ground Games', 'U19, U17, U15', 6000, 7000, '7 players + 2 extra', 'Fair bowling action; runs counted by scoring; outs decided by umpire; follow overs limit.', 'Team', 'Both', 7, 9],
-    [2, 'Futsal', 'Team', 'Ground Games', 'U19, U15', 6000, 7000, '5 players + 2 extra', 'No handball (except GK); limited contact; fixed time; fouls penalised. Two 10-min halves.', 'Team', 'Both', 5, 7],
+    [2, 'Futsal', 'Team', 'Ground Games', 'U19, U17, U15', 6000, 7000, '5 players + 2 extra', 'No handball (except GK); limited contact; fixed time; fouls penalised. Two 10-min halves.', 'Team', 'Both', 5, 7],
     [3, 'Basketball', 'Team', 'Ground Games', 'U19, U17, U15', 6000, 7000, '5 players + 2 extra', 'No travelling or double dribble; follow time limits; fouls penalised; highest score wins.', 'Team', 'Both', 5, 7],
-    [4, 'Paddle Tennis', 'Individual', 'Ground Games', 'U19, U15', 2000, 2500, '1 player', 'Play within marked area; serve fairly; point awarded when opponent misses; follow score limit.', 'Individual', 'Both', 1, 1],
-    [5, 'Paddle Tennis (Doubles)', 'Doubles', 'Ground Games', 'U19, U15', 3500, 4500, '2 players', 'Play within marked area; serve fairly; point awarded when opponent misses; follow score limit.', 'Doubles', 'Both', 2, 2],
+    [4, 'Paddle Tennis', 'Individual', 'Ground Games', 'U19, U17, U15', 2000, 2500, '1 player', 'Play within marked area; serve fairly; point awarded when opponent misses; follow score limit.', 'Individual', 'Both', 1, 1],
+    [5, 'Paddle Tennis (Doubles)', 'Doubles', 'Ground Games', 'U19, U17, U15', 3500, 4500, '2 players', 'Play within marked area; serve fairly; point awarded when opponent misses; follow score limit.', 'Doubles', 'Both', 2, 2],
     [6, 'Dodgeball', 'Team', 'Ground Games', 'U19, U17, U15', 5000, 6000, '6 players', 'Two sides of 6 try to eliminate opponents by hitting with thrown balls or catching throws.', 'Team', 'Both', 6, 8],
     [7, 'Frisbee (Flying Disc)', 'Team', 'Ground Games', 'U19, U17, U15', 2000, 2500, '7 players', 'Ultimate Frisbee is a fast-paced, non-contact team sport with a flying disc. 7 players per team.', 'Team', 'Both', 7, 9],
     [8, 'Squid Game', 'Individual', 'Ground Games', 'U19', 700, 700, '1 player', 'Fun athletic survival elimination challenges.', 'Individual', 'Both', 1, 1],
 
     // Indoor Games
-    [9, 'Badminton', 'Individual', 'Indoor Games', 'U19, U15', 1000, 1500, '1 player', 'Serve diagonally; shuttle must pass net; rally scoring applies; no double hits.', 'Individual', 'Both', 1, 1],
-    [10, 'Badminton (Doubles)', 'Doubles', 'Indoor Games', 'U19, U15', 2000, 2500, '2 players', 'Serve diagonally; shuttle must pass net; rally scoring applies; no double hits.', 'Doubles', 'Both', 2, 2],
-    [11, 'Table Tennis', 'Individual', 'Indoor Games', 'U19, U15', 800, 1000, '1 player', 'Proper serve required; ball must bounce once each side; points on missed return.', 'Individual', 'Both', 1, 1],
-    [12, 'Table Tennis (Doubles)', 'Doubles', 'Indoor Games', 'U19, U15', 1200, 1500, '2 players', 'Proper serve required; ball must bounce once each side; points on missed return.', 'Doubles', 'Both', 2, 2],
-    [13, 'Carrom', 'Individual', 'Indoor Games', 'U19', 500, 500, '1 player', 'Strike within turn; pocket queen with cover; fouls result in penalty.', 'Individual', 'Both', 1, 1],
-    [14, 'Ludo', 'Individual', 'Indoor Games', 'U19', 500, 500, '1 player', 'Roll the dice fairly; move pieces according to number; no cheating.', 'Individual', 'Both', 1, 1],
-    [15, 'Chess', 'Individual', 'Indoor Games', 'U19', 700, 700, '1 player', 'Standard moves; touch-move rule applies; checkmate ends the game.', 'Individual', 'Both', 1, 1],
-    [16, 'Foosball', 'Individual', 'Indoor Games', 'U19, U15', 500, 700, '1 player', 'Table soccer played on 4 rods per side. Knockout format to 10 goals.', 'Individual', 'Boys', 1, 1],
+    [9, 'Badminton', 'Individual', 'Indoor Games', 'U19, U17, U15', 1000, 1500, '1 player', 'Serve diagonally; shuttle must pass net; rally scoring applies; no double hits.', 'Individual', 'Both', 1, 1],
+    [10, 'Badminton (Doubles)', 'Doubles', 'Indoor Games', 'U19, U17, U15', 2000, 2500, '2 players', 'Serve diagonally; shuttle must pass net; rally scoring applies; no double hits.', 'Doubles', 'Both', 2, 2],
+    [11, 'Table Tennis', 'Individual', 'Indoor Games', 'U19, U17, U15', 800, 1000, '1 player', 'Proper serve required; ball must bounce once each side; points on missed return.', 'Individual', 'Both', 1, 1],
+    [12, 'Table Tennis (Doubles)', 'Doubles', 'Indoor Games', 'U19, U17, U15', 1200, 1500, '2 players', 'Proper serve required; ball must bounce once each side; points on missed return.', 'Doubles', 'Both', 2, 2],
+    [13, 'Carrom', 'Individual', 'Indoor Games', 'Open Category', 500, 500, '1 player', 'Strike within turn; pocket queen with cover; fouls result in penalty.', 'Individual', 'Both', 1, 1],
+    [14, 'Ludo', 'Individual', 'Indoor Games', 'Open Category', 500, 500, '1 player', 'Roll the dice fairly; move pieces according to number; no cheating.', 'Individual', 'Both', 1, 1],
+    [15, 'Chess', 'Individual', 'Indoor Games', 'Open Category', 700, 700, '1 player', 'Standard moves; touch-move rule applies; checkmate ends the game.', 'Individual', 'Both', 1, 1],
+    [16, 'Foosball', 'Individual', 'Indoor Games', 'U19, U17, U15', 500, 700, '1 player', 'Table soccer played on 4 rods per side. Knockout format to 10 goals.', 'Individual', 'Boys', 1, 1],
     [17, 'Arm Wrestling', 'Individual', 'Indoor Games', 'U19, U17, U15', 800, 1000, '1 player', 'Elbows on the table; fair grip; no lifting elbow; winner pins opponent hand.', 'Individual', 'Both', 1, 1],
     [18, 'Snooker Junior', 'Individual', 'Indoor Games', 'U15', 800, 1000, '1 player', 'Junior cue sport played with standard snooker rules.', 'Individual', 'Boys', 1, 1],
     [19, 'Mafia', 'Team', 'Indoor Games', 'U19', 500, 500, '4-8 players', 'Social deduction role-playing game played in teams / squads.', 'Team', 'Both', 4, 8],
@@ -244,8 +258,37 @@ function buildConfig() {
     registrationDeadline: config['RegistrationDeadline'] ? (config['RegistrationDeadline'] instanceof Date ? config['RegistrationDeadline'].toISOString() : String(config['RegistrationDeadline'])) : '',
     eventName: config['EventName'] || 'TLH SPORTS FEST 2027',
     eventTagline: config['EventTagline'] || 'Ignite the Spirit of Sports 🔥',
-    uploadFolderId: config['UploadFolderId'] || ''
+    uploadFolderId: String(config['UploadFolderId'] || PropertiesService.getScriptProperties().getProperty('UPLOAD_FOLDER_ID') || '').trim()
   };
+}
+
+function getMaxAgeForCategory_(ageCategory) {
+  const s = String(ageCategory || '').trim().toUpperCase();
+  if (s === 'U15') return 15;
+  if (s === 'U17') return 17;
+  if (s === 'U19' || s === 'OPEN' || s === 'OPEN CATEGORY') return 19;
+  return null;
+}
+
+function parseAgeYears_(val) {
+  if (val === undefined || val === null || val === '') return null;
+  const s = String(val).trim();
+  if (/^\d{1,2}$/.test(s)) return Number(s);
+  let d = null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const parts = s.split('-');
+    d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  } else {
+    d = new Date(s);
+  }
+  if (!d || isNaN(d.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - d.getFullYear();
+  const m = today.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) {
+    age--;
+  }
+  return age;
 }
 
 // ── TWO SEPARATE SHEETS FOR REGISTRATIONS ──
@@ -258,6 +301,29 @@ function handleRegistration(payload) {
       success: false,
       error: 'Online registrations for TLH Sports Fest 2027 are officially closed.'
     };
+  }
+
+  // Enforce Age Category maximum age limit (e.g. Open Category max 19 years)
+  const maxAge = getMaxAgeForCategory_(payload.ageCategory);
+  if (maxAge !== null) {
+    const captainAge = parseAgeYears_(payload.dob);
+    if (captainAge !== null && captainAge > maxAge) {
+      return {
+        success: false,
+        error: `Maximum accepted age for ${payload.ageCategory} is ${maxAge} years (entered age: ${captainAge}).`
+      };
+    }
+    if (Array.isArray(payload.teamMembers)) {
+      for (let i = 0; i < payload.teamMembers.length; i++) {
+        const mAge = parseAgeYears_(payload.teamMembers[i].ageOrDob);
+        if (mAge !== null && mAge > maxAge) {
+          return {
+            success: false,
+            error: `Player "${payload.teamMembers[i].name || '#' + (i + 1)}" exceeds the maximum accepted age (${maxAge} years) for ${payload.ageCategory}.`
+          };
+        }
+      }
+    }
   }
 
   const isTeam = (payload.format === 'Team' || payload.format === 'Doubles' || payload.isTeamGame === true);
@@ -528,53 +594,110 @@ function sendTeamConfirmationEmail(data, regId, feePaid, isEarlyBird) {
 
 // ── Google Drive Folder & Sensible File Naming ──
 function getUploadFolders() {
-  const ss = getSpreadsheet();
-  let rootFolderId = '';
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+
   try {
-    const configSheet = ss.getSheetByName(SHEET_CONFIG);
-    if (configSheet) {
+    const props = PropertiesService.getScriptProperties();
+    let rootFolderId = '';
+    let configSheet = null;
+    let firstUploadRow = -1;
+    const duplicateRows = [];
+
+    try {
+      configSheet = getOrCreateSheet(SHEET_CONFIG, ['Key', 'Value']);
       const data = configSheet.getDataRange().getValues();
       for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === 'UploadFolderId') {
-          rootFolderId = data[i][1];
+        if (String(data[i][0]).trim() === 'UploadFolderId') {
+          if (firstUploadRow === -1) {
+            firstUploadRow = i + 1;
+          } else {
+            duplicateRows.push(i + 1);
+          }
+          const candidateId = String(data[i][1] || '').trim();
+          if (candidateId && !rootFolderId) {
+            rootFolderId = candidateId;
+          }
+        }
+      }
+    } catch (e) {}
+
+    if (!rootFolderId) {
+      rootFolderId = String(props.getProperty('UPLOAD_FOLDER_ID') || '').trim();
+    }
+
+    let rootFolder = null;
+    if (rootFolderId) {
+      try {
+        const candidate = DriveApp.getFolderById(rootFolderId);
+        if (candidate && !candidate.isTrashed()) {
+          rootFolder = candidate;
+        }
+      } catch (e) {}
+    }
+
+    // Reuse existing folder by name if Config/Properties was lost or blank
+    if (!rootFolder) {
+      const existing = DriveApp.getFoldersByName('TLH Sports Fest 2027 — Uploads');
+      while (existing.hasNext()) {
+        const f = existing.next();
+        if (!f.isTrashed()) {
+          rootFolder = f;
           break;
         }
       }
     }
-  } catch (e) {}
 
-  let rootFolder;
-  if (rootFolderId) {
-    try { rootFolder = DriveApp.getFolderById(rootFolderId); } catch (e) {}
-  }
+    // Only create a new folder if none exists anywhere
+    if (!rootFolder) {
+      rootFolder = DriveApp.createFolder('TLH Sports Fest 2027 — Uploads');
+      rootFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    }
 
-  if (!rootFolder) {
-    rootFolder = DriveApp.createFolder('TLH Sports Fest 2027 — Uploads');
-    rootFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    const finalFolderId = rootFolder.getId();
+    props.setProperty('UPLOAD_FOLDER_ID', finalFolderId);
+
+    // Update the single UploadFolderId row in-place & clean up duplicate rows
     try {
-      const configSheet = getOrCreateSheet(SHEET_CONFIG, ['Key', 'Value']);
-      configSheet.appendRow(['UploadFolderId', rootFolder.getId()]);
+      if (configSheet) {
+        if (firstUploadRow !== -1) {
+          configSheet.getRange(firstUploadRow, 2).setValue(finalFolderId);
+        } else {
+          configSheet.appendRow(['UploadFolderId', finalFolderId]);
+        }
+        for (let r = duplicateRows.length - 1; r >= 0; r--) {
+          configSheet.deleteRow(duplicateRows[r]);
+        }
+      }
     } catch (e) {}
+
+    // Subfolders: CNIC & Payment (non-trashed reuse)
+    let cnicFolder = null;
+    const cnicSubs = rootFolder.getFoldersByName('CNIC & B-Form Photos');
+    while (cnicSubs.hasNext()) {
+      const f = cnicSubs.next();
+      if (!f.isTrashed()) { cnicFolder = f; break; }
+    }
+    if (!cnicFolder) {
+      cnicFolder = rootFolder.createFolder('CNIC & B-Form Photos');
+      cnicFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    }
+
+    let paymentFolder = null;
+    const paySubs = rootFolder.getFoldersByName('Payment Receipts');
+    while (paySubs.hasNext()) {
+      const f = paySubs.next();
+      if (!f.isTrashed()) { paymentFolder = f; break; }
+    }
+    if (!paymentFolder) {
+      paymentFolder = rootFolder.createFolder('Payment Receipts');
+      paymentFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    }
+
+    return { rootFolder, cnicFolder, paymentFolder };
+  } finally {
+    lock.releaseLock();
   }
-
-  // Subfolders: CNIC & Payment
-  let cnicFolder, paymentFolder;
-
-  const cnicSubs = rootFolder.getFoldersByName('CNIC & B-Form Photos');
-  if (cnicSubs.hasNext()) cnicFolder = cnicSubs.next();
-  else {
-    cnicFolder = rootFolder.createFolder('CNIC & B-Form Photos');
-    cnicFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  }
-
-  const paySubs = rootFolder.getFoldersByName('Payment Receipts');
-  if (paySubs.hasNext()) paymentFolder = paySubs.next();
-  else {
-    paymentFolder = rootFolder.createFolder('Payment Receipts');
-    paymentFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  }
-
-  return { rootFolder, cnicFolder, paymentFolder };
 }
 
 function handleFileUpload(payload) {
@@ -595,7 +718,7 @@ function handleFileUpload(payload) {
   }
   if (ext === 'jpeg') ext = 'jpg';
 
-  const cleanSanitize = (str) => (str || '').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+  const cleanSanitize = (str) => (str || '').replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g, '_').substring(0, 90);
 
   const prefix = cleanSanitize(payload.prefix || (isCnic ? 'CNIC' : 'PAYMENT'));
   const timestamp = Utilities.formatDate(new Date(), 'Asia/Karachi', 'yyyyMMdd_HHmmss');
@@ -618,11 +741,44 @@ function handleFileUpload(payload) {
   };
 }
 
+function syncGamesSheet() {
+  const gameHeaders = ['Sr', 'Game', 'Format', 'Category', 'AgeCategory', 'EarlyFee', 'RegularFee', 'Players', 'Rules', 'Type', 'Gender', 'MinPlayers', 'MaxPlayers'];
+  const gamesSheet = getOrCreateSheet(SHEET_GAMES, gameHeaders);
+  gamesSheet.clear();
+  gamesSheet.getRange(1, 1, 1, gameHeaders.length).setValues([gameHeaders]).setFontWeight('bold').setBackground('#A30B0B').setFontColor('#FFFFFF');
+  const gamesData = getMasterGamesData();
+  gamesSheet.getRange(2, 1, gamesData.length, gameHeaders.length).setValues(gamesData);
+  for (let c = 1; c <= 13; c++) gamesSheet.autoResizeColumn(c);
+
+  // Also ensure single persisted UploadFolderId without touching other Config rows
+  const folders = getUploadFolders();
+
+  return {
+    success: true,
+    gamesCount: gamesData.length,
+    uploadFolderId: folders.rootFolder.getId(),
+    message: 'Games sheet synced & upload folder locked successfully.'
+  };
+}
+
 function setupSheets() {
   const ss = getSpreadsheet();
+  const props = PropertiesService.getScriptProperties();
+
+  // Preserve existing UploadFolderId if already configured
+  const configSheet = getOrCreateSheet(SHEET_CONFIG, ['Key', 'Value']);
+  let preservedFolderId = String(props.getProperty('UPLOAD_FOLDER_ID') || '').trim();
+  try {
+    const existingData = configSheet.getDataRange().getValues();
+    for (let i = 1; i < existingData.length; i++) {
+      if (String(existingData[i][0]).trim() === 'UploadFolderId' && String(existingData[i][1] || '').trim()) {
+        preservedFolderId = String(existingData[i][1]).trim();
+        break;
+      }
+    }
+  } catch (e) {}
 
   // 1. Config Sheet
-  const configSheet = getOrCreateSheet(SHEET_CONFIG, ['Key', 'Value']);
   const defaults = [
     ['EventName', 'TLH SPORTS FEST 2027'],
     ['EventTagline', 'Ignite the Spirit of Sports 🔥'],
@@ -633,7 +789,7 @@ function setupSheets() {
     ['RegistrationDeadline', '2027-01-31T23:59:59'],
     ['RegistrationOpen', 'TRUE'],
     ['EarlyBirdOpen', 'TRUE'],
-    ['UploadFolderId', '']
+    ['UploadFolderId', preservedFolderId]
   ];
   configSheet.clear();
   configSheet.getRange(1, 1, 1, 2).setValues([['Key', 'Value']]).setFontWeight('bold').setBackground('#A30B0B').setFontColor('#FFFFFF');
