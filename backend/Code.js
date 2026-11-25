@@ -124,13 +124,13 @@ function getMasterGamesData() {
     [19, 'Mafia', 'Team', 'Indoor Games', 'U19', 500, 500, '4-8 players', 'Social deduction role-playing game played in teams / squads.', 'Team', 'Both', 4, 8],
 
     // E-Games
-    [20, 'PUBG Mobile', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Assigned custom room modes; no emulator/hacking; moderator decision is final.', 'Individual', 'Both', 1, 1],
-    [21, 'Tekken 8 (PS)', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Standard 1v1 tournament rules; default settings; best of 3 rounds.', 'Individual', 'Both', 1, 1],
-    [22, 'FIFA 2027 (PS)', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Tactical defending; half length 5 mins; knockout format.', 'Individual', 'Both', 1, 1],
-    [23, 'Call of Duty PVP (PS)', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Standard competitive multiplayer rules; no unfair advantages.', 'Individual', 'Both', 1, 1],
-    [24, 'Free Fire Custom (Mobile)', 'Individual', 'E-Games', 'U19', 500, 700, '1 player', 'Mobile custom lobby; fair play rules apply.', 'Individual', 'Both', 1, 1],
-    [25, 'Fortnite (PS)', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Custom lobby battle royale; standard tournament settings.', 'Individual', 'Both', 1, 1],
-    [26, 'Minecraft PVP (PC)', 'Individual', 'E-Games', 'U19', 800, 1000, '1 player', 'Arena PVP duel format; vanilla mechanics; no hacked clients.', 'Individual', 'Both', 1, 1],
+    [20, 'PUBG Mobile', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Assigned custom room modes; no emulator/hacking; moderator decision is final.', 'Individual', 'Both', 1, 1],
+    [21, 'Tekken 8 (PS)', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Standard 1v1 tournament rules; default settings; best of 3 rounds.', 'Individual', 'Both', 1, 1],
+    [22, 'FIFA 2027 (PS)', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Tactical defending; half length 5 mins; knockout format.', 'Individual', 'Both', 1, 1],
+    [23, 'Call of Duty PVP (PS)', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Standard competitive multiplayer rules; no unfair advantages.', 'Individual', 'Both', 1, 1],
+    [24, 'Free Fire Custom (Mobile)', 'Individual', 'E-Games', 'Open Category', 500, 700, '1 player', 'Mobile custom lobby; fair play rules apply.', 'Individual', 'Both', 1, 1],
+    [25, 'Fortnite (PS)', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Custom lobby battle royale; standard tournament settings.', 'Individual', 'Both', 1, 1],
+    [26, 'Minecraft PVP (PC)', 'Individual', 'E-Games', 'Open Category', 800, 1000, '1 player', 'Arena PVP duel format; vanilla mechanics; no hacked clients.', 'Individual', 'Both', 1, 1],
 
     // Workshops
     [27, 'Mud Pottery', 'Individual', 'Workshops', 'U19', 2000, 2500, '1 participant', 'Shaping clay into decorative or useful objects; materials provided.', 'Individual', 'Both', 1, 1],
